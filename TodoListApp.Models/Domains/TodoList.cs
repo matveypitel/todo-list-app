@@ -1,6 +1,5 @@
-namespace TodoListApp.WebApi.Data.Entities;
-
-public class TodoListEntity
+namespace TodoListApp.Models.Domains;
+public class TodoList
 {
     public int Id { get; set; }
 
@@ -10,5 +9,5 @@ public class TodoListEntity
 
     public string UserId { get; set; } = string.Empty;
 
-    public ICollection<TaskItemEntity> Tasks { get; } = new List<TaskItemEntity>();
+    public ICollection<TaskItem> Tasks { get; } = new List<TaskItem>();
 }
