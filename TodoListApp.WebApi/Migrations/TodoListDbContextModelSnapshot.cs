@@ -22,69 +22,6 @@ namespace TodoListApp.WebApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("TodoListApp.Models.Domains.TaskItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Assignee")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TodoListId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TodoListId");
-
-                    b.ToTable("TaskItem");
-                });
-
-            modelBuilder.Entity("TodoListApp.Models.Domains.TodoList", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TodoList");
-                });
-
             modelBuilder.Entity("TodoListApp.WebApi.Data.Entities.TaskItemEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -114,19 +51,14 @@ namespace TodoListApp.WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TodoListEntityId")
-                        .HasColumnType("int");
-
                     b.Property<int>("TodoListId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TodoListEntityId");
-
                     b.HasIndex("TodoListId");
 
-                    b.ToTable("TaskItemEntity");
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("TodoListApp.WebApi.Data.Entities.TodoListEntity", b =>
@@ -153,35 +85,15 @@ namespace TodoListApp.WebApi.Migrations
                     b.ToTable("TodoLists");
                 });
 
-            modelBuilder.Entity("TodoListApp.Models.Domains.TaskItem", b =>
-                {
-                    b.HasOne("TodoListApp.Models.Domains.TodoList", "TodoList")
-                        .WithMany("Tasks")
-                        .HasForeignKey("TodoListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TodoList");
-                });
-
             modelBuilder.Entity("TodoListApp.WebApi.Data.Entities.TaskItemEntity", b =>
                 {
-                    b.HasOne("TodoListApp.WebApi.Data.Entities.TodoListEntity", null)
+                    b.HasOne("TodoListApp.WebApi.Data.Entities.TodoListEntity", "TodoList")
                         .WithMany("Tasks")
-                        .HasForeignKey("TodoListEntityId");
-
-                    b.HasOne("TodoListApp.Models.Domains.TodoList", "TodoList")
-                        .WithMany()
                         .HasForeignKey("TodoListId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("TodoList");
-                });
-
-            modelBuilder.Entity("TodoListApp.Models.Domains.TodoList", b =>
-                {
-                    b.Navigation("Tasks");
                 });
 
             modelBuilder.Entity("TodoListApp.WebApi.Data.Entities.TodoListEntity", b =>
