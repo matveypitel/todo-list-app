@@ -11,4 +11,6 @@ public class TodoListDbContext : DbContext
     }
 
     public DbSet<TodoListEntity> TodoLists { get; set; } = null!;
+
+    public DbSet<TaskItemEntity> Tasks { get; set; } = null!;
 }
