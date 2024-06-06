@@ -20,7 +20,7 @@ public class TaskItemEntity
 
     public int TodoListId { get; set; }
 
-    public TodoList TodoList { get; set; } = null!;
+    public TodoListEntity TodoList { get; set; } = null!;
 
     public bool IsActive => this.Status == "Not Started" || this.Status == "In Progress";
 }
