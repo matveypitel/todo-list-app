@@ -21,11 +21,11 @@ public class TodoListRepository : ITodoListRepository
         return createdEntity.Entity;
     }
 
-    public async Task<IEnumerable<TodoListEntity>> GetAllAsync(string userId, int pageNumber, int pageSize)
+    public async Task<IEnumerable<TodoListEntity>> GetAllAsync(string userId, int page, int pageSize)
     {
         return await this.context.TodoLists
            .Where(t => t.UserId == userId)
-           .Skip((pageNumber - 1) * pageSize)
+           .Skip((page - 1) * pageSize)
            .Take(pageSize)
            .AsNoTracking()
            .ToListAsync();
@@ -35,6 +35,7 @@ public class TodoListRepository : ITodoListRepository
     {
         return await this.context.TodoLists
             .Where(t => t.UserId == userId)
+            .Include(t => t.Tasks)
             .FirstOrDefaultAsync(t => t.Id == id)
             ?? throw new KeyNotFoundException($"To-do list (id = {id}) not found.");
     }
@@ -43,10 +44,12 @@ public class TodoListRepository : ITodoListRepository
     {
         ArgumentNullException.ThrowIfNull(todoListEntity);
 
-        _ = await this.context.TodoLists
+        var existingTodoList = await this.context.TodoLists
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.Id == id)
-            ?? throw new KeyNotFoundException($"To-do list (id = {todoListEntity.Id}) not found.");
+            ?? throw new KeyNotFoundException($"To-do list (id = {id}) not found.");
+
+        todoListEntity.Id = existingTodoList.Id;
 
         this.context.Entry(todoListEntity).State = EntityState.Modified;
 
@@ -55,7 +58,9 @@ public class TodoListRepository : ITodoListRepository
 
     public async Task DeleteAsync(int id, string userId)
     {
-        var todoList = await this.context.TodoLists.FindAsync(id)
+        var todoList = await this.context.TodoLists
+            .Where(t => t.UserId == userId)
+            .FirstOrDefaultAsync(t => t.Id == id)
             ?? throw new KeyNotFoundException($"To-do list (id = {id}) not found.");
 
         _ = this.context.TodoLists.Remove(todoList);

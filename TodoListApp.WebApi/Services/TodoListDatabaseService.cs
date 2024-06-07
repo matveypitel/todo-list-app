@@ -22,9 +22,9 @@ public class TodoListDatabaseService : ITodoListDatabaseService
         return this.mapper.Map<TodoList>(todoListEntity);
     }
 
-    public async Task<IEnumerable<TodoList>> GetAllAsync(string userId, int pageNumber, int pageSize)
+    public async Task<IEnumerable<TodoList>> GetAllAsync(string userId, int page, int pageSize)
     {
-        var todoListEntities = await this.repository.GetAllAsync(userId, pageNumber, pageSize);
+        var todoListEntities = await this.repository.GetAllAsync(userId, page, pageSize);
         return this.mapper.Map<IEnumerable<TodoList>>(todoListEntities);
     }
 
