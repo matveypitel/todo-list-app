@@ -4,7 +4,7 @@ namespace TodoListApp.WebApi.Abstractions;
 
 public interface ITodoListRepository
 {
-    Task<IEnumerable<TodoListEntity>> GetAllAsync(string userId, int pageNumber, int pageSize);
+    Task<IEnumerable<TodoListEntity>> GetAllAsync(string userId, int page, int pageSize);
 
     Task<TodoListEntity> GetByIdAsync(int id, string userId);
 
