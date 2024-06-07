@@ -1,5 +1,3 @@
-using TodoListApp.Models.Domains;
-
 namespace TodoListApp.WebApi.Data.Entities;
 
 public class TaskItemEntity
@@ -16,7 +14,9 @@ public class TaskItemEntity
 
     public string Status { get; set; } = "Not Started";
 
-    public string Assignee { get; set; } = string.Empty;
+    public string OwnerId { get; set; } = string.Empty;
+
+    public string Assignee { get; set; } = null!;
 
     public int TodoListId { get; set; }
 

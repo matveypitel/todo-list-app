@@ -13,7 +13,9 @@ public class TaskItem
 
     public string Status { get; set; } = "Not Started";
 
-    public string Assignee { get; set; } = string.Empty;
+    public string OwnerId { get; set; } = string.Empty;
+
+    public string? Assignee { get; set; }
 
     public int TodoListId { get; set; }
 
