@@ -11,5 +11,8 @@ public class ApiMappingProfile : Profile
     {
         _ = this.CreateMap<TodoListEntity, TodoList>().ReverseMap();
         _ = this.CreateMap<TodoListModel, TodoList>().ReverseMap();
+
+        _ = this.CreateMap<TaskItemEntity, TaskItem>().ReverseMap();
+        _ = this.CreateMap<TaskItemModel, TaskItem>().ReverseMap();
     }
 }
