@@ -21,7 +21,10 @@ builder.Services.AddDbContext<TodoListDbContext>(options =>
         x => x.MigrationsAssembly("TodoListApp.WebApi")));
 
 builder.Services.AddScoped<ITodoListRepository, TodoListRepository>();
+builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
+
 builder.Services.AddScoped<ITodoListDatabaseService, TodoListDatabaseService>();
+builder.Services.AddScoped<ITaskItemDatabaseService, TaskItemDatabaseService>();
 
 builder.Services.AddAuthentication(options =>
 {
