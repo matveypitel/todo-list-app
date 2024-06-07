@@ -12,13 +12,11 @@ public class TaskItemModel
     [StringLength(150, ErrorMessage = "Description length can't be more than 150 symbols")]
     public string? Description { get; set; }
 
-    public DateTime CreatedDate { get; } = DateTime.UtcNow;
+    public DateTime CreatedDate { get; init; } = DateTime.Now;
 
     public DateTime? DueDate { get; set; }
 
     public string Status { get; set; } = "Not Started";
-
-    public int? TodoListId { get; set; }
 
     public string? Assignee { get; set; }
 
