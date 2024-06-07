@@ -9,7 +9,7 @@ using TodoListApp.WebApi.Abstractions;
 namespace TodoListApp.WebApi.Controllers;
 
 [Authorize]
-[Route("api/[controller]")]
+[Route("api/todolists/{todoListId:int}/tasks")]
 [ApiController]
 public class TaskController : ControllerBase
 {
@@ -30,19 +30,21 @@ public class TaskController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<TaskItemModel>> CreateTaskItem([FromBody] TaskItemModel taskItemModel)
+    public async Task<ActionResult<TaskItemModel>> CreateTaskItem([FromRoute] int todoListId, [FromBody] TaskItemModel taskItemModel)
     {
         try
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
 
             var newTaskItem = this.mapper.Map<TaskItem>(taskItemModel);
+
+            newTaskItem.TodoListId = todoListId;
             newTaskItem.OwnerId = userId;
             newTaskItem.Assignee = userId;
 
             var taskItem = await this.databaseService.CreateAsync(newTaskItem);
 
-            return this.CreatedAtAction(nameof(this.GetTaskItem), new { id = taskItem.Id }, this.mapper.Map<TaskItemModel>(taskItem));
+            return this.CreatedAtAction(nameof(this.GetTaskItem), new { id = taskItem.Id, todoListId }, this.mapper.Map<TaskItemModel>(taskItem));
         }
         catch (KeyNotFoundException ex)
         {
@@ -65,7 +67,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaskItemModel>>> GetTaskItems([FromQuery] int todoListId)
+    public async Task<ActionResult<IEnumerable<TaskItemModel>>> GetTaskItems([FromRoute] int todoListId)
     {
         try
         {
@@ -96,13 +98,13 @@ public class TaskController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<TaskItemModel>> GetTaskItem([FromRoute] int id, [FromQuery] int todolistId)
+    public async Task<ActionResult<TaskItemModel>> GetTaskItem([FromRoute] int id, [FromRoute] int todoListId)
     {
         try
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
 
-            var taskItem = await this.databaseService.GetByIdAsync(id, todolistId, userId);
+            var taskItem = await this.databaseService.GetByIdAsync(id, todoListId, userId);
 
             return this.Ok(this.mapper.Map<TaskItemModel>(taskItem));
         }
@@ -127,7 +129,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateTaskItem([FromRoute] int id, [FromQuery] int todoListId, [FromBody] TaskItemModel taskItemModel)
+    public async Task<ActionResult> UpdateTaskItem([FromRoute] int id, [FromRoute] int todoListId, [FromBody] TaskItemModel taskItemModel)
     {
         try
         {
@@ -161,7 +163,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteTaskItem(int id, int todoListId)
+    public async Task<ActionResult> DeleteTaskItem(int id, [FromRoute] int todoListId)
     {
         try
         {

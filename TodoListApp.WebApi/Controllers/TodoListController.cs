@@ -9,7 +9,7 @@ using TodoListApp.WebApi.Abstractions;
 namespace TodoListApp.WebApi.Controllers;
 
 [Authorize]
-[Route("api/[controller]")]
+[Route("api/todolists")]
 [ApiController]
 public class TodoListController : ControllerBase
 {
