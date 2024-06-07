@@ -9,7 +9,7 @@ using TodoListApp.WebApi.Abstractions;
 namespace TodoListApp.WebApi.Controllers;
 
 [Authorize]
-[Route("api/todolists")]
+[Route("api/[controller]")]
 [ApiController]
 public class TodoListController : ControllerBase
 {
@@ -63,7 +63,7 @@ public class TodoListController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TodoListModel>>> GetTodoLists([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    public async Task<ActionResult<IEnumerable<TodoListModel>>> GetTodoLists([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         try
         {
@@ -71,17 +71,19 @@ public class TodoListController : ControllerBase
 
             var totalCount = await this.databaseService.GetCountAsync(userId);
 
-            if (pageNumber > (int)Math.Ceiling((double)totalCount / pageSize))
+            if (totalCount != 0 && page > (int)Math.Ceiling((double)totalCount / pageSize))
             {
                 return this.BadRequest();
             }
 
-            var todoLists = await this.databaseService.GetAllAsync(userId, pageNumber, pageSize);
+            var todoLists = await this.databaseService.GetAllAsync(userId, page, pageSize);
 
             var result = new PagedResult<TodoListModel>
             {
                 Items = this.mapper.Map<IEnumerable<TodoListModel>>(todoLists),
                 TotalCount = totalCount,
+                ItemsPerPage = pageSize,
+                CurrentPage = page,
             };
 
             return this.Ok(result);
@@ -107,7 +109,7 @@ public class TodoListController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<TodoListModel>> GetTodoList(int id)
+    public async Task<ActionResult<TodoListModel>> GetTodoList([FromRoute] int id)
     {
         try
         {
@@ -138,7 +140,7 @@ public class TodoListController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateTodoList(int id, [FromBody] TodoListModel todoListModel)
+    public async Task<ActionResult> UpdateTodoList([FromRoute] int id, [FromBody] TodoListModel todoListModel)
     {
         try
         {
@@ -149,7 +151,7 @@ public class TodoListController : ControllerBase
 
             await this.databaseService.UpdateAsync(id, todoList);
 
-            return this.Ok();
+            return this.NoContent();
         }
         catch (KeyNotFoundException ex)
         {
@@ -172,7 +174,7 @@ public class TodoListController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteTodoList(int id)
+    public async Task<ActionResult> DeleteTodoList([FromRoute] int id)
     {
         try
         {
