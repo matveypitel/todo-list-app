@@ -22,15 +22,16 @@ public class TaskItemDatabaseService : ITaskItemDatabaseService
         return this.mapper.Map<TaskItem>(taskEntity);
     }
 
-    public async Task DeleteAsync(int id, int todoListId, string ownerId)
-    {
-        await this.repository.DeleteAsync(id, todoListId, ownerId);
-    }
-
     public async Task<IEnumerable<TaskItem>> GetAllAsync(int todoListId, string ownerId)
     {
         var tasks = await this.repository.GetAllAsync(todoListId, ownerId);
         return this.mapper.Map<IEnumerable<TaskItem>>(tasks);
+    }
+
+    public async Task<IEnumerable<TaskItem>> GetAssignedToUserAsync(string userId, string? status, string? sort)
+    {
+        var assignedTasks = await this.repository.GetAssignedToUserAsync(userId, status, sort);
+        return this.mapper.Map<IEnumerable<TaskItem>>(assignedTasks);
     }
 
     public async Task<TaskItem> GetByIdAsync(int id, int todoListId, string ownerId)
@@ -43,5 +44,15 @@ public class TaskItemDatabaseService : ITaskItemDatabaseService
     {
         var taskEntity = this.mapper.Map<TaskItemEntity>(taskItem);
         await this.repository.UpdateAsync(id, todoListId, taskEntity);
+    }
+
+    public async Task UpdateTaskStatusAsync(int id, string userId, string status)
+    {
+        await this.repository.UpdateTaskStatusAsync(id, userId, status);
+    }
+
+    public async Task DeleteAsync(int id, int todoListId, string ownerId)
+    {
+        await this.repository.DeleteAsync(id, todoListId, ownerId);
     }
 }
