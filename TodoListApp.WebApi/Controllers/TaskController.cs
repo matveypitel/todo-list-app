@@ -73,7 +73,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteTaskItem(int id, [FromRoute] int todoListId)
+    public async Task<ActionResult> DeleteTaskItem([FromRoute] int id, [FromRoute] int todoListId)
     {
         var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
 
