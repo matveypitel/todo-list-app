@@ -1,4 +1,7 @@
+using System.Globalization;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using TodoListApp.Models.DTOs;
 using TodoListApp.Models.Enums;
 using TodoListApp.WebApi.Abstractions;
 using TodoListApp.WebApi.Data;
@@ -30,7 +33,7 @@ public class TaskItemRepository : ITaskItemRepository
         return createdTask.Entity;
     }
 
-    public async Task<IEnumerable<TaskItemEntity>> GetAllAsync(int todoListId, string ownerId)
+    public async Task<IEnumerable<TaskItemEntity>> GetListAsync(int todoListId, string ownerId)
     {
         _ = await this.context.TodoLists
             .Where(t => t.UserId == ownerId)
@@ -43,11 +46,17 @@ public class TaskItemRepository : ITaskItemRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<TaskItemEntity>> GetAssignedToUserAsync(string userId, string? status, string? sort)
+    public async Task<PagedModel<TaskItemEntity>> GetPagedListOfAssignedToUserAsync(string userId, int page, int pageSize, string? status, string? sort)
     {
         var tasks = this.context.Tasks
-        .AsNoTracking()
-        .Where(t => t.Assignee == userId);
+            .Where(t => t.Assignee == userId)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .AsNoTracking();
+
+        var totalCount = await this.context.Tasks
+           .Where(t => t.Assignee == userId)
+           .CountAsync();
 
         if (!string.IsNullOrEmpty(status))
         {
@@ -56,17 +65,27 @@ public class TaskItemRepository : ITaskItemRepository
 
         if (!string.IsNullOrEmpty(sort))
         {
-            if (sort == "title")
+            if (sort.Equals("title", StringComparison.OrdinalIgnoreCase))
             {
                 tasks = tasks.OrderBy(t => t.Title);
             }
-            else if (sort == "dueDate")
+            else if (sort.Equals("dueDate", StringComparison.OrdinalIgnoreCase))
             {
-                tasks = tasks.OrderBy(t => t.DueDate);
+                tasks = tasks.OrderBy(t => t.DueDate == null).ThenBy(t => t.DueDate);
             }
         }
 
-        return await tasks.ToListAsync();
+        var listOfTasks = await tasks.ToListAsync();
+
+        var pagedModel = new PagedModel<TaskItemEntity>
+        {
+            Items = listOfTasks,
+            CurrentPage = page,
+            ItemsPerPage = pageSize,
+            TotalCount = totalCount,
+        };
+
+        return pagedModel;
     }
 
     public async Task<TaskItemEntity> GetByIdAsync(int id, int todoListId, string ownerId)
@@ -77,9 +96,9 @@ public class TaskItemRepository : ITaskItemRepository
             ?? throw new KeyNotFoundException($"To-do list (id = {todoListId}) not found.");
 
         return await this.context.Tasks
-                   .Where(t => t.TodoListId == todoListId && t.OwnerId == ownerId)
-                   .FirstOrDefaultAsync(t => t.Id == id)
-               ?? throw new KeyNotFoundException($"Task (id = {id}) not found.");
+            .Where(t => t.TodoListId == todoListId && t.OwnerId == ownerId)
+            .FirstOrDefaultAsync(t => t.Id == id)
+            ?? throw new KeyNotFoundException($"Task (id = {id}) not found.");
     }
 
     public async Task UpdateAsync(int id, int todoListId, TaskItemEntity taskItemEntity)
