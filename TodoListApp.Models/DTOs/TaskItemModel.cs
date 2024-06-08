@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using TodoListApp.Models.Enums;
 
 namespace TodoListApp.Models.DTOs;
 public class TaskItemModel
@@ -16,9 +17,13 @@ public class TaskItemModel
 
     public DateTime? DueDate { get; set; }
 
-    public string Status { get; set; } = "Not Started";
+    public string? OwnerId { get; set; }
+
+    public TaskItemStatus Status { get; set; } = TaskItemStatus.NotStarted;
 
     public string? Assignee { get; set; }
 
-    public bool IsActive => this.Status == "Not Started" || this.Status == "In Progress";
+    public bool IsActive => this.Status == TaskItemStatus.NotStarted || this.Status == TaskItemStatus.InProgress;
+
+    public bool IsOverDue => this.DueDate.HasValue && this.DueDate.Value.Date < DateTime.Now.Date;
 }

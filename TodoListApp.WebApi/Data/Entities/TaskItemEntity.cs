@@ -1,3 +1,5 @@
+using TodoListApp.Models.Enums;
+
 namespace TodoListApp.WebApi.Data.Entities;
 
 public class TaskItemEntity
@@ -12,7 +14,7 @@ public class TaskItemEntity
 
     public DateTime? DueDate { get; set; }
 
-    public string Status { get; set; } = "Not Started";
+    public TaskItemStatus Status { get; set; } = TaskItemStatus.NotStarted;
 
     public string OwnerId { get; set; } = string.Empty;
 
@@ -22,5 +24,7 @@ public class TaskItemEntity
 
     public TodoListEntity TodoList { get; set; } = null!;
 
-    public bool IsActive => this.Status == "Not Started" || this.Status == "In Progress";
+    public bool IsActive { get; set; }
+
+    public bool IsOverDue { get; set; }
 }

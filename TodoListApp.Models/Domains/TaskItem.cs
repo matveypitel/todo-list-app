@@ -1,3 +1,5 @@
+using TodoListApp.Models.Enums;
+
 namespace TodoListApp.Models.Domains;
 public class TaskItem
 {
@@ -11,7 +13,7 @@ public class TaskItem
 
     public DateTime? DueDate { get; set; }
 
-    public string Status { get; set; } = "Not Started";
+    public TaskItemStatus Status { get; set; } = TaskItemStatus.NotStarted;
 
     public string OwnerId { get; set; } = string.Empty;
 
@@ -21,5 +23,7 @@ public class TaskItem
 
     public TodoList TodoList { get; set; } = null!;
 
-    public bool IsActive => this.Status == "Not Started" || this.Status == "In Progress";
+    public bool IsActive => this.Status == TaskItemStatus.NotStarted || this.Status == TaskItemStatus.InProgress;
+
+    public bool IsOverDue => this.DueDate.HasValue && this.DueDate.Value.Date < DateTime.Now.Date;
 }
