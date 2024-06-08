@@ -1,0 +1,20 @@
+using TodoListApp.WebApi.Abstractions;
+using TodoListApp.WebApi.Repositories;
+using TodoListApp.WebApi.Services;
+
+namespace TodoListApp.WebApi.Extensions;
+
+public static class ServiceCollectionExtension
+{
+    public static void AddRepositories(this IServiceCollection services)
+    {
+        _ = services.AddScoped<ITodoListRepository, TodoListRepository>();
+        _ = services.AddScoped<ITaskItemRepository, TaskItemRepository>();
+    }
+
+    public static void AddDatabaseServices(this IServiceCollection services)
+    {
+        _ = services.AddScoped<ITodoListDatabaseService, TodoListDatabaseService>();
+        _ = services.AddScoped<ITaskItemDatabaseService, TaskItemDatabaseService>();
+    }
+}
