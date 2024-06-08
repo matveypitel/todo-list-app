@@ -1,3 +1,4 @@
+using TodoListApp.Models.DTOs;
 using TodoListApp.WebApi.Data.Entities;
 
 namespace TodoListApp.WebApi.Abstractions;
@@ -6,9 +7,9 @@ public interface ITaskItemRepository
 {
     Task<TaskItemEntity> GetByIdAsync(int id, int todoListId, string ownerId);
 
-    Task<IEnumerable<TaskItemEntity>> GetAllAsync(int todoListId, string ownerId);
+    Task<IEnumerable<TaskItemEntity>> GetListAsync(int todoListId, string ownerId);
 
-    Task<IEnumerable<TaskItemEntity>> GetAssignedToUserAsync(string userId, string? status, string? sort);
+    Task<PagedModel<TaskItemEntity>> GetPagedListOfAssignedToUserAsync(string userId, int page, int pageSize, string? status, string? sort);
 
     Task<TaskItemEntity> CreateAsync(TaskItemEntity taskItemEntity);
 
