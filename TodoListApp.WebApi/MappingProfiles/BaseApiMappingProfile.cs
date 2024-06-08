@@ -5,9 +5,9 @@ using TodoListApp.WebApi.Data.Entities;
 
 namespace TodoListApp.WebApi.MappingProfiles;
 
-public class ApiMappingProfile : Profile
+public class BaseApiMappingProfile : Profile
 {
-    public ApiMappingProfile()
+    public BaseApiMappingProfile()
     {
         _ = this.CreateMap<TodoListEntity, TodoList>().ReverseMap();
         _ = this.CreateMap<TodoListModel, TodoList>().ReverseMap();
