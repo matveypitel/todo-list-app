@@ -1,4 +1,6 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using TodoListApp.Models.DTOs;
 using TodoListApp.WebApi.Abstractions;
 using TodoListApp.WebApi.Data;
 using TodoListApp.WebApi.Data.Entities;
@@ -21,14 +23,28 @@ public class TodoListRepository : ITodoListRepository
         return createdEntity.Entity;
     }
 
-    public async Task<IEnumerable<TodoListEntity>> GetAllAsync(string userId, int page, int pageSize)
+    public async Task<PagedModel<TodoListEntity>> GetPagedListAsync(string userId, int page, int pageSize)
     {
-        return await this.context.TodoLists
+        var listOfTodoList = await this.context.TodoLists
            .Where(t => t.UserId == userId)
            .Skip((page - 1) * pageSize)
            .Take(pageSize)
            .AsNoTracking()
            .ToListAsync();
+
+        var totalCount = await this.context.TodoLists
+           .Where(t => t.UserId == userId)
+           .CountAsync();
+
+        var pagedModel = new PagedModel<TodoListEntity>
+        {
+            Items = listOfTodoList,
+            CurrentPage = page,
+            ItemsPerPage = pageSize,
+            TotalCount = totalCount,
+        };
+
+        return pagedModel;
     }
 
     public async Task<TodoListEntity> GetByIdAsync(int id, string userId)
@@ -65,12 +81,5 @@ public class TodoListRepository : ITodoListRepository
 
         _ = this.context.TodoLists.Remove(todoList);
         _ = await this.context.SaveChangesAsync();
-    }
-
-    public async Task<int> GetCountAsync(string userId)
-    {
-        return await this.context.TodoLists
-           .Where(t => t.UserId == userId)
-           .CountAsync();
     }
 }
