@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using TodoListApp.Models.Enums;
+using TodoListApp.Models.ValidationAttributes;
 
 namespace TodoListApp.Models.DTOs;
 public class TaskItemModel
@@ -15,10 +16,12 @@ public class TaskItemModel
 
     public DateTime CreatedDate { get; init; } = DateTime.Now;
 
+    [DueDate(ErrorMessage = "Due date can't be earlier than now date")]
     public DateTime? DueDate { get; set; }
 
     public string? OwnerId { get; set; }
 
+    [Range(0, 2)]
     public TaskItemStatus Status { get; set; } = TaskItemStatus.NotStarted;
 
     public string? Assignee { get; set; }
