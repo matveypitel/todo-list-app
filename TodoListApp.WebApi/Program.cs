@@ -5,12 +5,12 @@ using Microsoft.IdentityModel.Tokens;
 using TodoListApp.WebApi.Abstractions;
 using TodoListApp.WebApi.Data;
 using TodoListApp.WebApi.MappingProfiles;
+using TodoListApp.WebApi.Middleware;
 using TodoListApp.WebApi.Repositories;
 using TodoListApp.WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 
 builder.Services.AddAutoMapper(typeof(ApiMappingProfile).Assembly);
@@ -48,13 +48,13 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     _ = app.UseSwagger();
