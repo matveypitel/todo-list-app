@@ -2,29 +2,25 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using TodoListApp.WebApi.Abstractions;
 using TodoListApp.WebApi.Data;
+using TodoListApp.WebApi.Extensions;
 using TodoListApp.WebApi.MappingProfiles;
 using TodoListApp.WebApi.Middleware;
-using TodoListApp.WebApi.Repositories;
-using TodoListApp.WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddAutoMapper(typeof(ApiMappingProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(BaseApiMappingProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(PaginatedApiMappingProfile).Assembly);
 
 builder.Services.AddDbContext<TodoListDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("TodoListConnection"),
         x => x.MigrationsAssembly("TodoListApp.WebApi")));
 
-builder.Services.AddScoped<ITodoListRepository, TodoListRepository>();
-builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
-
-builder.Services.AddScoped<ITodoListDatabaseService, TodoListDatabaseService>();
-builder.Services.AddScoped<ITaskItemDatabaseService, TaskItemDatabaseService>();
+builder.Services.AddRepositories();
+builder.Services.AddDatabaseServices();
 
 builder.Services.AddAuthentication(options =>
 {
