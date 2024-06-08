@@ -16,31 +16,31 @@ public class TodoListDatabaseService : ITodoListDatabaseService
         this.mapper = mapper;
     }
 
-    public async Task<TodoList> CreateAsync(TodoList todoList)
+    public async Task<TodoList> CreateTodoListAsync(TodoList todoList)
     {
         var todoListEntity = await this.repository.CreateAsync(this.mapper.Map<TodoListEntity>(todoList));
         return this.mapper.Map<TodoList>(todoListEntity);
     }
 
-    public async Task<IEnumerable<TodoList>> GetAllAsync(string userId, int page, int pageSize)
+    public async Task<IEnumerable<TodoList>> GetListOfTodoListsAsync(string userId, int page, int pageSize)
     {
         var todoListEntities = await this.repository.GetAllAsync(userId, page, pageSize);
         return this.mapper.Map<IEnumerable<TodoList>>(todoListEntities);
     }
 
-    public async Task<TodoList> GetByIdAsync(int id, string userId)
+    public async Task<TodoList> GetTodoListByIdAsync(int id, string userId)
     {
         var todoListEntity = await this.repository.GetByIdAsync(id, userId);
         return this.mapper.Map<TodoList>(todoListEntity);
     }
 
-    public async Task UpdateAsync(int id, TodoList todoList)
+    public async Task UpdateTodoListAsync(int id, TodoList todoList)
     {
         var todoListEntity = this.mapper.Map<TodoListEntity>(todoList);
         await this.repository.UpdateAsync(id, todoListEntity);
     }
 
-    public async Task DeleteAsync(int id, string userId)
+    public async Task DeleteTodoListAsync(int id, string userId)
     {
         await this.repository.DeleteAsync(id, userId);
     }
