@@ -35,28 +35,18 @@ public class TodoListController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TodoListModel>>> GetTodoLists([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    public async Task<ActionResult<PagedModel<TodoListModel>>> GetTodoLists([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
 
-        var totalCount = await this.databaseService.GetCountAsync(userId);
+        var todoLists = await this.databaseService.GetPagedListOfTodoListsAsync(userId, page, pageSize);
 
-        if (totalCount != 0 && page > (int)Math.Ceiling((double)totalCount / pageSize))
+        if (todoLists.TotalCount != 0 && page > (int)Math.Ceiling((double)todoLists.TotalCount / pageSize))
         {
             return this.BadRequest();
         }
 
-        var todoLists = await this.databaseService.GetListOfTodoListsAsync(userId, page, pageSize);
-
-        var result = new PagedResult<TodoListModel>
-        {
-            Items = this.mapper.Map<IEnumerable<TodoListModel>>(todoLists),
-            TotalCount = totalCount,
-            ItemsPerPage = pageSize,
-            CurrentPage = page,
-        };
-
-        return this.Ok(result);
+        return this.Ok(this.mapper.Map<PagedModel<TodoListModel>>(todoLists));
     }
 
     [HttpGet("{id}")]
