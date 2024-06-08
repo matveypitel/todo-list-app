@@ -1,10 +1,11 @@
 using TodoListApp.Models.Domains;
+using TodoListApp.Models.DTOs;
 
 namespace TodoListApp.WebApi.Abstractions;
 
 public interface ITodoListDatabaseService
 {
-    Task<IEnumerable<TodoList>> GetListOfTodoListsAsync(string userId, int page, int pageSize);
+    Task<PagedModel<TodoList>> GetPagedListOfTodoListsAsync(string userId, int page, int pageSize);
 
     Task<TodoList> GetTodoListByIdAsync(int id, string userId);
 
@@ -13,6 +14,4 @@ public interface ITodoListDatabaseService
     Task UpdateTodoListAsync(int id, TodoList todoList);
 
     Task DeleteTodoListAsync(int id, string userId);
-
-    Task<int> GetCountAsync(string userId);
 }
