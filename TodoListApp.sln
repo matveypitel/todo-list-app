@@ -13,9 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		user-stories.md = user-stories.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoListApp.WebApi", "TodoListApp.WebApi\TodoListApp.WebApi.csproj", "{9EC6C682-E03E-4097-857C-8EEAEFC37679}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TodoListApp.WebApi", "TodoListApp.WebApi\TodoListApp.WebApi.csproj", "{9EC6C682-E03E-4097-857C-8EEAEFC37679}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoListApp.WebApp", "TodoListApp.WebApp\TodoListApp.WebApp.csproj", "{FEB61879-3D2C-4751-B5CE-981E89666110}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TodoListApp.WebApp", "TodoListApp.WebApp\TodoListApp.WebApp.csproj", "{2F4C4B04-7EEB-4E58-BD90-D37974D76D39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoListApp.Models", "TodoListApp.Models\TodoListApp.Models.csproj", "{A31F34A5-178E-47B5-BA50-F625991EE0F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,10 +29,14 @@ Global
 		{9EC6C682-E03E-4097-857C-8EEAEFC37679}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EC6C682-E03E-4097-857C-8EEAEFC37679}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EC6C682-E03E-4097-857C-8EEAEFC37679}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FEB61879-3D2C-4751-B5CE-981E89666110}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FEB61879-3D2C-4751-B5CE-981E89666110}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FEB61879-3D2C-4751-B5CE-981E89666110}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FEB61879-3D2C-4751-B5CE-981E89666110}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F4C4B04-7EEB-4E58-BD90-D37974D76D39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F4C4B04-7EEB-4E58-BD90-D37974D76D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F4C4B04-7EEB-4E58-BD90-D37974D76D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F4C4B04-7EEB-4E58-BD90-D37974D76D39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A31F34A5-178E-47B5-BA50-F625991EE0F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A31F34A5-178E-47B5-BA50-F625991EE0F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A31F34A5-178E-47B5-BA50-F625991EE0F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A31F34A5-178E-47B5-BA50-F625991EE0F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
