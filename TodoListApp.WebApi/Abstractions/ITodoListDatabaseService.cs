@@ -4,15 +4,15 @@ namespace TodoListApp.WebApi.Abstractions;
 
 public interface ITodoListDatabaseService
 {
-    Task<IEnumerable<TodoList>> GetAllAsync(string userId, int page, int pageSize);
+    Task<IEnumerable<TodoList>> GetListOfTodoListsAsync(string userId, int page, int pageSize);
 
-    Task<TodoList> GetByIdAsync(int id, string userId);
+    Task<TodoList> GetTodoListByIdAsync(int id, string userId);
 
-    Task<TodoList> CreateAsync(TodoList todoList);
+    Task<TodoList> CreateTodoListAsync(TodoList todoList);
 
-    Task UpdateAsync(int id, TodoList todoList);
+    Task UpdateTodoListAsync(int id, TodoList todoList);
 
-    Task DeleteAsync(int id, string userId);
+    Task DeleteTodoListAsync(int id, string userId);
 
     Task<int> GetCountAsync(string userId);
 }
