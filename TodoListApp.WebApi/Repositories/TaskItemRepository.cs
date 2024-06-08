@@ -101,7 +101,7 @@ public class TaskItemRepository : ITaskItemRepository
 
         if (string.IsNullOrEmpty(taskItemEntity.Assignee))
         {
-            taskItemEntity.Assignee = existingTask.Assignee;
+            taskItemEntity.Assignee = taskItemEntity.OwnerId;
         }
 
         this.context.Entry(taskItemEntity).State = EntityState.Modified;
