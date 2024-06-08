@@ -1,5 +1,6 @@
 using AutoMapper;
 using TodoListApp.Models.Domains;
+using TodoListApp.Models.DTOs;
 using TodoListApp.WebApi.Abstractions;
 using TodoListApp.WebApi.Data.Entities;
 
@@ -24,14 +25,14 @@ public class TaskItemDatabaseService : ITaskItemDatabaseService
 
     public async Task<IEnumerable<TaskItem>> GetListOfTasksAsync(int todoListId, string ownerId)
     {
-        var tasks = await this.repository.GetAllAsync(todoListId, ownerId);
+        var tasks = await this.repository.GetListAsync(todoListId, ownerId);
         return this.mapper.Map<IEnumerable<TaskItem>>(tasks);
     }
 
-    public async Task<IEnumerable<TaskItem>> GetAssignedTaskToUserAsync(string userId, string? status, string? sort)
+    public async Task<PagedModel<TaskItem>> GetPagedListOfAssignedTaskToUserAsync(string userId, int page, int pageSize, string? status, string? sort)
     {
-        var assignedTasks = await this.repository.GetAssignedToUserAsync(userId, status, sort);
-        return this.mapper.Map<IEnumerable<TaskItem>>(assignedTasks);
+        var assignedTasks = await this.repository.GetPagedListOfAssignedToUserAsync(userId, page, pageSize, status, sort);
+        return this.mapper.Map<PagedModel<TaskItem>>(assignedTasks);
     }
 
     public async Task<TaskItem> GetTaskByIdAsync(int id, int todoListId, string ownerId)

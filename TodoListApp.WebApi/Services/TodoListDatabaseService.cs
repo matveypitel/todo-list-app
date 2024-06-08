@@ -1,5 +1,6 @@
 using AutoMapper;
 using TodoListApp.Models.Domains;
+using TodoListApp.Models.DTOs;
 using TodoListApp.WebApi.Abstractions;
 using TodoListApp.WebApi.Data.Entities;
 
@@ -22,10 +23,10 @@ public class TodoListDatabaseService : ITodoListDatabaseService
         return this.mapper.Map<TodoList>(todoListEntity);
     }
 
-    public async Task<IEnumerable<TodoList>> GetListOfTodoListsAsync(string userId, int page, int pageSize)
+    public async Task<PagedModel<TodoList>> GetPagedListOfTodoListsAsync(string userId, int page, int pageSize)
     {
-        var todoListEntities = await this.repository.GetAllAsync(userId, page, pageSize);
-        return this.mapper.Map<IEnumerable<TodoList>>(todoListEntities);
+        var todoListEntities = await this.repository.GetPagedListAsync(userId, page, pageSize);
+        return this.mapper.Map<PagedModel<TodoList>>(todoListEntities);
     }
 
     public async Task<TodoList> GetTodoListByIdAsync(int id, string userId)
@@ -43,10 +44,5 @@ public class TodoListDatabaseService : ITodoListDatabaseService
     public async Task DeleteTodoListAsync(int id, string userId)
     {
         await this.repository.DeleteAsync(id, userId);
-    }
-
-    public async Task<int> GetCountAsync(string userId)
-    {
-        return await this.repository.GetCountAsync(userId);
     }
 }
