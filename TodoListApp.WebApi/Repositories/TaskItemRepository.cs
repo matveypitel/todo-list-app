@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TodoListApp.Models.Enums;
 using TodoListApp.WebApi.Abstractions;
 using TodoListApp.WebApi.Data;
 using TodoListApp.WebApi.Data.Entities;
@@ -50,7 +51,7 @@ public class TaskItemRepository : ITaskItemRepository
 
         if (!string.IsNullOrEmpty(status))
         {
-            tasks = tasks.Where(t => t.Status == status);
+            tasks = tasks.Where(t => t.Status == Enum.Parse<TaskItemStatus>(status, true));
         }
 
         if (!string.IsNullOrEmpty(sort))
@@ -116,7 +117,8 @@ public class TaskItemRepository : ITaskItemRepository
             .FirstOrDefaultAsync(t => t.Id == id)
             ?? throw new KeyNotFoundException($"Task (id = {id}) not found.");
 
-        task.Status = status;
+        task.Status = Enum.Parse<TaskItemStatus>(status, true);
+
         this.context.Entry(task).State = EntityState.Modified;
 
         _ = await this.context.SaveChangesAsync();
