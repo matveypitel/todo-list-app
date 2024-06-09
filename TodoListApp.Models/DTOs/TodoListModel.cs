@@ -13,5 +13,5 @@ public class TodoListModel
     [StringLength(150, ErrorMessage = "Description length can't be more than 150 symbols")]
     public string? Description { get; set; }
 
-    public ICollection<TaskItemModel> Tasks { get; } = new List<TaskItemModel>();
+    public ICollection<TaskItemModel> Tasks { get; init; } = new List<TaskItemModel>();
 }

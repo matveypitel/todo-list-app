@@ -9,5 +9,5 @@ public class TodoList
 
     public string UserId { get; set; } = string.Empty;
 
-    public ICollection<TaskItem> Tasks { get; } = new List<TaskItem>();
+    public ICollection<TaskItem> Tasks { get; init; } = new List<TaskItem>();
 }
