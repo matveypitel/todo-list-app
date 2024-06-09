@@ -46,16 +46,16 @@ public class TaskItemRepository : ITaskItemRepository
             .ToListAsync();
     }
 
-    public async Task<PagedModel<TaskItemEntity>> GetPagedListOfAssignedToUserAsync(string userId, int page, int pageSize, string? status, string? sort)
+    public async Task<PagedModel<TaskItemEntity>> GetPagedListOfAssignedToUserAsync(string userName, int page, int pageSize, string? status, string? sort)
     {
         var tasks = this.context.Tasks
-            .Where(t => t.Assignee == userId)
+            .Where(t => t.Assignee == userName)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .AsNoTracking();
 
         var totalCount = await this.context.Tasks
-           .Where(t => t.Assignee == userId)
+           .Where(t => t.Assignee == userName)
            .CountAsync();
 
         if (!string.IsNullOrEmpty(status))

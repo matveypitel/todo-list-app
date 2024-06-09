@@ -29,9 +29,9 @@ public class AssignedTaskController : ControllerBase
         [FromQuery] string? status = null,
         [FromQuery] string? sort = null)
     {
-        var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
-        var taskItems = await this.databaseService.GetPagedListOfAssignedTaskToUserAsync(userId, page, pageSize, status, sort);
+        var taskItems = await this.databaseService.GetPagedListOfAssignedTaskToUserAsync(userName, page, pageSize, status, sort);
 
         if (taskItems.TotalCount != 0 && page > (int)Math.Ceiling((double)taskItems.TotalCount / pageSize))
         {

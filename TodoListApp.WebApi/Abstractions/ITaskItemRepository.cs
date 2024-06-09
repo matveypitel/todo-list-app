@@ -9,7 +9,7 @@ public interface ITaskItemRepository
 
     Task<IEnumerable<TaskItemEntity>> GetListAsync(int todoListId, string ownerId);
 
-    Task<PagedModel<TaskItemEntity>> GetPagedListOfAssignedToUserAsync(string userId, int page, int pageSize, string? status, string? sort);
+    Task<PagedModel<TaskItemEntity>> GetPagedListOfAssignedToUserAsync(string userName, int page, int pageSize, string? status, string? sort);
 
     Task<TaskItemEntity> CreateAsync(TaskItemEntity taskItemEntity);
 
