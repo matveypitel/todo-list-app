@@ -29,9 +29,9 @@ public class TaskItemDatabaseService : ITaskItemDatabaseService
         return this.mapper.Map<IEnumerable<TaskItem>>(tasks);
     }
 
-    public async Task<PagedModel<TaskItem>> GetPagedListOfAssignedTaskToUserAsync(string userId, int page, int pageSize, string? status, string? sort)
+    public async Task<PagedModel<TaskItem>> GetPagedListOfAssignedTaskToUserAsync(string userName, int page, int pageSize, string? status, string? sort)
     {
-        var assignedTasks = await this.repository.GetPagedListOfAssignedToUserAsync(userId, page, pageSize, status, sort);
+        var assignedTasks = await this.repository.GetPagedListOfAssignedToUserAsync(userName, page, pageSize, status, sort);
         return this.mapper.Map<PagedModel<TaskItem>>(assignedTasks);
     }
 
