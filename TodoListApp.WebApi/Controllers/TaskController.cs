@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
@@ -27,12 +28,13 @@ public class TaskController : ControllerBase
     public async Task<ActionResult<TaskItemModel>> CreateTaskItem([FromRoute] int todoListId, [FromBody] TaskItemModel taskItemModel)
     {
         var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
         var newTaskItem = this.mapper.Map<TaskItem>(taskItemModel);
 
         newTaskItem.TodoListId = todoListId;
         newTaskItem.OwnerId = userId;
-        newTaskItem.Assignee = userId;
+        newTaskItem.Assignee = userName;
 
         var taskItem = await this.databaseService.CreateTaskAsync(newTaskItem);
 
