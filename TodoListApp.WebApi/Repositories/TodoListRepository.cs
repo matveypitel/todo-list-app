@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TodoListApp.Models.DTOs;
 using TodoListApp.WebApi.Abstractions;
@@ -51,7 +50,6 @@ public class TodoListRepository : ITodoListRepository
     {
         return await this.context.TodoLists
             .Where(t => t.UserId == userId)
-            .Include(t => t.Tasks)
             .FirstOrDefaultAsync(t => t.Id == id)
             ?? throw new KeyNotFoundException($"To-do list (id = {id}) not found.");
     }
