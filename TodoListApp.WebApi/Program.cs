@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddAutoMapper(typeof(BaseApiMappingProfile).Assembly);
-builder.Services.AddAutoMapper(typeof(PaginatedApiMappingProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(PagedApiMappingProfile).Assembly);
 
 builder.Services.AddDbContext<TodoListDbContext>(options =>
     options.UseSqlServer(
