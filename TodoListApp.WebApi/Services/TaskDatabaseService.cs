@@ -6,12 +6,12 @@ using TodoListApp.WebApi.Data.Entities;
 
 namespace TodoListApp.WebApi.Services;
 
-public class TaskItemDatabaseService : ITaskItemDatabaseService
+public class TaskDatabaseService : ITaskDatabaseService
 {
-    private readonly ITaskItemRepository repository;
+    private readonly ITaskRepository repository;
     private readonly IMapper mapper;
 
-    public TaskItemDatabaseService(ITaskItemRepository repository, IMapper mapper)
+    public TaskDatabaseService(ITaskRepository repository, IMapper mapper)
     {
         this.repository = repository;
         this.mapper = mapper;

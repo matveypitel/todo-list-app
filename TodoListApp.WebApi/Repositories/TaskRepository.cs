@@ -7,11 +7,11 @@ using TodoListApp.WebApi.Data.Entities;
 
 namespace TodoListApp.WebApi.Repositories;
 
-public class TaskItemRepository : ITaskItemRepository
+public class TaskRepository : ITaskRepository
 {
     private readonly TodoListDbContext context;
 
-    public TaskItemRepository(TodoListDbContext context)
+    public TaskRepository(TodoListDbContext context)
     {
         this.context = context;
     }

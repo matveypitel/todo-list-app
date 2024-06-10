@@ -13,9 +13,9 @@ namespace TodoListApp.WebApi.Controllers;
 public class AssignedTaskController : ControllerBase
 {
     private readonly IMapper mapper;
-    private readonly ITaskItemDatabaseService databaseService;
+    private readonly ITaskDatabaseService databaseService;
 
-    public AssignedTaskController(ITaskItemDatabaseService databaseService, IMapper mapper)
+    public AssignedTaskController(ITaskDatabaseService databaseService, IMapper mapper)
     {
         this.mapper = mapper;
         this.databaseService = databaseService;

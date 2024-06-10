@@ -13,10 +13,10 @@ namespace TodoListApp.WebApi.Controllers;
 [ApiController]
 public class TaskController : ControllerBase
 {
-    private readonly ITaskItemDatabaseService databaseService;
+    private readonly ITaskDatabaseService databaseService;
     private readonly IMapper mapper;
 
-    public TaskController(ITaskItemDatabaseService databaseService, IMapper mapper)
+    public TaskController(ITaskDatabaseService databaseService, IMapper mapper)
     {
         this.databaseService = databaseService;
         this.mapper = mapper;

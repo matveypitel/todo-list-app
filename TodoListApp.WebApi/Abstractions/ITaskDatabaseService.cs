@@ -3,7 +3,7 @@ using TodoListApp.Models.DTOs;
 
 namespace TodoListApp.WebApi.Abstractions;
 
-public interface ITaskItemDatabaseService
+public interface ITaskDatabaseService
 {
     Task<TaskItem> GetTaskByIdAsync(int id, int todoListId, string ownerId);
 
