@@ -23,10 +23,10 @@ public class TaskItemDatabaseService : ITaskItemDatabaseService
         return this.mapper.Map<TaskItem>(taskEntity);
     }
 
-    public async Task<IEnumerable<TaskItem>> GetListOfTasksAsync(int todoListId, string ownerId)
+    public async Task<PagedModel<TaskItem>> GetListOfTasksAsync(int todoListId, string ownerId, int page, int pageSize)
     {
-        var tasks = await this.repository.GetListAsync(todoListId, ownerId);
-        return this.mapper.Map<IEnumerable<TaskItem>>(tasks);
+        var tasks = await this.repository.GetListAsync(todoListId, ownerId, page, pageSize);
+        return this.mapper.Map<PagedModel<TaskItem>>(tasks);
     }
 
     public async Task<PagedModel<TaskItem>> GetPagedListOfAssignedTaskToUserAsync(string userName, int page, int pageSize, string? status, string? sort)

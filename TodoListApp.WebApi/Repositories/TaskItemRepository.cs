@@ -1,5 +1,3 @@
-using System.Globalization;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TodoListApp.Models.DTOs;
 using TodoListApp.Models.Enums;
@@ -33,17 +31,33 @@ public class TaskItemRepository : ITaskItemRepository
         return createdTask.Entity;
     }
 
-    public async Task<IEnumerable<TaskItemEntity>> GetListAsync(int todoListId, string ownerId)
+    public async Task<PagedModel<TaskItemEntity>> GetListAsync(int todoListId, string ownerId, int page, int pageSize)
     {
         _ = await this.context.TodoLists
             .Where(t => t.UserId == ownerId)
             .FirstOrDefaultAsync(t => t.Id == todoListId)
             ?? throw new KeyNotFoundException($"To-do list (id = {todoListId}) not found.");
 
-        return await this.context.Tasks
+        var tasks = await this.context.Tasks
             .AsNoTracking()
             .Where(t => t.TodoListId == todoListId && t.OwnerId == ownerId)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        var totalCount = await this.context.Tasks
+           .Where(t => t.TodoListId == todoListId && t.OwnerId == ownerId)
+           .CountAsync();
+
+        var pagedModel = new PagedModel<TaskItemEntity>
+        {
+            Items = tasks,
+            CurrentPage = page,
+            ItemsPerPage = pageSize,
+            TotalCount = totalCount,
+        };
+
+        return pagedModel;
     }
 
     public async Task<PagedModel<TaskItemEntity>> GetPagedListOfAssignedToUserAsync(string userName, int page, int pageSize, string? status, string? sort)

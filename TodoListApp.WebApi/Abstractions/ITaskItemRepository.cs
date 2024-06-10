@@ -7,7 +7,7 @@ public interface ITaskItemRepository
 {
     Task<TaskItemEntity> GetByIdAsync(int id, int todoListId, string ownerId);
 
-    Task<IEnumerable<TaskItemEntity>> GetListAsync(int todoListId, string ownerId);
+    Task<PagedModel<TaskItemEntity>> GetListAsync(int todoListId, string ownerId, int page, int pageSize);
 
     Task<PagedModel<TaskItemEntity>> GetPagedListOfAssignedToUserAsync(string userName, int page, int pageSize, string? status, string? sort);
 
