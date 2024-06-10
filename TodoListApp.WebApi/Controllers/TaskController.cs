@@ -1,8 +1,6 @@
-using System.Globalization;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
@@ -38,17 +36,23 @@ public class TaskController : ControllerBase
 
         var taskItem = await this.databaseService.CreateTaskAsync(newTaskItem);
 
-        return this.CreatedAtAction(nameof(this.GetTaskDetails), new { id = taskItem.Id, todoListId }, this.mapper.Map<TaskItemModel>(taskItem));
+        return this.CreatedAtAction(
+            nameof(this.GetTaskDetails),
+            new { id = taskItem.Id, todoListId },
+            this.mapper.Map<TaskItemModel>(taskItem));
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaskItemModel>>> GetTaskItems([FromRoute] int todoListId)
+    public async Task<ActionResult<PagedModel<TaskItemModel>>> GetTaskItems(
+        [FromRoute] int todoListId,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
         var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
 
-        var taskItems = await this.databaseService.GetListOfTasksAsync(todoListId, userId);
+        var taskItems = await this.databaseService.GetListOfTasksAsync(todoListId, userId, page, pageSize);
 
-        return this.Ok(this.mapper.Map<IEnumerable<TaskItemModel>>(taskItems));
+        return this.Ok(this.mapper.Map<PagedModel<TaskItemModel>>(taskItems));
     }
 
     [HttpGet("{id}")]
