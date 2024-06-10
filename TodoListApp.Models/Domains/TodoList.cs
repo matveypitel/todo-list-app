@@ -7,7 +7,7 @@ public class TodoList
 
     public string? Description { get; set; }
 
-    public string UserId { get; set; } = string.Empty;
+    public string Owner { get; set; } = string.Empty;
 
     public ICollection<TaskItem> Tasks { get; init; } = new List<TaskItem>();
 }

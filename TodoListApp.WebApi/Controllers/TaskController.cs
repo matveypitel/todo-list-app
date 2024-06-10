@@ -25,14 +25,13 @@ public class TaskController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<TaskItemModel>> CreateTaskItem([FromRoute] int todoListId, [FromBody] TaskItemModel taskItemModel)
     {
-        var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
         var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
         var newTaskItem = this.mapper.Map<TaskItem>(taskItemModel);
 
         newTaskItem.TodoListId = todoListId;
-        newTaskItem.OwnerId = userId;
-        newTaskItem.Assignee = userName;
+        newTaskItem.Owner = userName;
+        newTaskItem.AssignedTo = userName;
 
         var taskItem = await this.databaseService.CreateTaskAsync(newTaskItem);
 
@@ -48,9 +47,9 @@ public class TaskController : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
-        var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
-        var taskItems = await this.databaseService.GetListOfTasksAsync(todoListId, userId, page, pageSize);
+        var taskItems = await this.databaseService.GetListOfTasksAsync(todoListId, userName, page, pageSize);
 
         return this.Ok(this.mapper.Map<PagedModel<TaskItemModel>>(taskItems));
     }
@@ -58,9 +57,9 @@ public class TaskController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<TaskItemModel>> GetTaskDetails([FromRoute] int id, [FromRoute] int todoListId)
     {
-        var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
-        var taskItem = await this.databaseService.GetTaskByIdAsync(id, todoListId, userId);
+        var taskItem = await this.databaseService.GetTaskByIdAsync(id, todoListId, userName);
 
         return this.Ok(this.mapper.Map<TaskItemModel>(taskItem));
     }
@@ -68,10 +67,10 @@ public class TaskController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateTaskItem([FromRoute] int id, [FromRoute] int todoListId, [FromBody] TaskItemModel taskItemModel)
     {
-        var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
         var taskItem = this.mapper.Map<TaskItem>(taskItemModel);
-        taskItem.OwnerId = userId;
+        taskItem.Owner = userName;
 
         await this.databaseService.UpdateTaskAsync(id, todoListId, taskItem);
 
@@ -81,9 +80,9 @@ public class TaskController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteTaskItem([FromRoute] int id, [FromRoute] int todoListId)
     {
-        var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
-        await this.databaseService.DeleteTaskAsync(id, todoListId, userId);
+        await this.databaseService.DeleteTaskAsync(id, todoListId, userName);
 
         return this.NoContent();
     }

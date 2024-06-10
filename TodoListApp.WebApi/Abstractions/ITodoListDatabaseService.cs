@@ -5,13 +5,13 @@ namespace TodoListApp.WebApi.Abstractions;
 
 public interface ITodoListDatabaseService
 {
-    Task<PagedModel<TodoList>> GetPagedListOfTodoListsAsync(string userId, int page, int pageSize);
+    Task<PagedModel<TodoList>> GetPagedListOfTodoListsAsync(string ownerName, int page, int pageSize);
 
-    Task<TodoList> GetTodoListByIdAsync(int id, string userId);
+    Task<TodoList> GetTodoListByIdAsync(int id, string ownerName);
 
     Task<TodoList> CreateTodoListAsync(TodoList todoList);
 
     Task UpdateTodoListAsync(int id, TodoList todoList);
 
-    Task DeleteTodoListAsync(int id, string userId);
+    Task DeleteTodoListAsync(int id, string ownerName);
 }

@@ -5,9 +5,9 @@ namespace TodoListApp.WebApi.Abstractions;
 
 public interface ITaskDatabaseService
 {
-    Task<TaskItem> GetTaskByIdAsync(int id, int todoListId, string ownerId);
+    Task<TaskItem> GetTaskByIdAsync(int id, int todoListId, string ownerName);
 
-    Task<PagedModel<TaskItem>> GetListOfTasksAsync(int todoListId, string ownerId, int page, int pageSize);
+    Task<PagedModel<TaskItem>> GetListOfTasksAsync(int todoListId, string ownerName, int page, int pageSize);
 
     Task<PagedModel<TaskItem>> GetPagedListOfAssignedTaskToUserAsync(string userName, int page, int pageSize, string? status, string? sort);
 
@@ -15,7 +15,7 @@ public interface ITaskDatabaseService
 
     Task UpdateTaskAsync(int id, int todoListId, TaskItem taskItem);
 
-    Task UpdateTaskStatusAsync(int id, string userId, string status);
+    Task UpdateTaskStatusAsync(int id, string userName, string status);
 
-    Task DeleteTaskAsync(int id, int todoListId, string ownerId);
+    Task DeleteTaskAsync(int id, int todoListId, string ownerName);
 }

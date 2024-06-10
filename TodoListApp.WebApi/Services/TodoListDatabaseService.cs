@@ -23,15 +23,15 @@ public class TodoListDatabaseService : ITodoListDatabaseService
         return this.mapper.Map<TodoList>(todoListEntity);
     }
 
-    public async Task<PagedModel<TodoList>> GetPagedListOfTodoListsAsync(string userId, int page, int pageSize)
+    public async Task<PagedModel<TodoList>> GetPagedListOfTodoListsAsync(string ownerName, int page, int pageSize)
     {
-        var todoListEntities = await this.repository.GetPagedListAsync(userId, page, pageSize);
+        var todoListEntities = await this.repository.GetPagedListAsync(ownerName, page, pageSize);
         return this.mapper.Map<PagedModel<TodoList>>(todoListEntities);
     }
 
-    public async Task<TodoList> GetTodoListByIdAsync(int id, string userId)
+    public async Task<TodoList> GetTodoListByIdAsync(int id, string ownerName)
     {
-        var todoListEntity = await this.repository.GetByIdAsync(id, userId);
+        var todoListEntity = await this.repository.GetByIdAsync(id, ownerName);
         return this.mapper.Map<TodoList>(todoListEntity);
     }
 
@@ -41,8 +41,8 @@ public class TodoListDatabaseService : ITodoListDatabaseService
         await this.repository.UpdateAsync(id, todoListEntity);
     }
 
-    public async Task DeleteTodoListAsync(int id, string userId)
+    public async Task DeleteTodoListAsync(int id, string ownerName)
     {
-        await this.repository.DeleteAsync(id, userId);
+        await this.repository.DeleteAsync(id, ownerName);
     }
 }

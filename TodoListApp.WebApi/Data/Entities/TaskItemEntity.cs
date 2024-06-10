@@ -16,7 +16,7 @@ public class TaskItemEntity
 
     public TaskItemStatus Status { get; set; } = TaskItemStatus.NotStarted;
 
-    public string OwnerId { get; set; } = string.Empty;
+    public string Owner { get; set; } = string.Empty;
 
     public string AssignedTo { get; set; } = null!;
 

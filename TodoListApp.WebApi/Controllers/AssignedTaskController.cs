@@ -44,9 +44,9 @@ public class AssignedTaskController : ControllerBase
     [Route("{id}")]
     public async Task<IActionResult> UpdateTaskStatus([FromRoute] int id, [FromBody] string status)
     {
-        var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
-        await this.databaseService.UpdateTaskStatusAsync(id, userId, status);
+        await this.databaseService.UpdateTaskStatusAsync(id, userName, status);
 
         return this.NoContent();
     }

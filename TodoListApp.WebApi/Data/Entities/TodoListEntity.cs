@@ -8,7 +8,7 @@ public class TodoListEntity
 
     public string? Description { get; set; }
 
-    public string UserId { get; set; } = string.Empty;
+    public string Owner { get; set; } = string.Empty;
 
     public ICollection<TaskItemEntity> Tasks { get; } = new List<TaskItemEntity>();
 }

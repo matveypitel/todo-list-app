@@ -23,9 +23,9 @@ public class TaskDatabaseService : ITaskDatabaseService
         return this.mapper.Map<TaskItem>(taskEntity);
     }
 
-    public async Task<PagedModel<TaskItem>> GetListOfTasksAsync(int todoListId, string ownerId, int page, int pageSize)
+    public async Task<PagedModel<TaskItem>> GetListOfTasksAsync(int todoListId, string ownerName, int page, int pageSize)
     {
-        var tasks = await this.repository.GetListAsync(todoListId, ownerId, page, pageSize);
+        var tasks = await this.repository.GetListAsync(todoListId, ownerName, page, pageSize);
         return this.mapper.Map<PagedModel<TaskItem>>(tasks);
     }
 
@@ -35,9 +35,9 @@ public class TaskDatabaseService : ITaskDatabaseService
         return this.mapper.Map<PagedModel<TaskItem>>(assignedTasks);
     }
 
-    public async Task<TaskItem> GetTaskByIdAsync(int id, int todoListId, string ownerId)
+    public async Task<TaskItem> GetTaskByIdAsync(int id, int todoListId, string ownerName)
     {
-        var task = await this.repository.GetByIdAsync(id, todoListId, ownerId);
+        var task = await this.repository.GetByIdAsync(id, todoListId, ownerName);
         return this.mapper.Map<TaskItem>(task);
     }
 
@@ -47,13 +47,13 @@ public class TaskDatabaseService : ITaskDatabaseService
         await this.repository.UpdateAsync(id, todoListId, taskEntity);
     }
 
-    public async Task UpdateTaskStatusAsync(int id, string userId, string status)
+    public async Task UpdateTaskStatusAsync(int id, string userName, string status)
     {
-        await this.repository.UpdateTaskStatusAsync(id, userId, status);
+        await this.repository.UpdateTaskStatusAsync(id, userName, status);
     }
 
-    public async Task DeleteTaskAsync(int id, int todoListId, string ownerId)
+    public async Task DeleteTaskAsync(int id, int todoListId, string ownerName)
     {
-        await this.repository.DeleteAsync(id, todoListId, ownerId);
+        await this.repository.DeleteAsync(id, todoListId, ownerName);
     }
 }

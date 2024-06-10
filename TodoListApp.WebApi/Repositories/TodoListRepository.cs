@@ -22,17 +22,17 @@ public class TodoListRepository : ITodoListRepository
         return createdEntity.Entity;
     }
 
-    public async Task<PagedModel<TodoListEntity>> GetPagedListAsync(string userId, int page, int pageSize)
+    public async Task<PagedModel<TodoListEntity>> GetPagedListAsync(string ownerName, int page, int pageSize)
     {
         var listOfTodoList = await this.context.TodoLists
-           .Where(t => t.UserId == userId)
+           .Where(t => t.Owner == ownerName)
            .Skip((page - 1) * pageSize)
            .Take(pageSize)
            .AsNoTracking()
            .ToListAsync();
 
         var totalCount = await this.context.TodoLists
-           .Where(t => t.UserId == userId)
+           .Where(t => t.Owner == ownerName)
            .CountAsync();
 
         var pagedModel = new PagedModel<TodoListEntity>
@@ -46,10 +46,10 @@ public class TodoListRepository : ITodoListRepository
         return pagedModel;
     }
 
-    public async Task<TodoListEntity> GetByIdAsync(int id, string userId)
+    public async Task<TodoListEntity> GetByIdAsync(int id, string ownerName)
     {
         return await this.context.TodoLists
-            .Where(t => t.UserId == userId)
+            .Where(t => t.Owner == ownerName)
             .FirstOrDefaultAsync(t => t.Id == id)
             ?? throw new KeyNotFoundException($"To-do list (id = {id}) not found.");
     }
@@ -70,10 +70,10 @@ public class TodoListRepository : ITodoListRepository
         _ = await this.context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(int id, string userId)
+    public async Task DeleteAsync(int id, string ownerName)
     {
         var todoList = await this.context.TodoLists
-            .Where(t => t.UserId == userId)
+            .Where(t => t.Owner == ownerName)
             .FirstOrDefaultAsync(t => t.Id == id)
             ?? throw new KeyNotFoundException($"To-do list (id = {id}) not found.");
 

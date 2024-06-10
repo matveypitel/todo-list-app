@@ -19,7 +19,7 @@ public class TaskItemModel
     [DueDate(ErrorMessage = "Due date can't be earlier than now date")]
     public DateTime? DueDate { get; set; }
 
-    public string? OwnerId { get; set; }
+    public string? Owner { get; set; }
 
     public int TodoListId { get; set; }
 

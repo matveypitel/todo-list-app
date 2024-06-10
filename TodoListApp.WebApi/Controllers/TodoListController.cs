@@ -25,10 +25,10 @@ public class TodoListController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<TodoListModel>> CreateTodoList([FromBody] TodoListModel todoListModel)
     {
-        var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
         var newtodoList = this.mapper.Map<TodoList>(todoListModel);
-        newtodoList.UserId = userId;
+        newtodoList.Owner = userName;
         var todoList = await this.databaseService.CreateTodoListAsync(newtodoList);
 
         return this.CreatedAtAction(nameof(this.GetTodoListDetails), new { id = todoList.Id }, this.mapper.Map<TodoListModel>(todoList));
@@ -37,9 +37,9 @@ public class TodoListController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PagedModel<TodoListModel>>> GetTodoLists([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
-        var todoLists = await this.databaseService.GetPagedListOfTodoListsAsync(userId, page, pageSize);
+        var todoLists = await this.databaseService.GetPagedListOfTodoListsAsync(userName, page, pageSize);
 
         if (todoLists.TotalCount != 0 && page > (int)Math.Ceiling((double)todoLists.TotalCount / pageSize))
         {
@@ -52,9 +52,9 @@ public class TodoListController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<TodoListModel>> GetTodoListDetails([FromRoute] int id)
     {
-        var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
-        var todoList = await this.databaseService.GetTodoListByIdAsync(id, userId);
+        var todoList = await this.databaseService.GetTodoListByIdAsync(id, userName);
 
         return this.Ok(this.mapper.Map<TodoListModel>(todoList));
     }
@@ -62,10 +62,10 @@ public class TodoListController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateTodoList([FromRoute] int id, [FromBody] TodoListModel todoListModel)
     {
-        var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
         var todoList = this.mapper.Map<TodoList>(todoListModel);
-        todoList.UserId = userId;
+        todoList.Owner = userName;
 
         await this.databaseService.UpdateTodoListAsync(id, todoList);
 
@@ -75,9 +75,9 @@ public class TodoListController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteTodoList([FromRoute] int id)
     {
-        var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
-        await this.databaseService.DeleteTodoListAsync(id, userId);
+        await this.databaseService.DeleteTodoListAsync(id, userName);
 
         return this.NoContent();
     }
