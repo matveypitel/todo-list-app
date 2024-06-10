@@ -21,10 +21,12 @@ public class TaskItemModel
 
     public string? OwnerId { get; set; }
 
+    public int TodoListId { get; set; }
+
     [Range(0, 2)]
     public TaskItemStatus Status { get; set; } = TaskItemStatus.NotStarted;
 
-    public string? Assignee { get; set; }
+    public string? AssignedTo { get; set; }
 
     public bool IsActive => this.Status == TaskItemStatus.NotStarted || this.Status == TaskItemStatus.InProgress;
 

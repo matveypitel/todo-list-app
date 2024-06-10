@@ -17,7 +17,7 @@ public class TaskItem
 
     public string OwnerId { get; set; } = string.Empty;
 
-    public string? Assignee { get; set; }
+    public string? AssignedTo { get; set; }
 
     public int TodoListId { get; set; }
 
