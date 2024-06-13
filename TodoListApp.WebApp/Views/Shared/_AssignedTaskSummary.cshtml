@@ -1,0 +1,38 @@
+@using TodoListApp.Models.Enums;
+@model TaskItemModel
+
+<div class="col mt-2">
+    <div class="card h-100 mt-4 @(Model.IsOverDue ? "border-danger" : "") shadow">
+        <div class="card-body d-flex flex-column">
+            @if (Model.IsOverDue)
+            {
+                <h6 class="text-danger"><i class="fa-solid fa-exclamation"></i> Task is overdue</h6>
+            }
+            <h4 class="card-title">@Model.Title</h4>
+            <div class="dropdown-divider"></div>
+            <p class="card-text flex-grow-1">@(Model.Description == null ? "No description" : Model.Description)</p>
+            <div>
+                <a class="btn btn-sm btn-outline-primary" asp-action="Status" asp-route-id="@Model.Id">Change status</a>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            <div>
+                <p><i class="fa-solid fa-user"></i> Owner: @Model.Owner</p>
+            </div>
+            @switch (Model.Status)
+            {
+                case TaskItemStatus.NotStarted:
+                    <span class="badge bg-secondary">Not Started</span>
+                    break;
+                case TaskItemStatus.InProgress:
+                    <span class="badge bg-primary">In Progress</span>
+                    break;
+                case TaskItemStatus.Completed:
+                    <span class="badge bg-success">Completed</span>
+                    break;
+            }
+            <i class="fa-solid fa-calendar-days"></i>
+            @(Model.DueDate == null ? "No Due date" : Model.DueDate.Value.ToString("dd MMM yyyy"))
+        </div>
+    </div>
+</div>

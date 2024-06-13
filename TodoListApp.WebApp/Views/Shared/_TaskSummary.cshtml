@@ -1,4 +1,5 @@
 @using TodoListApp.Models.DTOs;
+@using TodoListApp.Models.Enums
 @model TaskItemModel
 
 @{
@@ -35,6 +36,18 @@
             </div>
         </div>
         <div class="card-footer text-muted">
+            @switch (Model.Status)
+            {
+                case TaskItemStatus.NotStarted:
+                    <span class="badge bg-secondary">Not Started</span>
+                    break;
+                case TaskItemStatus.InProgress:
+                    <span class="badge bg-primary">In Progress</span>
+                    break;
+                case TaskItemStatus.Completed:
+                    <span class="badge bg-success">Completed</span>
+                    break;
+            }
             <i class="fa-solid fa-people-arrows"></i>
             Assigned to @(Model.AssignedTo == this.User.Identity!.Name ? "Me" : Model.AssignedTo)
         </div>

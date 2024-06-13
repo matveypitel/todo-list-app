@@ -1,4 +1,5 @@
 @using TodoListApp.Models.DTOs;
+@using TodoListApp.Models.Enums
 @model TaskItemModel
 
 @{
@@ -11,12 +12,23 @@
             <h2 class="mb-0">@Model.Title</h2>
         </div>
         <div class="card-body bg-light">
-            <p class="card-text"><strong>Description:</strong> @Model.Description</p>
-            <p class="card-text"><strong>Created at:</strong> @Model.CreatedDate.ToString("dd MMM yyyy")</p>
-            <p class="card-text"><strong>Status:</strong> @Model.Status</p>
-            <p class="card-text"><strong>Due on:</strong> <small class="text-muted">@Model.DueDate!.Value.ToString("dd MMM yyyy")</small></p>
+            <p class="card-text">@Model.Description</p>
+            <p class="card-text mt-2"><strong>Created at</strong> @Model.CreatedDate.ToString("dd MMM yyyy")</p>
+            <p class="card-text"><strong>Due on</strong> @Model.DueDate!.Value.ToString("dd MMM yyyy")</p>
         </div>
         <div class="card-footer text-muted">
+            @switch (Model.Status)
+            {
+                case TaskItemStatus.NotStarted:
+                    <span class="badge bg-secondary">Not Started</span>
+                    break;
+                case TaskItemStatus.InProgress:
+                    <span class="badge bg-primary">In Progress</span>
+                    break;
+                case TaskItemStatus.Completed:
+                    <span class="badge bg-success">Completed</span>
+                    break;
+            }
             <i class="fa-solid fa-people-arrows"></i>
             Assigned to @(Model.AssignedTo == this.User.Identity!.Name ? "Me" : Model.AssignedTo)
         </div>
