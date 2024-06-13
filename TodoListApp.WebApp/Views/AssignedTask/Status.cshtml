@@ -1,0 +1,21 @@
+@using TodoListApp.Models.DTOs;
+@model TaskItemModel
+
+@{
+    ViewData["Title"] = "Status of assigned tasks";
+}
+
+<h1>Task Status</h1>
+
+<form asp-action="Status" asp-route-id="@Model.Id" method="post">
+    <input type="hidden" asp-for="Title" />
+    <div>
+        <label for="status">Status:</label>
+        <select id="status" name="Status">
+            <option value="NotStarted">Not Started</option>
+            <option value="InProgress">In Progress</option>
+            <option value="Completed">Completed</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary" style="margin-top: 10px">Save</button>
+</form>
