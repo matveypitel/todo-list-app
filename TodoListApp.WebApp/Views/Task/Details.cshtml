@@ -1,0 +1,28 @@
+@using TodoListApp.Models.DTOs;
+@model TaskItemModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-info text-white">
+            <h2 class="mb-0">@Model.Title</h2>
+        </div>
+        <div class="card-body bg-light">
+            <p class="card-text"><strong>Description:</strong> @Model.Description</p>
+            <p class="card-text"><strong>Created at:</strong> @Model.CreatedDate.ToString("dd MMM yyyy")</p>
+            <p class="card-text"><strong>Status:</strong> @Model.Status</p>
+            <p class="card-text"><strong>Due on:</strong> <small class="text-muted">@Model.DueDate!.Value.ToString("dd MMM yyyy")</small></p>
+        </div>
+        <div class="card-footer text-muted">
+            <i class="fa-solid fa-people-arrows"></i>
+            Assigned to @(Model.AssignedTo == this.User.Identity!.Name ? "Me" : Model.AssignedTo)
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        <a class="btn btn-outline-info" asp-action="Edit" asp-route-id="@Model.Id">Edit Task</a>
+        <a class="btn btn-outline-secondary" asp-action="Index" asp-route-todoListId="@Model.TodoListId">Back to List</a>
+    </div>
+</div>

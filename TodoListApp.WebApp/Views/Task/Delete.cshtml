@@ -1,0 +1,35 @@
+@using TodoListApp.Models.DTOs;
+@model TaskItemModel
+
+@{
+    ViewData["Title"] = "Delete Task";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">Delete Task</div>
+                <div class="card-body">
+                    <h5>Are you sure you want to delete this task?</h5>
+                    <table class="table">
+                        <tr>
+                            <th>Title</th>
+                            <td>@Model.Title</td>
+                        </tr>
+                        <tr>
+                            <th>Description</th>
+                            <td>@Model.Description</td>
+                        </tr>
+                    </table>
+
+                    <form asp-action="DeleteConfirmed" asp-route-todoListId="@Model.TodoListId" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <button type="submit" class="btn btn-outline-danger">Delete</button>
+                        <a class="btn btn-outline-secondary" asp-action="Index" asp-route-todoListId="@Model.TodoListId">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

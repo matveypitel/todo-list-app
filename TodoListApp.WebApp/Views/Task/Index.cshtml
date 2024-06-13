@@ -1,0 +1,19 @@
+@using TodoListApp.Models.DTOs;
+@model PagedModel<TaskItemModel>
+
+@{
+    var todoListId = TempData["TodoListId"] as int?;
+    ViewData["Title"] = "Tasks";
+}
+
+<h2>Tasks</h2>
+<a class="btn btn-outline-success col-1 mt-2" asp-route-todoListId="@todoListId" asp-action="Create">Create new</a>
+
+@foreach (var task in Model.Items ?? Enumerable.Empty<TaskItemModel>())
+{
+    <partial name="_TaskSummary" model="task" />
+}
+
+<div class="pagination-container">
+    <div class="pagination" is-task-model="" page-model="@Model" page-action="Index"></div>
+</div>

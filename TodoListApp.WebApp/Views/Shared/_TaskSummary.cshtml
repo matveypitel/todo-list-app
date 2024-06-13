@@ -1,0 +1,42 @@
+@using TodoListApp.Models.DTOs;
+@model TaskItemModel
+
+@{
+    var todoListId = TempData["TodoListId"] as int?;
+}
+
+<div class="col mt-2">
+    <div class="card h-100 mt-4 @(Model.IsOverDue ? "border-danger" : "") shadow">
+        <div class="card-body d-flex flex-column">
+            @if (Model.IsOverDue)
+            {
+                <h6 class="text-danger"><i class="fa-solid fa-exclamation"></i> Task is overdue</h6>
+            }
+            <h4 class="card-title">@Model.Title </h4>
+            <div class="dropdown-divider"></div>
+            <p class="card-text flex-grow-1">@(Model.Description == null ? "No description" : Model.Description)</p>
+            <div>
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Actions
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" asp-action="Edit" asp-route-todoListId="@todoListId" asp-route-id="@Model.Id">Edit</a></li>
+                        <li><a class="dropdown-item" asp-action="Delete" asp-route-todoListId="@todoListId" asp-route-id="@Model.Id">Delete</a></li>
+                    </ul>
+                </div>
+                <a class="btn btn-primary"
+                   asp-controller="Task"
+                   asp-action="Details"
+                   asp-route-todoListId="@todoListId"
+                   asp-route-id="@Model.Id">
+                    Details
+                </a>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            <i class="fa-solid fa-people-arrows"></i>
+            Assigned to @(Model.AssignedTo == this.User.Identity!.Name ? "Me" : Model.AssignedTo)
+        </div>
+    </div>
+</div> 
