@@ -1,7 +1,7 @@
 using AutoMapper;
 using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
-using TodoListApp.WebApi.Abstractions;
+using TodoListApp.WebApi.Interfaces;
 using TodoListApp.WebApi.Data.Entities;
 
 namespace TodoListApp.WebApi.Services;
@@ -47,13 +47,20 @@ public class TaskDatabaseService : ITaskDatabaseService
         await this.repository.UpdateAsync(id, todoListId, taskEntity);
     }
 
-    public async Task UpdateTaskStatusAsync(int id, string userName, string status)
+    public async Task UpdateTaskStatusAsync(int id, string userName, TaskItem taskItem)
     {
-        await this.repository.UpdateTaskStatusAsync(id, userName, status);
+        var taskEntity = this.mapper.Map<TaskItemEntity>(taskItem);
+        await this.repository.UpdateTaskStatusAsync(id, userName, taskEntity);
     }
 
     public async Task DeleteTaskAsync(int id, int todoListId, string ownerName)
     {
         await this.repository.DeleteAsync(id, todoListId, ownerName);
+    }
+
+    public async Task<TaskItem> GetAssignedTaskByIdAsync(int id, string userName)
+    {
+        var task = await this.repository.GetAssignedByIdAsync(id, userName);
+        return this.mapper.Map<TaskItem>(task);
     }
 }
