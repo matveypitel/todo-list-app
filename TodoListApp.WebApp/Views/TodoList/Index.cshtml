@@ -1,0 +1,23 @@
+@using TodoListApp.Models.DTOs;
+@model PagedModel<TodoListModel>
+
+@{
+    ViewData["Title"] = "To-do lists";
+}
+
+<h1 class="mb-4">My to-do lists</h1>
+<a class="btn btn-success mb-4" asp-action="Create">
+    <i class="fa-regular fa-square-plus"></i>
+    Create new list
+</a>
+
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    @foreach (var todoList in Model.Items ?? Enumerable.Empty<TodoListModel>())
+    {
+        <partial name="_TodoListSummary" model="todoList" />
+    }
+</div>
+
+<div class="pagination-container">
+    <div class="pagination" is-todoList-model="" page-model="@Model" page-action="Index"></div>
+</div>

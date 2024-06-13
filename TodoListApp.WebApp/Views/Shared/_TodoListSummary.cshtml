@@ -1,0 +1,32 @@
+@using TodoListApp.Models.DTOs;
+@model TodoListModel
+
+<div class="col mt-2">
+    <div class="card h-100 mt-4 shadow">
+        <div class="card-body d-flex flex-column \">
+            <h5 class="card-text" style="height:70px">
+                <i class="fa-brands fa-readme"></i>
+                @Model.Title
+            </h5>
+            <div class="dropdown-divider"></div>
+            <p class="card-text flex-grow-1">@(Model.Description == null ? "No description" : Model.Description)</p>
+            <div class="d-flex justify-content-between">
+                <a class="btn btn-primary"
+                   asp-controller="Task"
+                   asp-action="Index"
+                   asp-route-todoListId="@Model.Id">
+                    <i class="fa-solid fa-arrow-right"></i>
+                    Go to tasks
+                </a>
+                <div class="btn-group">
+                    <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                    <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@Model.Id">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
