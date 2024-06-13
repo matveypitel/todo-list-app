@@ -1,0 +1,40 @@
+@using TodoListApp.WebApp.Models.ViewModels
+@model RegisterViewModel
+
+@{
+    Layout = "_LoginLayout";
+}
+
+<div class="d-flex justify-content-center align-items-baseline vh-100 mt-5">
+    <div class="card w-50 w-md-100 mt-5">
+        <div class="card-body">
+            <div class="text-center">
+                <h5>Registration</h5>
+            </div>
+            <form class="px-4 py-3" method="post">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" asp-for="Email" required>
+                    <span class="validation-message" asp-validation-for="Email"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" asp-for="Username" required>
+                    <span class="validation-message" asp-validation-for="Username"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" asp-for="Password" required>
+                    <span class="validation-message" asp-validation-for="Password"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" asp-for="ConfirmPassword" required>
+                    <span class="validation-message" asp-validation-for="ConfirmPassword"></span>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Register</button>
+                <p class="small mt-3"><a class="text-black" asp-action="Login">Login</a> if you already have an account.</p>
+            </form>
+        </div>
+    </div>
+</div>
