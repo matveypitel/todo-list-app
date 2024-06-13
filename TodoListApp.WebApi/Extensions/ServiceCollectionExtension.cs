@@ -1,4 +1,4 @@
-using TodoListApp.WebApi.Abstractions;
+using TodoListApp.WebApi.Interfaces;
 using TodoListApp.WebApi.Repositories;
 using TodoListApp.WebApi.Services;
 

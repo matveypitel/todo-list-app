@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
 using TodoListApp.Models.Enums;
-using TodoListApp.WebApi.Abstractions;
+using TodoListApp.WebApi.Interfaces;
 using TodoListApp.WebApi.Data;
 using TodoListApp.WebApi.Data.Entities;
 
@@ -142,15 +143,17 @@ public class TaskRepository : ITaskRepository
         _ = await this.context.SaveChangesAsync();
     }
 
-    public async Task UpdateTaskStatusAsync(int id, string userName, string status)
+    public async Task UpdateTaskStatusAsync(int id, string userName, TaskItemEntity taskItemEntity)
     {
+        ArgumentNullException.ThrowIfNull(taskItemEntity);
+
         var task = await this.context.Tasks
             .AsNoTracking()
             .Where(t => t.AssignedTo == userName)
             .FirstOrDefaultAsync(t => t.Id == id)
             ?? throw new KeyNotFoundException($"Task (id = {id}) not found.");
 
-        task.Status = Enum.Parse<TaskItemStatus>(status, true);
+        task.Status = Enum.Parse<TaskItemStatus>(taskItemEntity.Status.ToString(), true);
 
         this.context.Entry(task).State = EntityState.Modified;
 
@@ -171,5 +174,14 @@ public class TaskRepository : ITaskRepository
 
         _ = this.context.Tasks.Remove(task);
         _ = await this.context.SaveChangesAsync();
+    }
+
+    public async Task<TaskItemEntity> GetAssignedByIdAsync(int id, string userName)
+    {
+        return await this.context.Tasks
+            .Where(t => t.AssignedTo == userName)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.Id == id)
+            ?? throw new KeyNotFoundException($"Task (id = {id}) not found.");
     }
 }

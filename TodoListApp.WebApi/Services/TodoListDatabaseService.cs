@@ -1,7 +1,7 @@
 using AutoMapper;
 using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
-using TodoListApp.WebApi.Abstractions;
+using TodoListApp.WebApi.Interfaces;
 using TodoListApp.WebApi.Data.Entities;
 
 namespace TodoListApp.WebApi.Services;

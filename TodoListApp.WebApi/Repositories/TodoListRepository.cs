@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TodoListApp.Models.DTOs;
-using TodoListApp.WebApi.Abstractions;
+using TodoListApp.WebApi.Interfaces;
 using TodoListApp.WebApi.Data;
 using TodoListApp.WebApi.Data.Entities;
 
