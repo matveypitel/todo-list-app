@@ -25,7 +25,7 @@ public class TodoListController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<TodoListModel>> CreateTodoList([FromBody] TodoListModel todoListModel)
     {
-        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+        var userName = this.GetUserName();
 
         var newtodoList = this.mapper.Map<TodoList>(todoListModel);
         newtodoList.Owner = userName;
@@ -37,7 +37,7 @@ public class TodoListController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PagedModel<TodoListModel>>> GetTodoLists([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+        var userName = this.GetUserName();
 
         var todoLists = await this.databaseService.GetPagedListOfTodoListsAsync(userName, page, pageSize);
 
@@ -52,7 +52,7 @@ public class TodoListController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<TodoListModel>> GetTodoListDetails([FromRoute] int id)
     {
-        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+        var userName = this.GetUserName();
 
         var todoList = await this.databaseService.GetTodoListByIdAsync(id, userName);
 
@@ -62,7 +62,7 @@ public class TodoListController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateTodoList([FromRoute] int id, [FromBody] TodoListModel todoListModel)
     {
-        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+        var userName = this.GetUserName();
 
         var todoList = this.mapper.Map<TodoList>(todoListModel);
         todoList.Owner = userName;
@@ -75,10 +75,15 @@ public class TodoListController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteTodoList([FromRoute] int id)
     {
-        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+        var userName = this.GetUserName();
 
         await this.databaseService.DeleteTodoListAsync(id, userName);
 
         return this.NoContent();
+    }
+
+    private string GetUserName()
+    {
+        return this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
     }
 }

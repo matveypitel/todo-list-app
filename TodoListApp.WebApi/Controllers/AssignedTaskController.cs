@@ -29,7 +29,7 @@ public class AssignedTaskController : ControllerBase
         [FromQuery] string? status = null,
         [FromQuery] string? sort = null)
     {
-        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+        var userName = this.GetUserName();
 
         var taskItems = await this.databaseService.GetPagedListOfAssignedTasksToUserAsync(userName, page, pageSize, status, sort);
 
@@ -45,7 +45,7 @@ public class AssignedTaskController : ControllerBase
     [Route("{id}")]
     public async Task<ActionResult<TaskItemModel>> GetTaskById([FromRoute] int id)
     {
-        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+        var userName = this.GetUserName();
 
         var taskItem = await this.databaseService.GetAssignedTaskByIdAsync(id, userName);
 
@@ -56,12 +56,17 @@ public class AssignedTaskController : ControllerBase
     [Route("status/{id}")]
     public async Task<IActionResult> UpdateTaskStatus([FromRoute] int id, [FromBody] TaskItemModel taskItemModel)
     {
-        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+        var userName = this.GetUserName();
 
         var taskItem = this.mapper.Map<TaskItem>(taskItemModel);
 
         await this.databaseService.UpdateTaskStatusAsync(id, userName, taskItem);
 
         return this.NoContent();
+    }
+
+    private string GetUserName()
+    {
+        return this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
     }
 }

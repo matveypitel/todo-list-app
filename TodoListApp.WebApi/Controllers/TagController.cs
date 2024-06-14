@@ -26,7 +26,7 @@ public class TagController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PagedModel<TagModel>>> GetAllTags([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+        var userName = this.GetUserName();
 
         var tags = await this.tagDatabaseService.GetPagedListOfAllAsync(userName, page, pageSize);
 
@@ -40,10 +40,15 @@ public class TagController : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
-        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+        var userName = this.GetUserName();
 
         var tasks = await this.taskDatabaseService.GetPagedListOfTasksWithTagAsync(userName, tag, page, pageSize);
 
         return this.Ok(this.mapper.Map<PagedModel<TaskItemModel>>(tasks));
+    }
+
+    private string GetUserName()
+    {
+        return this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
     }
 }

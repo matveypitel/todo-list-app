@@ -1,10 +1,13 @@
 using System.Security.Claims;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.Models.DTOs;
 using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Controllers;
+
+[Authorize]
 [Route("api/search")]
 [ApiController]
 public class SearchController : ControllerBase
@@ -27,10 +30,15 @@ public class SearchController : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
-        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+        var userName = this.GetUserName();
 
         var tasks = await this.taskDatabaseService.GetPagedListOfTasksSearchResultsAsync(userName, title, creationDate, dueDate, page, pageSize);
 
         return this.Ok(this.mapper.Map<PagedModel<TaskItemModel>>(tasks));
+    }
+
+    private string GetUserName()
+    {
+        return this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
     }
 }
