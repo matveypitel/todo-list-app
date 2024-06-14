@@ -35,6 +35,8 @@ public class BaseApiMappingProfile : Profile
                     TodoListId = task.TodoListId,
                     Title = task.Title,
                     Description = task.Description,
+                    Owner = task.Owner,
+                    AssignedTo = task.AssignedTo,
                 })));
         _ = this.CreateMap<Tag, TagModel>().ReverseMap()
             .ForMember(dest => dest.Tasks, opt => opt.MapFrom(src => src.Tasks.Select(
@@ -44,6 +46,8 @@ public class BaseApiMappingProfile : Profile
                     TodoListId = task.TodoListId,
                     Title = task.Title,
                     Description = task.Description,
+                    Owner = task.Owner,
+                    AssignedTo = task.AssignedTo,
                 })));
     }
 }
