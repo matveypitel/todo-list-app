@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using TodoListApp.Models.DTOs;
-using TodoListApp.WebApi.Interfaces;
 using TodoListApp.WebApi.Data;
 using TodoListApp.WebApi.Data.Entities;
+using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Repositories;
 
