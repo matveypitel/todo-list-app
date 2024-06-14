@@ -12,7 +12,38 @@ public class BaseApiMappingProfile : Profile
         _ = this.CreateMap<TodoListEntity, TodoList>().ReverseMap();
         _ = this.CreateMap<TodoListModel, TodoList>().ReverseMap();
 
-        _ = this.CreateMap<TaskItemEntity, TaskItem>().ReverseMap();
-        _ = this.CreateMap<TaskItemModel, TaskItem>().ReverseMap();
+        _ = this.CreateMap<TaskItem, TaskItemEntity>().ReverseMap()
+            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(
+                tag => new Tag
+                {
+                    Id = tag.Id,
+                    Label = tag.Label,
+                })));
+        _ = this.CreateMap<TaskItem, TaskItemModel>().ReverseMap()
+            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(
+                tag => new Tag
+                {
+                    Id = tag.Id,
+                    Label = tag.Label,
+                })));
+
+        _ = this.CreateMap<Tag, TagEntity>().ReverseMap()
+            .ForMember(dest => dest.Tasks, opt => opt.MapFrom(src => src.Tasks.Select(
+                task => new TaskItem
+                {
+                    Id = task.Id,
+                    TodoListId = task.TodoListId,
+                    Title = task.Title,
+                    Description = task.Description,
+                })));
+        _ = this.CreateMap<Tag, TagModel>().ReverseMap()
+            .ForMember(dest => dest.Tasks, opt => opt.MapFrom(src => src.Tasks.Select(
+                task => new TaskItem
+                {
+                    Id = task.Id,
+                    TodoListId = task.TodoListId,
+                    Title = task.Title,
+                    Description = task.Description,
+                })));
     }
 }

@@ -26,4 +26,6 @@ public class TaskItem
     public bool IsActive => this.Status == TaskItemStatus.NotStarted || this.Status == TaskItemStatus.InProgress;
 
     public bool IsOverDue => this.DueDate.HasValue && this.DueDate.Value.Date < DateTime.Now.Date;
+
+    public ICollection<Tag> Tags { get; init; } = new List<Tag>();
 }

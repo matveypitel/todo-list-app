@@ -27,4 +27,6 @@ public class TaskItemEntity
     public bool IsActive { get; set; }
 
     public bool IsOverDue { get; set; }
+
+    public ICollection<TagEntity> Tags { get; init; } = new List<TagEntity>();
 }

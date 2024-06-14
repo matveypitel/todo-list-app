@@ -9,7 +9,9 @@ public interface ITaskRepository
 
     Task<TaskItemEntity> GetAssignedByIdAsync(int id, string userName);
 
-    Task<PagedModel<TaskItemEntity>> GetListAsync(int todoListId, string ownerName, int page, int pageSize);
+    Task<PagedModel<TaskItemEntity>> GetPagedListAsync(int todoListId, string ownerName, int page, int pageSize);
+
+    Task<PagedModel<TaskItemEntity>> GetPagedListWithTagAsync(string userName, string tagLabel, int page, int pageSize);
 
     Task<PagedModel<TaskItemEntity>> GetPagedListOfAssignedToUserAsync(string userName, int page, int pageSize, string? status, string? sort);
 

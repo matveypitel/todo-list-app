@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
 using TodoListApp.Models.Enums;
-using TodoListApp.WebApi.Interfaces;
 using TodoListApp.WebApi.Data;
 using TodoListApp.WebApi.Data.Entities;
+using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Repositories;
 
@@ -32,7 +31,7 @@ public class TaskRepository : ITaskRepository
         return createdTask.Entity;
     }
 
-    public async Task<PagedModel<TaskItemEntity>> GetListAsync(int todoListId, string ownerName, int page, int pageSize)
+    public async Task<PagedModel<TaskItemEntity>> GetPagedListAsync(int todoListId, string ownerName, int page, int pageSize)
     {
         _ = await this.context.TodoLists
             .Where(t => t.Owner == ownerName)
@@ -49,6 +48,30 @@ public class TaskRepository : ITaskRepository
         var totalCount = await this.context.Tasks
            .Where(t => t.TodoListId == todoListId && t.Owner == ownerName)
            .CountAsync();
+
+        var pagedModel = new PagedModel<TaskItemEntity>
+        {
+            Items = tasks,
+            CurrentPage = page,
+            ItemsPerPage = pageSize,
+            TotalCount = totalCount,
+        };
+
+        return pagedModel;
+    }
+
+    public async Task<PagedModel<TaskItemEntity>> GetPagedListWithTagAsync(string userName, string tagLabel, int page, int pageSize)
+    {
+        var tasksQuery = this.context.Tasks
+            .AsNoTracking()
+            .Where(task => task.Tags.Any(tag => tag.Label == tagLabel) && (task.Owner == userName || task.AssignedTo == userName));
+
+        var tasks = await tasksQuery
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        var totalCount = await tasksQuery.CountAsync();
 
         var pagedModel = new PagedModel<TaskItemEntity>
         {
@@ -112,6 +135,7 @@ public class TaskRepository : ITaskRepository
 
         return await this.context.Tasks
             .Where(t => t.TodoListId == todoListId && t.Owner == ownerName)
+            .Include(t => t.Tags)
             .FirstOrDefaultAsync(t => t.Id == id)
             ?? throw new KeyNotFoundException($"Task (id = {id}) not found.");
     }

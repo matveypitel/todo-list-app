@@ -1,8 +1,8 @@
 using AutoMapper;
 using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
-using TodoListApp.WebApi.Interfaces;
 using TodoListApp.WebApi.Data.Entities;
+using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Services;
 
@@ -23,9 +23,15 @@ public class TaskDatabaseService : ITaskDatabaseService
         return this.mapper.Map<TaskItem>(taskEntity);
     }
 
-    public async Task<PagedModel<TaskItem>> GetListOfTasksAsync(int todoListId, string ownerName, int page, int pageSize)
+    public async Task<PagedModel<TaskItem>> GetPagedListOfTasksAsync(int todoListId, string ownerName, int page, int pageSize)
     {
-        var tasks = await this.repository.GetListAsync(todoListId, ownerName, page, pageSize);
+        var tasks = await this.repository.GetPagedListAsync(todoListId, ownerName, page, pageSize);
+        return this.mapper.Map<PagedModel<TaskItem>>(tasks);
+    }
+
+    public async Task<PagedModel<TaskItem>> GetPagedListOfTasksWithTagAsync(string userName, string tagLabel, int page, int pageSize)
+    {
+        var tasks = await this.repository.GetPagedListWithTagAsync(userName, tagLabel, page, pageSize);
         return this.mapper.Map<PagedModel<TaskItem>>(tasks);
     }
 

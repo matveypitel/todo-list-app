@@ -23,7 +23,6 @@ public class TaskItemModel
 
     public int TodoListId { get; set; }
 
-    [Range(0, 2)]
     public TaskItemStatus Status { get; set; } = TaskItemStatus.NotStarted;
 
     public string? AssignedTo { get; set; }
@@ -31,4 +30,6 @@ public class TaskItemModel
     public bool IsActive => this.Status == TaskItemStatus.NotStarted || this.Status == TaskItemStatus.InProgress;
 
     public bool IsOverDue => this.DueDate.HasValue && this.DueDate.Value.Date < DateTime.Now.Date;
+
+    public ICollection<TagModel> Tags { get; init; } = new List<TagModel>();
 }

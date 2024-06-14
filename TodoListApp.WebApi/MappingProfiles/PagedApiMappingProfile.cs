@@ -14,5 +14,8 @@ public class PagedApiMappingProfile : Profile
 
         _ = this.CreateMap<PagedModel<TaskItemEntity>, PagedModel<TaskItem>>().ReverseMap();
         _ = this.CreateMap<PagedModel<TaskItemModel>, PagedModel<TaskItem>>().ReverseMap();
+
+        _ = this.CreateMap<PagedModel<TagEntity>, PagedModel<Tag>>().ReverseMap();
+        _ = this.CreateMap<PagedModel<TagModel>, PagedModel<Tag>>().ReverseMap();
     }
 }

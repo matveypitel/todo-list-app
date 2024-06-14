@@ -14,12 +14,14 @@ namespace TodoListApp.WebApi.Controllers;
 public class TaskController : ControllerBase
 {
     private readonly ITaskDatabaseService databaseService;
+    private readonly ITagDatabaseService tagDatabaseService;
     private readonly IMapper mapper;
 
-    public TaskController(ITaskDatabaseService databaseService, IMapper mapper)
+    public TaskController(ITaskDatabaseService databaseService, IMapper mapper, ITagDatabaseService tagDatabaseService)
     {
         this.databaseService = databaseService;
         this.mapper = mapper;
+        this.tagDatabaseService = tagDatabaseService;
     }
 
     [HttpPost]
@@ -49,7 +51,7 @@ public class TaskController : ControllerBase
     {
         var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
-        var taskItems = await this.databaseService.GetListOfTasksAsync(todoListId, userName, page, pageSize);
+        var taskItems = await this.databaseService.GetPagedListOfTasksAsync(todoListId, userName, page, pageSize);
 
         return this.Ok(this.mapper.Map<PagedModel<TaskItemModel>>(taskItems));
     }
@@ -83,6 +85,69 @@ public class TaskController : ControllerBase
         var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
 
         await this.databaseService.DeleteTaskAsync(id, todoListId, userName);
+
+        return this.NoContent();
+    }
+
+    [HttpPost]
+    [Route("{id}/tags")]
+    public async Task<ActionResult<TagModel>> AddTagToTaskItem([FromRoute] int todoListId, [FromRoute] int id, [FromBody] TagModel tagModel)
+    {
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+        var taskItem = await this.databaseService.GetTaskByIdAsync(id, todoListId, userName);
+
+        if (taskItem == null)
+        {
+            return this.NotFound();
+        }
+
+        var tag = this.mapper.Map<Tag>(tagModel);
+
+        var newTag = await this.tagDatabaseService.AddTagToTaskAsync(id, tag);
+
+        return this.CreatedAtAction(
+            nameof(this.GetTaskDetails),
+            new { id = taskItem.Id, todoListId, },
+            this.mapper.Map<TagModel>(newTag));
+    }
+
+    [HttpPut]
+    [Route("{id}/tags/{tagId}")]
+    public async Task<ActionResult> UpdateTagOfTaskItem(
+        [FromRoute] int todoListId,
+        [FromRoute] int id,
+        [FromRoute] int tagId,
+        [FromBody] TagModel tag)
+    {
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+        var taskItem = await this.databaseService.GetTaskByIdAsync(id, todoListId, userName);
+
+        if (taskItem == null)
+        {
+            return this.NotFound();
+        }
+
+        await this.tagDatabaseService.UpdateTagAsync(tagId, id, this.mapper.Map<Tag>(tag));
+
+        return this.NoContent();
+    }
+
+    [HttpDelete]
+    [Route("{id}/tags/{tagId}")]
+    public async Task<ActionResult> DeleteTagOfTaskItem([FromRoute] int todoListId, [FromRoute] int id, [FromRoute] int tagId)
+    {
+        var userName = this.User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+        var taskItem = await this.databaseService.GetTaskByIdAsync(id, todoListId, userName);
+
+        if (taskItem == null)
+        {
+            return this.NotFound();
+        }
+
+        await this.tagDatabaseService.DeleteTagAsync(tagId, id);
 
         return this.NoContent();
     }
