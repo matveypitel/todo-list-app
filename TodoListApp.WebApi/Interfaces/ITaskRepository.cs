@@ -15,6 +15,8 @@ public interface ITaskRepository
 
     Task<PagedModel<TaskItemEntity>> GetPagedListOfAssignedToUserAsync(string userName, int page, int pageSize, string? status, string? sort);
 
+    Task<PagedModel<TaskItemEntity>> GetPagedListOfSearchResultsAsync(string userName, string? title, DateTime? creationDate, DateTime? dueDate, int page, int pageSize);
+
     Task<TaskItemEntity> CreateAsync(TaskItemEntity taskItemEntity);
 
     Task UpdateAsync(int id, int todoListId, TaskItemEntity taskItemEntity);

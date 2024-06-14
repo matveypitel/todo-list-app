@@ -92,10 +92,6 @@ public class TaskRepository : ITaskRepository
             .Take(pageSize)
             .AsNoTracking();
 
-        var totalCount = await this.context.Tasks
-           .Where(t => t.AssignedTo == userName)
-           .CountAsync();
-
         if (!string.IsNullOrEmpty(status))
         {
             tasks = tasks.Where(t => t.Status == Enum.Parse<TaskItemStatus>(status, true));
@@ -112,6 +108,46 @@ public class TaskRepository : ITaskRepository
                 tasks = tasks.OrderBy(t => t.DueDate == null).ThenBy(t => t.DueDate);
             }
         }
+
+        var totalCount = await tasks.CountAsync();
+
+        var listOfTasks = await tasks.ToListAsync();
+
+        var pagedModel = new PagedModel<TaskItemEntity>
+        {
+            Items = listOfTasks,
+            CurrentPage = page,
+            ItemsPerPage = pageSize,
+            TotalCount = totalCount,
+        };
+
+        return pagedModel;
+    }
+
+    public async Task<PagedModel<TaskItemEntity>> GetPagedListOfSearchResultsAsync(string userName, string? title, DateTime? creationDate, DateTime? dueDate, int page, int pageSize)
+    {
+        var tasks = this.context.Tasks
+            .Where(t => t.AssignedTo == userName || t.Owner == userName)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .AsNoTracking();
+
+        if (!string.IsNullOrEmpty(title))
+        {
+            tasks = tasks.Where(t => t.Title.Contains(title));
+        }
+
+        if (creationDate.HasValue)
+        {
+            tasks = tasks.Where(t => t.CreatedDate.Date == creationDate.Value.Date);
+        }
+
+        if (dueDate.HasValue)
+        {
+            tasks = tasks.Where(t => t.DueDate.HasValue && t.DueDate.Value.Date == dueDate.Value.Date);
+        }
+
+        var totalCount = await tasks.CountAsync();
 
         var listOfTasks = await tasks.ToListAsync();
 
