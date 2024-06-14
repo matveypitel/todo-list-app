@@ -25,4 +25,6 @@ public class TaskItemWebApiModel
     public bool IsActive => this.Status == TaskItemStatus.NotStarted || this.Status == TaskItemStatus.InProgress;
 
     public bool IsOverDue => this.DueDate.HasValue && this.DueDate.Value.Date < DateTime.Now.Date;
+
+    public ICollection<TagWebApiModel> Tags { get; init; } = new List<TagWebApiModel>();
 }

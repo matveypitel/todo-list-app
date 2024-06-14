@@ -9,10 +9,41 @@ public class BaseAppMappingProfile : Profile
 {
     public BaseAppMappingProfile()
     {
-        _ = this.CreateMap<TodoListWebApiModel, TodoList>().ReverseMap();
-        _ = this.CreateMap<TodoListModel, TodoList>().ReverseMap().ReverseMap();
+        _ = this.CreateMap<TodoList, TodoListWebApiModel>().ReverseMap();
+        _ = this.CreateMap<TodoList, TodoListModel>().ReverseMap().ReverseMap();
 
-        _ = this.CreateMap<TaskItem, TaskItemWebApiModel>().ReverseMap();
-        _ = this.CreateMap<TaskItem, TaskItemModel>().ReverseMap();
+        _ = this.CreateMap<TaskItem, TaskItemWebApiModel>().ReverseMap()
+            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(
+                tag => new Tag
+                {
+                    Id = tag.Id,
+                    Label = tag.Label,
+                })));
+        _ = this.CreateMap<TaskItem, TaskItemModel>().ReverseMap()
+            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(
+                tag => new Tag
+                {
+                    Id = tag.Id,
+                    Label = tag.Label,
+                })));
+
+        _ = this.CreateMap<Tag, TagWebApiModel>().ReverseMap()
+            .ForMember(dest => dest.Tasks, opt => opt.MapFrom(src => src.Tasks.Select(
+                task => new TaskItem
+                {
+                    Id = task.Id,
+                    TodoListId = task.TodoListId,
+                    Title = task.Title,
+                    Description = task.Description,
+                })));
+        _ = this.CreateMap<Tag, TagModel>().ReverseMap()
+            .ForMember(dest => dest.Tasks, opt => opt.MapFrom(src => src.Tasks.Select(
+                task => new TaskItem
+                {
+                    Id = task.Id,
+                    TodoListId = task.TodoListId,
+                    Title = task.Title,
+                    Description = task.Description,
+                })));
     }
 }

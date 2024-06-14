@@ -14,5 +14,8 @@ public class PagedAppMappingProfile : Profile
 
         _ = this.CreateMap<PagedModel<TaskItem>, PagedModel<TaskItemWebApiModel>>().ReverseMap();
         _ = this.CreateMap<PagedModel<TaskItem>, PagedModel<TaskItemModel>>().ReverseMap();
+
+        _ = this.CreateMap<PagedModel<Tag>, PagedModel<TagWebApiModel>>().ReverseMap();
+        _ = this.CreateMap<PagedModel<Tag>, PagedModel<TagModel>>().ReverseMap();
     }
 }
