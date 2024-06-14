@@ -12,7 +12,17 @@
             <div class="dropdown-divider"></div>
             <p class="card-text flex-grow-1">@(Model.Description == null ? "No description" : Model.Description)</p>
             <div>
-                <a class="btn btn-sm btn-outline-primary" asp-action="Status" asp-route-id="@Model.Id">Change status</a>
+                <a class="btn btn btn-outline-primary" asp-action="Status" asp-route-id="@Model.Id">Change status</a>
+                @if (Model.Owner == User.Identity!.Name)
+                {
+                    <a class="btn btn-primary"
+                       asp-controller="Task"
+                       asp-action="Details"
+                       asp-route-todoListId="@Model.TodoListId"
+                       asp-route-id="@Model.Id">
+                        Details
+                    </a>
+                }
             </div>
         </div>
         <div class="card-footer text-muted">
