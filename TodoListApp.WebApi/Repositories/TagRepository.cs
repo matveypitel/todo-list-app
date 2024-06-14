@@ -31,15 +31,6 @@ public class TagRepository : ITagRepository
             throw new ArgumentNullException($"Tag (label = {tagEntity.Label}) already exists.");
         }
 
-        var existingTag = await this.context.Tags.FirstOrDefaultAsync(t => t.Label == tagEntity.Label);
-        if (existingTag != null)
-        {
-            taskEntity.Tags.Add(existingTag);
-            _ = await this.context.SaveChangesAsync();
-
-            return existingTag;
-        }
-
         taskEntity.Tags.Add(tagEntity);
         _ = await this.context.SaveChangesAsync();
 
@@ -75,25 +66,30 @@ public class TagRepository : ITagRepository
 
     public async Task<PagedModel<TagEntity>> GetPagedListOfAllAsync(string tasksOwnerName, int page, int pageSize)
     {
-        var tagIds = await this.context.Tasks
-            .Where(task => task.Owner == tasksOwnerName)
-            .SelectMany(task => task.Tags)
-            .Select(tag => tag.Id)
-            .Distinct()
+        var tasks = await this.context.Tasks
+            .Where(task => task.Owner == tasksOwnerName || task.AssignedTo == tasksOwnerName)
+            .Include(task => task.Tags)
             .ToListAsync();
 
-        var tags = await this.context.Tags
-            .Where(tag => tagIds.Contains(tag.Id))
+        var tagsWithTasks = tasks
+            .SelectMany(task => task.Tags, (task, tag) => new { task, tag })
+            .GroupBy(t => t.tag.Label)
+            .Select(g => new TagEntity
+            {
+                Label = g.Key,
+                Tasks = g.Select(t => t.task).ToList(),
+            })
+            .ToList();
+
+        var pagedTags = tagsWithTasks
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .ToListAsync();
-
-        var totalUniqueTagsCount = tagIds.Count;
+            .ToList();
 
         return new PagedModel<TagEntity>
         {
-            Items = tags,
-            TotalCount = totalUniqueTagsCount,
+            Items = pagedTags,
+            TotalCount = tagsWithTasks.Count,
             CurrentPage = page,
             ItemsPerPage = pageSize,
         };
