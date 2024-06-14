@@ -12,9 +12,9 @@
             <h2 class="mb-0">@Model.Title</h2>
         </div>
         <div class="card-body bg-light">
-            <p class="card-text">@Model.Description</p>
+            <p class="card-text">@(Model.Description ?? "No description")</p>
             <p class="card-text mt-2"><strong>Created at</strong> @Model.CreatedDate.ToString("dd MMM yyyy")</p>
-            <p class="card-text"><strong>Due on</strong> @Model.DueDate!.Value.ToString("dd MMM yyyy")</p>
+            <p class="card-text"><strong>Due on</strong> @(Model.DueDate.HasValue ? Model.DueDate.Value.ToString("dd MMM yyyy") : "No due date")</p>
         </div>
         <div class="card-footer text-muted">
             @switch (Model.Status)
@@ -31,10 +31,15 @@
             }
             <i class="fa-solid fa-people-arrows"></i>
             Assigned to @(Model.AssignedTo == this.User.Identity!.Name ? "Me" : Model.AssignedTo)
+            <div>
+                @foreach (var tag in Model.Tags)
+                {
+                    <span class="badge bg-warning">@tag.Label</span>
+                }
+            </div>
         </div>
     </div>
     <div class="text-center mt-4">
-        <a class="btn btn-outline-info" asp-action="Edit" asp-route-id="@Model.Id">Edit Task</a>
         <a class="btn btn-outline-secondary" asp-action="Index" asp-route-todoListId="@Model.TodoListId">Back to List</a>
     </div>
 </div>
