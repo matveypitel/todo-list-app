@@ -11,18 +11,22 @@
             <div class="card shadow">
                 <div class="card-header bg-success text-white">Edit Task</div>
                 <div class="card-body">
-                    <form asp-action="Edit">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
                         <div class="form-group mb-3">
                             <label asp-for="Title" class="form-label">Title</label>
                             <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label asp-for="Description" class="form-label">Description</label>
                             <textarea asp-for="Description" class="form-control"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label asp-for="DueDate" class="form-label">Due Date</label>
-                            <input asp-for="DueDate" type="date" min="@DateTime.Today.ToString("dd MMM yyyy")" class="form-control" />
+                            <input asp-for="DueDate" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control" />
+                            <span asp-validation-for="DueDate" class="text-danger"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label asp-for="Status" class="form-label">Status</label>
@@ -31,10 +35,12 @@
                                 <option value="InProgress">In Progress</option>
                                 <option value="Completed">Completed</option>
                             </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label asp-for="AssignedTo" class="form-label">Assigned To</label>
                             <select class="form-select" asp-for="AssignedTo" asp-items="ViewBag.Users"></select>
+                            <span asp-validation-for="AssignedTo" class="text-danger"></span>
                         </div>
 
                         <button type="submit" class="btn btn-success">Save</button>
@@ -45,3 +51,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
