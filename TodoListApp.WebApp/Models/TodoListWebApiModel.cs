@@ -7,4 +7,6 @@ public class TodoListWebApiModel
     public string Title { get; set; } = string.Empty;
 
     public string? Description { get; set; }
+
+    public ICollection<TodoListUserWebApiModel> Users { get; init; } = new List<TodoListUserWebApiModel>();
 }

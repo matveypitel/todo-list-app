@@ -1,0 +1,25 @@
+@model TodoListApp.Models.DTOs.TodoListUserModel
+
+@{
+    ViewData["Title"] = "Confirm Delete User";
+    var todoListId = TempData["TodoListId"] as int?;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">Delete Task</div>
+                <div class="card-body">
+                    <h5>Are you sure you want to remove @Model.UserName from this TodoList?</h5>
+                    <form asp-action="DeleteConfirmed" asp-route-todoListId="@todoListId" asp-route-userName="@Model.UserName">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger mt-2">Delete</button>
+                            <a class="btn btn-secondary mt-2" asp-controller="ShareUser" asp-action="Index" asp-route-todoListId="@todoListId">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

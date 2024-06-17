@@ -12,6 +12,9 @@ public class BaseAppMappingProfile : Profile
         _ = this.CreateMap<TodoList, TodoListWebApiModel>().ReverseMap();
         _ = this.CreateMap<TodoList, TodoListModel>().ReverseMap().ReverseMap();
 
+        _ = this.CreateMap<TodoListUser, TodoListUserWebApiModel>().ReverseMap();
+        _ = this.CreateMap<TodoListUser, TodoListUserModel>().ReverseMap();
+
         _ = this.CreateMap<TaskItem, TaskItemWebApiModel>().ReverseMap()
             .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(
                 tag => new Tag

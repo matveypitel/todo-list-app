@@ -1,0 +1,28 @@
+@using TodoListApp.Models.DTOs;
+@model PagedModel<TodoListUserModel>
+
+@{
+    ViewData["Title"] = "Shared Users";
+    var todoListId = TempData["TodoListId"] as int?;
+}
+
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+    <a class="btn btn-outline-success col-1 mt-2" asp-route-todoListId="@todoListId" asp-action="Add">Share to new user</a>
+    <div class="row">
+        @foreach (var user in Model.Items.Where(u => u.Role != TodoListApp.Models.Enums.TodoListRole.Owner))
+        {
+            <partial name="_ShareUserSummary" model="user" />
+        }
+    </div>
+    <a class="btn btn-primary mt-2"
+       asp-controller="TodoList"
+       asp-action="Index"
+       asp-route-todoListId="@todoListId">
+        Back to list
+    </a>
+</div>
+
+<div class="pagination-container">
+    <div class="pagination" is-todoList-user-model="" page-model="@Model" page-action="Index"></div>
+</div>

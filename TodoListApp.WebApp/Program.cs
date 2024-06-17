@@ -35,6 +35,11 @@ builder.Services.AddHttpClient<ITaskWebApiService, TaskWebApiService>(client =>
         client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
     });
 
+builder.Services.AddHttpClient<IShareUserWebApiService, ShareUserWebApiService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
+});
+
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

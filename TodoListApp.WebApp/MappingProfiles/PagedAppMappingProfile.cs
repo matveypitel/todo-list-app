@@ -12,6 +12,9 @@ public class PagedAppMappingProfile : Profile
         _ = this.CreateMap<PagedModel<TodoList>, PagedModel<TodoListWebApiModel>>().ReverseMap();
         _ = this.CreateMap<PagedModel<TodoList>, PagedModel<TodoListModel>>().ReverseMap();
 
+        _ = this.CreateMap<PagedModel<TodoListUser>, PagedModel<TodoListUserModel>>().ReverseMap();
+        _ = this.CreateMap<PagedModel<TodoListUser>, PagedModel<TodoListUserWebApiModel>>().ReverseMap();
+
         _ = this.CreateMap<PagedModel<TaskItem>, PagedModel<TaskItemWebApiModel>>().ReverseMap();
         _ = this.CreateMap<PagedModel<TaskItem>, PagedModel<TaskItemModel>>().ReverseMap();
 
