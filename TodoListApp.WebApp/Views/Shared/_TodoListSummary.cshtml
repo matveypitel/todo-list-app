@@ -26,7 +26,7 @@
                 </a>
                 @if (user.Role == TodoListRole.Owner)
                 {
-                    <a class="btn btn-outline-success" asp-controller="ShareUser" asp-action="Index" asp-route-todoListId="@Model.Id">Share to users</a>
+                    <a class="btn btn-outline-info" asp-controller="ShareUser" asp-action="Index" asp-route-todoListId="@Model.Id">Share to users</a>
                     <div class="btn-group">
                         <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">
                             <i class="fa-solid fa-pen-to-square"></i>

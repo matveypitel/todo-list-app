@@ -1,0 +1,35 @@
+@model (TodoListModel todoListModel, string ActionName, string ActionTheme)
+
+@{
+    var todolist = Model.todoListModel;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-@Model.ActionTheme text-white">@Model.ActionName Todo List</div>
+                <div class="card-body">
+                    <form asp-controller="TodoList" asp-action="@Model.ActionName" method="post">
+                        @if (Model.ActionName == "Edit")
+                        {
+                            <input type="hidden" asp-for="@todolist.Id" />
+                        }
+                        <div class="mb-3">
+                            <label asp-for="@todolist.Title" class="form-label">Title</label>
+                            <input asp-for="@todolist.Title" class="form-control" placeholder="Enter title">
+                            <span asp-validation-for="@todolist.Title" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="@todolist.Description" class="form-label">Description</label>
+                            <textarea asp-for="@todolist.Description" class="form-control" rows="3" placeholder="Enter description"></textarea>
+                            <span asp-validation-for="@todolist.Description" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-@Model.ActionTheme">Create</button>
+                        <a class="btn btn-secondary" asp-controller="TodoList" asp-action="Index">Back to List</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
