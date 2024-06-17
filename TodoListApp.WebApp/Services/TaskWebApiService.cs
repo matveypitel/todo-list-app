@@ -1,7 +1,7 @@
-using System.Text;
 using AutoMapper;
 using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
+using TodoListApp.Models.Enums;
 using TodoListApp.WebApp.Interfaces;
 using TodoListApp.WebApp.Models;
 using TodoListApp.WebApp.Utilities;
@@ -17,6 +17,17 @@ public class TaskWebApiService : ITaskWebApiService
     {
         this.httpClient = httpClient;
         this.mapper = mapper;
+    }
+
+    public async Task<TodoListRole> GetUserRoleInTodoListAsync(string token, int todoListId)
+    {
+        TokenUtility.AddAuthorizationHeader(this.httpClient, token);
+
+        var response = await this.httpClient.GetAsync(new Uri($"api/todolists/{todoListId}/tasks/role", UriKind.Relative));
+
+        _ = response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<TodoListRole>();
     }
 
     public async Task<TaskItem> CreateTaskAsync(string token, int todoListId, TaskItem task)

@@ -34,6 +34,9 @@ public class TaskController : Controller
 
         var pagedResult = await this.apiService.GetPagedTasksAsync(token, todoListId, page, this.PageSize);
 
+        var userRole = await this.apiService.GetUserRoleInTodoListAsync(token, todoListId);
+
+        this.TempData["UserRole"] = userRole;
         this.TempData["TodoListId"] = todoListId;
 
         return this.View(this.mapper.Map<PagedModel<TaskItemModel>>(pagedResult));
