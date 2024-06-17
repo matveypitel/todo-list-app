@@ -9,7 +9,7 @@ using TodoListApp.WebApi.Interfaces;
 namespace TodoListApp.WebApi.Controllers;
 
 [Authorize]
-[Route("api/todolists/{todoListId:int}/tasks")]
+[Route("api/todolists/{todoListId}/tasks")]
 [ApiController]
 public class TaskController : ControllerBase
 {
@@ -35,7 +35,7 @@ public class TaskController : ControllerBase
         newTaskItem.Owner = userName;
         newTaskItem.AssignedTo = userName;
 
-        var taskItem = await this.databaseService.CreateTaskAsync(newTaskItem);
+        var taskItem = await this.databaseService.CreateTaskAsync(newTaskItem, userName);
 
         return this.CreatedAtAction(
             nameof(this.GetTaskDetails),
@@ -74,7 +74,7 @@ public class TaskController : ControllerBase
         var taskItem = this.mapper.Map<TaskItem>(taskItemModel);
         taskItem.Owner = userName;
 
-        await this.databaseService.UpdateTaskAsync(id, todoListId, taskItem);
+        await this.databaseService.UpdateTaskAsync(id, todoListId, taskItem, userName);
 
         return this.NoContent();
     }
@@ -104,34 +104,12 @@ public class TaskController : ControllerBase
 
         var tag = this.mapper.Map<Tag>(tagModel);
 
-        var newTag = await this.tagDatabaseService.AddTagToTaskAsync(id, tag);
+        var newTag = await this.tagDatabaseService.AddTagToTaskAsync(id, tag, userName);
 
         return this.CreatedAtAction(
             nameof(this.GetTaskDetails),
             new { id = taskItem.Id, todoListId, },
             this.mapper.Map<TagModel>(newTag));
-    }
-
-    [HttpPut]
-    [Route("{id}/tags/{tagId}")]
-    public async Task<ActionResult> UpdateTagOfTaskItem(
-        [FromRoute] int todoListId,
-        [FromRoute] int id,
-        [FromRoute] int tagId,
-        [FromBody] TagModel tag)
-    {
-        var userName = this.GetUserName();
-
-        var taskItem = await this.databaseService.GetTaskByIdAsync(id, todoListId, userName);
-
-        if (taskItem == null)
-        {
-            return this.NotFound();
-        }
-
-        await this.tagDatabaseService.UpdateTagAsync(tagId, id, this.mapper.Map<Tag>(tag));
-
-        return this.NoContent();
     }
 
     [HttpDelete]
@@ -147,7 +125,7 @@ public class TaskController : ControllerBase
             return this.NotFound();
         }
 
-        await this.tagDatabaseService.DeleteTagAsync(tagId, id);
+        await this.tagDatabaseService.DeleteTagAsync(tagId, id, userName);
 
         return this.NoContent();
     }

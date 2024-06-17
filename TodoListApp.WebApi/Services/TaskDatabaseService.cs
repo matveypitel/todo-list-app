@@ -17,15 +17,15 @@ public class TaskDatabaseService : ITaskDatabaseService
         this.mapper = mapper;
     }
 
-    public async Task<TaskItem> CreateTaskAsync(TaskItem taskItem)
+    public async Task<TaskItem> CreateTaskAsync(TaskItem taskItem, string userName)
     {
-        var taskEntity = await this.repository.CreateAsync(this.mapper.Map<TaskItemEntity>(taskItem));
+        var taskEntity = await this.repository.CreateAsync(this.mapper.Map<TaskItemEntity>(taskItem), userName);
         return this.mapper.Map<TaskItem>(taskEntity);
     }
 
-    public async Task<PagedModel<TaskItem>> GetPagedListOfTasksAsync(int todoListId, string ownerName, int page, int pageSize)
+    public async Task<PagedModel<TaskItem>> GetPagedListOfTasksAsync(int todoListId, string userName, int page, int pageSize)
     {
-        var tasks = await this.repository.GetPagedListAsync(todoListId, ownerName, page, pageSize);
+        var tasks = await this.repository.GetPagedListAsync(todoListId, userName, page, pageSize);
         return this.mapper.Map<PagedModel<TaskItem>>(tasks);
     }
 
@@ -47,16 +47,16 @@ public class TaskDatabaseService : ITaskDatabaseService
         return this.mapper.Map<PagedModel<TaskItem>>(searchedTasks);
     }
 
-    public async Task<TaskItem> GetTaskByIdAsync(int id, int todoListId, string ownerName)
+    public async Task<TaskItem> GetTaskByIdAsync(int id, int todoListId, string userName)
     {
-        var task = await this.repository.GetByIdAsync(id, todoListId, ownerName);
+        var task = await this.repository.GetByIdAsync(id, todoListId, userName);
         return this.mapper.Map<TaskItem>(task);
     }
 
-    public async Task UpdateTaskAsync(int id, int todoListId, TaskItem taskItem)
+    public async Task UpdateTaskAsync(int id, int todoListId, TaskItem taskItem, string userName)
     {
         var taskEntity = this.mapper.Map<TaskItemEntity>(taskItem);
-        await this.repository.UpdateAsync(id, todoListId, taskEntity);
+        await this.repository.UpdateAsync(id, todoListId, taskEntity, userName);
     }
 
     public async Task UpdateTaskStatusAsync(int id, string userName, TaskItem taskItem)
@@ -65,9 +65,9 @@ public class TaskDatabaseService : ITaskDatabaseService
         await this.repository.UpdateTaskStatusAsync(id, userName, taskEntity);
     }
 
-    public async Task DeleteTaskAsync(int id, int todoListId, string ownerName)
+    public async Task DeleteTaskAsync(int id, int todoListId, string userName)
     {
-        await this.repository.DeleteAsync(id, todoListId, ownerName);
+        await this.repository.DeleteAsync(id, todoListId, userName);
     }
 
     public async Task<TaskItem> GetAssignedTaskByIdAsync(int id, string userName)
