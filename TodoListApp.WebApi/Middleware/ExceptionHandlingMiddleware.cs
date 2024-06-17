@@ -49,7 +49,26 @@ public class ExceptionHandlingMiddleware
                 ex,
                 "Invalid Request.");
         }
-        catch (Exception ex) when (ex is not KeyNotFoundException && ex is not ArgumentNullException)
+        catch (UnauthorizedAccessException ex)
+        {
+            await this.HandleExceptionAsync(
+                httpContext,
+                HttpStatusCode.Forbidden,
+                ex,
+                "Forbidden.");
+        }
+        catch (InvalidOperationException ex)
+        {
+            await this.HandleExceptionAsync(
+                httpContext,
+                HttpStatusCode.Conflict,
+                ex,
+                "Invalid Operation.");
+        }
+        catch (Exception ex) when
+            (ex is not KeyNotFoundException
+            && ex is not ArgumentNullException
+            && ex is not UnauthorizedAccessException)
         {
             await this.HandleExceptionAsync(
                 httpContext,
