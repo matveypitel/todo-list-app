@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
@@ -45,7 +44,6 @@ public class TodoListController : Controller
     public async Task<IActionResult> Create(TodoListModel model)
     {
         var token = TokenUtility.GetToken(this.Request);
-        var userName = this.User.Identity!.Name ?? string.Empty;
 
         if (!this.ModelState.IsValid)
         {
@@ -53,7 +51,6 @@ public class TodoListController : Controller
         }
 
         var newTodoList = this.mapper.Map<TodoList>(model);
-        newTodoList.Owner = userName;
 
         _ = await this.apiService.CreateTodoListAsync(token, newTodoList);
 
@@ -76,7 +73,6 @@ public class TodoListController : Controller
     public async Task<IActionResult> Edit(int id, TodoListModel model)
     {
         var token = TokenUtility.GetToken(this.Request);
-        var userName = this.User.Identity!.Name ?? string.Empty;
 
         if (!this.ModelState.IsValid)
         {
@@ -84,7 +80,6 @@ public class TodoListController : Controller
         }
 
         var newTodoList = this.mapper.Map<TodoList>(model);
-        newTodoList.Owner = userName;
 
         await this.apiService.UpdateTodoListAsync(token, id, newTodoList);
 
