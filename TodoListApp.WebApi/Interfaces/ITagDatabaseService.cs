@@ -5,13 +5,11 @@ namespace TodoListApp.WebApi.Interfaces;
 
 public interface ITagDatabaseService
 {
-    Task<Tag> AddTagToTaskAsync(int taskId, Tag tag);
+    Task<Tag> AddTagToTaskAsync(int taskId, Tag tag, string userName);
 
-    Task<PagedModel<Tag>> GetPagedListOfAllAsync(string tasksOwnerName, int page, int pageSize);
+    Task<PagedModel<Tag>> GetPagedListOfAllAsync(string userName, int page, int pageSize);
 
     Task<Tag> GetTagByIdAsync(int id, int taskId);
 
-    Task UpdateTagAsync(int id, int taskId, Tag tag);
-
-    Task DeleteTagAsync(int id, int taskId);
+    Task DeleteTagAsync(int id, int taskId, string userName);
 }

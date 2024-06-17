@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TodoListApp.Models.DTOs;
+using TodoListApp.Models.Enums;
 using TodoListApp.WebApi.Data;
 using TodoListApp.WebApi.Data.Entities;
 using TodoListApp.WebApi.Interfaces;
@@ -15,9 +16,14 @@ public class TagRepository : ITagRepository
         this.context = context;
     }
 
-    public async Task<TagEntity> AddToTaskAsync(int taskId, TagEntity tagEntity)
+    public async Task<TagEntity> AddToTaskAsync(int taskId, TagEntity tagEntity, string userName)
     {
         ArgumentNullException.ThrowIfNull(tagEntity);
+
+        if (!await this.UserHasPermissionAsync(taskId, userName))
+        {
+            throw new UnauthorizedAccessException("User does not have permission to update tags.");
+        }
 
         var taskEntity = await this.context.Tasks
                 .Include(t => t.Tags)
@@ -27,8 +33,7 @@ public class TagRepository : ITagRepository
         var existingTagInTask = taskEntity.Tags.FirstOrDefault(t => t.Label == tagEntity.Label);
         if (existingTagInTask != null)
         {
-            // TODO: create custom exception
-            throw new ArgumentNullException($"Tag (label = {tagEntity.Label}) already exists.");
+            throw new InvalidOperationException($"Tag (label = {tagEntity.Label}) already exists.");
         }
 
         taskEntity.Tags.Add(tagEntity);
@@ -37,8 +42,13 @@ public class TagRepository : ITagRepository
         return tagEntity;
     }
 
-    public async Task DeleteAsync(int id, int taskId)
+    public async Task DeleteAsync(int id, int taskId, string userName)
     {
+        if (!await this.UserHasPermissionAsync(taskId, userName))
+        {
+            throw new UnauthorizedAccessException("User does not have permission to update tags.");
+        }
+
         var taskEntity = await this.context.Tasks
                 .Include(t => t.Tags)
                 .FirstOrDefaultAsync(t => t.Id == taskId)
@@ -64,10 +74,15 @@ public class TagRepository : ITagRepository
             ?? throw new KeyNotFoundException($"Tag (id = {id}) not found.");
     }
 
-    public async Task<PagedModel<TagEntity>> GetPagedListOfAllAsync(string tasksOwnerName, int page, int pageSize)
+    public async Task<PagedModel<TagEntity>> GetPagedListOfAllAsync(string userName, int page, int pageSize)
     {
+        var accessibleTodoListIds = await this.context.TodoLists
+            .Where(tl => tl.Users.Any(u => u.UserName == userName))
+            .Select(tl => tl.Id)
+            .ToListAsync();
+
         var tasks = await this.context.Tasks
-            .Where(task => task.Owner == tasksOwnerName || task.AssignedTo == tasksOwnerName)
+            .Where(task => accessibleTodoListIds.Contains(task.TodoListId))
             .Include(task => task.Tags)
             .ToListAsync();
 
@@ -95,29 +110,25 @@ public class TagRepository : ITagRepository
         };
     }
 
-    public async Task UpdateAsync(int id, int taskId, TagEntity tagEntity)
-    {
-        ArgumentNullException.ThrowIfNull(tagEntity);
-
-        await this.TagTaskExistsAsync(taskId);
-
-        var existingTag = await this.context.Tags
-            .Where(t => t.Id == id && t.Tasks.Any(task => task.Id == taskId))
-            .FirstOrDefaultAsync()
-            ?? throw new KeyNotFoundException($"Tag (id = {id}) not found for task (id = {taskId}).");
-
-        existingTag.Label = tagEntity.Label;
-
-        this.context.Entry(existingTag).State = EntityState.Modified;
-
-        _ = await this.context.SaveChangesAsync();
-    }
-
     public async Task TagTaskExistsAsync(int taskId)
     {
         _ = await this.context.Tasks
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.Id == taskId)
             ?? throw new KeyNotFoundException($"Task (id = {taskId}) not found.");
+    }
+
+    private async Task<bool> UserHasPermissionAsync(int taskId, string userName)
+    {
+        var task = await this.context.Tasks
+            .Include(t => t.TodoList)
+            .ThenInclude(tl => tl.Users)
+            .FirstOrDefaultAsync(t => t.Id == taskId)
+            ?? throw new KeyNotFoundException($"Task (id = {taskId}) not found.");
+
+        var userRole = task.TodoList.Users
+            .FirstOrDefault(u => u.UserName == userName)?.Role;
+
+        return userRole == TodoListRole.Editor || userRole == TodoListRole.Owner;
     }
 }

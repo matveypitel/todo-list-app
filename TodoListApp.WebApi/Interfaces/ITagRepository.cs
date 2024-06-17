@@ -7,13 +7,11 @@ public interface ITagRepository
 {
     Task<TagEntity> GetByIdAsync(int id, int taskId);
 
-    Task<PagedModel<TagEntity>> GetPagedListOfAllAsync(string tasksOwnerName, int page, int pageSize);
+    Task<PagedModel<TagEntity>> GetPagedListOfAllAsync(string userName, int page, int pageSize);
 
-    Task<TagEntity> AddToTaskAsync(int taskId, TagEntity tagEntity);
+    Task<TagEntity> AddToTaskAsync(int taskId, TagEntity tagEntity, string userName);
 
-    Task UpdateAsync(int id, int taskId, TagEntity tagEntity);
-
-    Task DeleteAsync(int id, int taskId);
+    Task DeleteAsync(int id, int taskId, string userName);
 
     Task TagTaskExistsAsync(int taskId);
 }
