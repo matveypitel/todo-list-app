@@ -1,8 +1,10 @@
 @using TodoListApp.Models.DTOs;
+@using TodoListApp.Models.Enums
 @model PagedModel<TaskItemModel>
 
 @{
     var todoListId = TempData["TodoListId"] as int?;
+    var userRole = TempData["UserRole"] as TodoListRole?;
     ViewData["Title"] = "Tasks";
 }
 

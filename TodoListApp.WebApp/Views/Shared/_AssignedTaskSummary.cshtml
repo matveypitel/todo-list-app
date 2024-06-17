@@ -27,7 +27,10 @@
         </div>
         <div class="card-footer text-muted">
             <div>
-                <p><i class="fa-solid fa-user"></i> Owner: @Model.Owner</p>
+                @if (this.User.Identity!.Name != Model.Owner)
+                {
+                    <p><i class="fa-solid fa-user"></i> Owner: @Model.Owner</p>
+                }
             </div>
             @switch (Model.Status)
             {

@@ -1,5 +1,11 @@
 @using TodoListApp.Models.DTOs;
+@using TodoListApp.Models.Enums;
 @model TodoListModel
+
+@{
+    var owner = Model.Users.FirstOrDefault(u => u.Role == TodoListRole.Owner);
+    var user = Model.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name) !;
+}
 
 <div class="col mt-2">
     <div class="card h-100 mt-4 shadow">
@@ -18,15 +24,25 @@
                     <i class="fa-solid fa-arrow-right"></i>
                     Go to tasks
                 </a>
-                <div class="btn-group">
-                    <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </a>
-                    <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@Model.Id">
-                        <i class="fa-solid fa-trash"></i>
-                    </a>
-                </div>
+                @if (user.Role == TodoListRole.Owner)
+                {
+                    <a class="btn btn-outline-success" asp-controller="ShareUser" asp-action="Index" asp-route-todoListId="@Model.Id">Share to users</a>
+                    <div class="btn-group">
+                        <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@Model.Id">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+                }
             </div>
         </div>
+        @if (user.Role != TodoListRole.Owner)
+        {
+            <div class="card-footer">
+                <i class="fa-solid fa-user"></i> This to-do list shared by @owner!.UserName (@user.Role)
+            </div>
+        }
     </div>
 </div>

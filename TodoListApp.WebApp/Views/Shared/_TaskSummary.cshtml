@@ -4,6 +4,7 @@
 
 @{
     var todoListId = TempData["TodoListId"] as int?;
+    var role = TempData["UserRole"] as TodoListRole?;
 }
 
 <div class="col mt-2">
@@ -17,15 +18,18 @@
             <div class="dropdown-divider"></div>
             <p class="card-text flex-grow-1">@(Model.Description == null ? "No description" : Model.Description)</p>
             <div>
-                <div class="btn-group">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Actions
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" asp-action="Edit" asp-route-todoListId="@todoListId" asp-route-id="@Model.Id">Edit</a></li>
-                        <li><a class="dropdown-item" asp-action="Delete" asp-route-todoListId="@todoListId" asp-route-id="@Model.Id">Delete</a></li>
-                    </ul>
-                </div>
+                @if (role == TodoListRole.Owner)
+                {
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Actions
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" asp-action="Edit" asp-route-todoListId="@todoListId" asp-route-id="@Model.Id">Edit</a></li>
+                            <li><a class="dropdown-item" asp-action="Delete" asp-route-todoListId="@todoListId" asp-route-id="@Model.Id">Delete</a></li>
+                        </ul>
+                    </div>
+                }
                 <a class="btn btn-primary"
                    asp-controller="Task"
                    asp-action="Details"

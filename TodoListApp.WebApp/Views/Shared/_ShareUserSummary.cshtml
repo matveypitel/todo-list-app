@@ -1,0 +1,31 @@
+@model TodoListUserModel
+
+@{
+    ViewData["Title"] = "Shared Users";
+    var todoListId = TempData["TodoListId"] as int?;
+}
+
+<div class="col-md-4 mt-2">
+    <div class="card h-100 shadow">
+        <div class="card-body">
+            <h4 class="card-title">@Model.UserName</h4>
+            <p class="card-text">Role: @Model.Role</p>
+        </div>
+        <div class="card-footer">
+            <a class="btn btn-primary"
+               asp-controller="ShareUser"
+               asp-action="Edit"
+               asp-route-todoListId="@todoListId"
+               asp-route-userName="@Model.UserName">
+                Edit
+            </a>
+            <a class="btn btn-primary"
+               asp-controller="ShareUser"
+               asp-action="Delete"
+               asp-route-todoListId="@todoListId"
+               asp-route-userName="@Model.UserName">
+                Delete
+            </a>
+        </div>
+    </div>
+</div>
