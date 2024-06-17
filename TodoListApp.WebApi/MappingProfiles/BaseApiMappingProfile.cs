@@ -9,9 +9,17 @@ public class BaseApiMappingProfile : Profile
 {
     public BaseApiMappingProfile()
     {
-        _ = this.CreateMap<TodoListEntity, TodoList>().ReverseMap();
-        _ = this.CreateMap<TodoListModel, TodoList>().ReverseMap();
+        // TodoList mapping
+        _ = this.CreateMap<TodoListEntity, TodoList>().ReverseMap()
+            .ForMember(dest => dest.Users, opt => opt.MapFrom(src => src.Users));
+        _ = this.CreateMap<TodoListModel, TodoList>().ReverseMap()
+            .ForMember(dest => dest.Users, opt => opt.MapFrom(src => src.Users));
 
+        // TodoListUsers mapping
+        _ = this.CreateMap<TodoListUserEntity, TodoListUser>().ReverseMap();
+        _ = this.CreateMap<TodoListUserModel, TodoListUser>().ReverseMap();
+
+        // Tasks mapping
         _ = this.CreateMap<TaskItem, TaskItemEntity>().ReverseMap()
             .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(
                 tag => new Tag
@@ -27,6 +35,7 @@ public class BaseApiMappingProfile : Profile
                     Label = tag.Label,
                 })));
 
+        // Tags mapping
         _ = this.CreateMap<Tag, TagEntity>().ReverseMap()
             .ForMember(dest => dest.Tasks, opt => opt.MapFrom(src => src.Tasks.Select(
                 task => new TaskItem
