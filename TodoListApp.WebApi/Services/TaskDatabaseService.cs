@@ -1,6 +1,7 @@
 using AutoMapper;
 using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
+using TodoListApp.Models.Enums;
 using TodoListApp.WebApi.Data.Entities;
 using TodoListApp.WebApi.Interfaces;
 
@@ -15,6 +16,11 @@ public class TaskDatabaseService : ITaskDatabaseService
     {
         this.repository = repository;
         this.mapper = mapper;
+    }
+
+    public async Task<TodoListRole> GetUserRoleInTodoListAsync(int todoListId, string userName)
+    {
+        return await this.repository.GetUserRoleInTodoListAsync(todoListId, userName);
     }
 
     public async Task<TaskItem> CreateTaskAsync(TaskItem taskItem, string userName)

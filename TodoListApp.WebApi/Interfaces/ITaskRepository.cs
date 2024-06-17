@@ -1,10 +1,13 @@
 using TodoListApp.Models.DTOs;
+using TodoListApp.Models.Enums;
 using TodoListApp.WebApi.Data.Entities;
 
 namespace TodoListApp.WebApi.Interfaces;
 
 public interface ITaskRepository
 {
+    Task<TodoListRole> GetUserRoleInTodoListAsync(int todoListId, string userName);
+
     Task<TaskItemEntity> GetByIdAsync(int id, int todoListId, string userName);
 
     Task<TaskItemEntity> GetAssignedByIdAsync(int id, string userName);

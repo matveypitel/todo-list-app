@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
+using TodoListApp.Models.Enums;
 using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Controllers;
@@ -128,6 +129,17 @@ public class TaskController : ControllerBase
         await this.tagDatabaseService.DeleteTagAsync(tagId, id, userName);
 
         return this.NoContent();
+    }
+
+    [HttpGet]
+    [Route("role")]
+    public async Task<ActionResult<TodoListRole>> GetUserRoleInTodoList([FromRoute] int todoListId)
+    {
+        var userName = this.GetUserName();
+
+        var role = await this.databaseService.GetUserRoleInTodoListAsync(todoListId, userName);
+
+        return this.Ok(role);
     }
 
     private string GetUserName()

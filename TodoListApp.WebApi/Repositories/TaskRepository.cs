@@ -16,6 +16,14 @@ public class TaskRepository : ITaskRepository
         this.context = context;
     }
 
+    public async Task<TodoListRole> GetUserRoleInTodoListAsync(int todoListId, string userName)
+    {
+        return await this.context.TodoListsUsers
+            .Where(tlu => tlu.TodoListId == todoListId && tlu.UserName == userName)
+            .Select(tlu => tlu.Role)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<TaskItemEntity> CreateAsync(TaskItemEntity taskItemEntity, string userName)
     {
         ArgumentNullException.ThrowIfNull(taskItemEntity);
