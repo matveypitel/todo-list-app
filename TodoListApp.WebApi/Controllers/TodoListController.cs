@@ -28,10 +28,12 @@ public class TodoListController : ControllerBase
         var userName = this.GetUserName();
 
         var newtodoList = this.mapper.Map<TodoList>(todoListModel);
-        newtodoList.Owner = userName;
-        var todoList = await this.databaseService.CreateTodoListAsync(newtodoList);
+        var todoList = await this.databaseService.CreateTodoListAsync(newtodoList, userName);
 
-        return this.CreatedAtAction(nameof(this.GetTodoListDetails), new { id = todoList.Id }, this.mapper.Map<TodoListModel>(todoList));
+        return this.CreatedAtAction(
+            nameof(this.GetTodoListDetails),
+            new { id = todoList.Id },
+            this.mapper.Map<TodoListModel>(todoList));
     }
 
     [HttpGet]
@@ -65,9 +67,8 @@ public class TodoListController : ControllerBase
         var userName = this.GetUserName();
 
         var todoList = this.mapper.Map<TodoList>(todoListModel);
-        todoList.Owner = userName;
 
-        await this.databaseService.UpdateTodoListAsync(id, todoList);
+        await this.databaseService.UpdateTodoListAsync(id, todoList, userName);
 
         return this.NoContent();
     }

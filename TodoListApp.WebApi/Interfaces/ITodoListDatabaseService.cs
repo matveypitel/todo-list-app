@@ -1,17 +1,18 @@
 using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
+using TodoListApp.Models.Enums;
 
 namespace TodoListApp.WebApi.Interfaces;
 
 public interface ITodoListDatabaseService
 {
-    Task<PagedModel<TodoList>> GetPagedListOfTodoListsAsync(string ownerName, int page, int pageSize);
+    Task<PagedModel<TodoList>> GetPagedListOfTodoListsAsync(string userName, int page, int pageSize);
 
-    Task<TodoList> GetTodoListByIdAsync(int id, string ownerName);
+    Task<TodoList> GetTodoListByIdAsync(int id, string userName);
 
-    Task<TodoList> CreateTodoListAsync(TodoList todoList);
+    Task<TodoList> CreateTodoListAsync(TodoList todoList, string userName);
 
-    Task UpdateTodoListAsync(int id, TodoList todoList);
+    Task UpdateTodoListAsync(int id, TodoList todoList, string userName);
 
-    Task DeleteTodoListAsync(int id, string ownerName);
+    Task DeleteTodoListAsync(int id, string userName);
 }
