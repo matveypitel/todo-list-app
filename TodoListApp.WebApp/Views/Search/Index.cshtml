@@ -1,0 +1,46 @@
+@using TodoListApp.Models.DTOs;
+@model PagedModel<TaskItemModel>
+
+@{
+    ViewData["Title"] = "Search Tasks";
+    var title = Context.Request.Query["title"];
+    var creationDate = Context.Request.Query["creationDate"];
+    var dueDate = Context.Request.Query["dueDate"];
+    var isFormSubmitted = !string.IsNullOrEmpty(title) || !string.IsNullOrEmpty(creationDate) || !string.IsNullOrEmpty(dueDate);
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<button class="btn btn-sm btn-primary mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#searchCollapse" aria-expanded="false" aria-controls="searchCollapse">
+    Show filters
+</button>
+<form method="get" class="form-inline mb-3 mt-2 collapse @(isFormSubmitted ? "show" : "")" id="searchCollapse">
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label for="title" class="mr-2">Title</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Enter task name or part of it" value="@title">
+        </div>
+        <div class="form-group col-md-4">
+            <label for="creationDate" class="mr-2">Creation Date</label>
+            <input type="date" class="form-control" id="creationDate" name="creationDate" value="@creationDate">
+        </div>
+        <div class="form-group col-md-4">
+            <label for="dueDate" class="mr-2">Due Date</label>
+            <input type="date" class="form-control" id="dueDate" name="dueDate" value="@dueDate">
+        </div>
+    </div>
+    <div class="form-row mt-2">
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-outline-primary">Apply</button>
+            <a asp-action="Index" class="btn btn-secondary ml-2">Reset</a>
+        </div>
+    </div>
+</form>
+
+@foreach (var task in Model.Items ?? Enumerable.Empty<TaskItemModel>())
+{
+    <partial name="_TaskSummary" model="task" />
+}
+
+<div class="pagination-container">
+    <div class="pagination" is-assignedTask-model="" page-model="@Model" page-action="Index"></div>
+</div>
