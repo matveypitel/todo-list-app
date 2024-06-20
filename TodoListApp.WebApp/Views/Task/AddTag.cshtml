@@ -1,0 +1,34 @@
+@model TodoListApp.Models.DTOs.TagModel
+
+@{
+    ViewData["Title"] = "Add Tag";
+    var todoListId = TempData["TodoListId"] as int?;
+    var taskId = TempData["TaskId"] as int?;
+
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">Add Tag</div>
+                <div class="card-body">
+                    <form asp-action="AddTag" method="post">
+                        <input type="hidden" asp-for="@taskId" />
+                        <div class="form-group mb-3">
+                            <label asp-for="Label" class="form-label">Tag Label</label>
+                            <input asp-for="Label" class="form-control" />
+                            <span asp-validation-for="Label" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Tag</button>
+                        <a class="btn btn-outline-secondary" asp-action="Details" asp-route-todoListId="@todoListId" asp-route-id="@taskId">Back to Task</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

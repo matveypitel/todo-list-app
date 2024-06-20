@@ -6,7 +6,7 @@
 }
 
 <div class="d-flex justify-content-center align-items-baseline vh-100 mt-5">
-    <div class="card mt-5">
+    <div class="card mt-5 shadow">
         <div class="card-body">
             <div class="text-center">
                 <h5>Login</h5>
@@ -22,16 +22,8 @@
                     <input type="password" class="form-control" id="password" asp-for="Password" required>
                     <span class="validation-message" asp-validation-for="Password"></span>
                 </div>
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="rememberCheck">
-                        <label class="form-check-label" for="rememberCheck">
-                            Remember me
-                        </label>
-                    </div>
-                </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
-                <p class="small mt-3"><a class="text-black" asp-action="Register">Register</a> if you don't have an account yet.</p>
+                <p class="small mt-3">Don't you have an account? <a class="text-black" asp-action="Register">Register</a></p>
             </form>
         </div>
     </div>

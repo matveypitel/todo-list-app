@@ -6,30 +6,28 @@
     var todoListId = TempData["TodoListId"] as int?;
 }
 
-<div class="container">
-    <h2>@ViewData["Title"]</h2>
-    <a class="btn btn-outline-success" asp-route-todoListId="@todoListId" asp-action="Add">Share to new user</a>
-    <div class="row">
-         @if (Model.Items.Any(u => u.Role != TodoListApp.Models.Enums.TodoListRole.Owner))
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<a class="btn btn-sm btn-outline-success mb-2" asp-route-todoListId="@todoListId" asp-action="Add"><i class="fa-solid fa-user-plus"></i> Share</a>
+<div class="row">
+    @if (Model.Items.Any(u => u.Role != TodoListApp.Models.Enums.TodoListRole.Owner))
+    {
+        foreach (var user in Model.Items.Where(u => u.Role != TodoListApp.Models.Enums.TodoListRole.Owner))
         {
-            foreach (var user in Model.Items.Where(u => u.Role != TodoListApp.Models.Enums.TodoListRole.Owner))
-            {
-                <partial name="_ShareUserSummary" model="user" />
-            }
+            <partial name="_ShareUserSummary" model="user" />
         }
-        else
-        {
-            <p class="text-muted">No shared users found.</p>
-        }
-    </div>
-    <a class="btn btn-outline-secondary mt-4"
-       asp-controller="TodoList"
-       asp-action="Index"
-       asp-route-todoListId="@todoListId">
-        Back to list
-    </a>
+    }
+    else
+    {
+        <p class="text-muted">No shared users found.</p>
+    }
 </div>
-
+<a class="btn btn-sm btn-outline-secondary mt-4"
+   asp-controller="TodoList"
+   asp-action="Index"
+   asp-route-todoListId="@todoListId">
+    <i class="fa-solid fa-angles-left"></i>
+    Back to list
+</a>
 <div class="pagination-container">
     <div class="pagination" is-todoList-user-model="" page-model="@Model" page-action="Index"></div>
 </div>

@@ -4,14 +4,19 @@
 
 @{
     ViewData["Title"] = "Details";
+    HttpContext httpContext = this.Context;
 }
 
 <div class="container mt-5">
-    <div class="card shadow-lg">
+    <div class="card shadow-lg @(Model.IsOverDue ? "border-danger" : "")">
         <div class="card-header bg-info text-white">
             <h2 class="mb-0">@Model.Title</h2>
         </div>
         <div class="card-body bg-light">
+            @if (Model.IsOverDue)
+            {
+                <h6 class="text-danger"><i class="fa-solid fa-exclamation"></i> Task is overdue</h6>
+            }
             <p class="card-text">@(Model.Description ?? "No description")</p>
             <p class="card-text mt-2"><strong>Created at</strong> @Model.CreatedDate.ToString("dd MMM yyyy")</p>
             <p class="card-text"><strong>Due on</strong> @(Model.DueDate.HasValue ? Model.DueDate.Value.ToString("dd MMM yyyy") : "No due date")</p>
@@ -31,11 +36,20 @@
             }
             <i class="fa-solid fa-people-arrows"></i>
             Assigned to @(Model.AssignedTo == this.User.Identity!.Name ? "Me" : Model.AssignedTo)
-            <div>
+            <div class="mt-2">
+                <text><strong>Tags</strong></text>
                 @foreach (var tag in Model.Tags)
                 {
-                    <span class="badge bg-warning">@tag.Label</span>
+                    <span class="badge bg-info">
+                        @tag.Label
+                        <a class="text-dark" asp-action="DeleteTag" asp-route-todoListId="@Model.TodoListId" asp-route-taskId="@Model.Id" asp-route-tagId="@tag.Id" title="Delete Tag">
+                            <i class="fa-solid fa-circle-xmark" style="color: #cf1717;"></i>
+                        </a>
+                    </span>
                 }
+            </div>
+            <div>
+                <a class="btn btn-sm btn-outline-success mt-2" asp-action="AddTag" asp-route-todoListId="@Model.TodoListId" asp-route-taskId="@Model.Id">Add new tag</a>
             </div>
         </div>
     </div>

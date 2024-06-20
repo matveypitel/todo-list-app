@@ -7,42 +7,53 @@
     var user = Model.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name) !;
 }
 
-<div class="col mt-2">
-    <div class="card h-100 mt-4 shadow">
-        <div class="card-body d-flex flex-column \">
-            <h5 class="card-text" style="height:70px">
-                <i class="fa-brands fa-readme"></i>
-                @Model.Title
-            </h5>
-            <div class="dropdown-divider"></div>
-            <p class="card-text flex-grow-1">@(Model.Description == null ? "No description" : Model.Description)</p>
-            <div class="d-flex justify-content-between">
-                <a class="btn btn-primary"
-                   asp-controller="Task"
-                   asp-action="Index"
-                   asp-route-todoListId="@Model.Id">
-                    <i class="fa-solid fa-arrow-right"></i>
-                    Go to tasks
-                </a>
-                @if (user.Role == TodoListRole.Owner)
-                {
-                    <a class="btn btn-outline-info" asp-controller="ShareUser" asp-action="Index" asp-route-todoListId="@Model.Id">Share to users</a>
-                    <div class="btn-group">
-                        <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </a>
-                        <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@Model.Id">
-                            <i class="fa-solid fa-trash"></i>
-                        </a>
-                    </div>
-                }
-            </div>
-        </div>
+
+<div class="card shadow mt-2 border-2 @(user.Role != TodoListRole.Owner ? "border-success" : "")">
+    <div class="card-body d-flex flex-column">
         @if (user.Role != TodoListRole.Owner)
         {
-            <div class="card-footer">
-                <i class="fa-solid fa-user"></i> This to-do list shared by @owner!.UserName (@user.Role)
-            </div>
+            <p class="card-text fs-6 text-success">@user.Role | <i class="fa-solid fa-person-chalkboard"></i> Shared by @owner!.UserName</p>
         }
+        <h6 class="card-text">
+            @Model.Title
+        </h6>
+        <p class="card-text flex-grow-1 small me-5">@(Model.Description == null ? "No description" : Model.Description)</p>
+        <div class="d-flex justify-content-between">
+            <a class="btn btn-sm btn-primary"
+               asp-controller="Task"
+               asp-action="Index"
+               asp-route-todoListId="@Model.Id">
+                <i class="fa-solid fa-list-check"></i>
+                Tasks
+            </a>
+            @if (user.Role == TodoListRole.Owner)
+            {
+            <div class="btn-group">
+                <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item small" asp-controller="ShareUser" asp-action="Index" asp-route-todoListId="@Model.Id">
+                            <i class="fa-solid fa-share"></i>
+                            Share
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item small" asp-action="Edit" asp-route-id="@Model.Id">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                            Edit
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item small" asp-action="Delete" asp-route-id="@Model.Id">
+                            <i class="fa-solid fa-trash" style="color: #c44545;"></i>
+                            Delete
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            }
+        </div>
     </div>
 </div>

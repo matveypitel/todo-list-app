@@ -1,0 +1,30 @@
+@using TodoListApp.Models.DTOs
+@model PagedModel<TagModel>
+
+@{
+    ViewData["Title"] = "Tags";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<div class="row">
+    @foreach (var tag in Model.Items ?? Enumerable.Empty<TagModel>())
+    {
+        <div class="col-md-4 mt-2">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h6 class="card-title">@tag.Label</h6>
+                    <a class="btn btn-sm btn-primary" asp-action="TasksWithTag" asp-route-tag="@tag.Label">
+                        <i class="fa-solid fa-list-check"></i>
+                        Tasks
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+<div class="pagination-container">
+    <div class="pagination" is-tag-model="" page-model="@Model" page-action="Index"></div>
+</div>

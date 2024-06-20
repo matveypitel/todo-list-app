@@ -8,9 +8,10 @@
     ViewData["Title"] = "Tasks";
 }
 
-<h2>Tasks</h2>
-<a class="btn btn-outline-success col-1 mt-2" asp-route-todoListId="@todoListId" asp-action="Create">Create new</a>
-
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<a class="btn btn-sm btn-success mb-2" asp-route-todoListId="@todoListId" asp-action="Create">
+    <i class="fa-solid fa-plus"></i> New task
+</a>
 @foreach (var task in Model.Items ?? Enumerable.Empty<TaskItemModel>())
 {
     <partial name="_TaskSummary" model="task" />

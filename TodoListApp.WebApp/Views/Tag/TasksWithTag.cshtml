@@ -1,0 +1,20 @@
+@using TodoListApp.Models.DTOs
+@using TodoListApp.Models.Enums
+@model PagedModel<TaskItemModel>
+
+@{
+    ViewData["Title"] = "Tasks with Tag";
+    HttpRequest thisRequest = Context.Request;
+    var tag = thisRequest.Query["tag"].ToString();
+}
+
+<h2>Tasks with Tag: @tag</h2>
+
+@foreach (var task in Model.Items ?? Enumerable.Empty<TaskItemModel>())
+{
+    <partial name="_TaskSummary" model="task" />
+}
+
+<div class="pagination-container">
+    <div class="pagination" is-task-model="" page-model="@Model" page-action="TasksWithTag" page-route-tag="@tag"></div>
+</div>
