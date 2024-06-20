@@ -1,5 +1,4 @@
 using TodoListApp.Models.DTOs;
-using TodoListApp.Models.Enums;
 using TodoListApp.WebApi.Data.Entities;
 
 namespace TodoListApp.WebApi.Interfaces;

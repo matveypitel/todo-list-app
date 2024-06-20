@@ -30,6 +30,11 @@ public class TagController : ControllerBase
 
         var tags = await this.tagDatabaseService.GetPagedListOfAllAsync(userName, page, pageSize);
 
+        if (tags.TotalCount != 0 && page > (int)Math.Ceiling((double)tags.TotalCount / pageSize))
+        {
+            return this.BadRequest();
+        }
+
         return this.Ok(this.mapper.Map<PagedModel<TagModel>>(tags));
     }
 
@@ -43,6 +48,11 @@ public class TagController : ControllerBase
         var userName = this.GetUserName();
 
         var tasks = await this.taskDatabaseService.GetPagedListOfTasksWithTagAsync(userName, tag, page, pageSize);
+
+        if (tasks.TotalCount != 0 && page > (int)Math.Ceiling((double)tasks.TotalCount / pageSize))
+        {
+            return this.BadRequest();
+        }
 
         return this.Ok(this.mapper.Map<PagedModel<TaskItemModel>>(tasks));
     }

@@ -8,7 +8,7 @@ public class TodoListEntity
 
     public string? Description { get; set; }
 
-    public ICollection<TaskItemEntity> Tasks { get; } = new List<TaskItemEntity>();
+    public ICollection<TaskItemEntity> Tasks { get; init; } = new List<TaskItemEntity>();
 
-    public ICollection<TodoListUserEntity> Users { get; } = new List<TodoListUserEntity>();
+    public ICollection<TodoListUserEntity> Users { get; init; } = new List<TodoListUserEntity>();
 }

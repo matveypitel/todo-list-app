@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
 using TodoListApp.Models.Enums;
 using TodoListApp.WebApi.Data;
@@ -20,6 +19,8 @@ public class TodoListRepository : ITodoListRepository
     public async Task<TodoListEntity> CreateAsync(TodoListEntity todoListEntity, string userName)
     {
         var createdEntity = await this.context.TodoLists.AddAsync(todoListEntity);
+
+        _ = await this.context.SaveChangesAsync();
 
         var todoListUser = new TodoListUserEntity
         {

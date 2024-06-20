@@ -20,9 +20,9 @@ public class TagRepository : ITagRepository
     {
         ArgumentNullException.ThrowIfNull(tagEntity);
 
-        if (!await this.UserHasPermissionAsync(taskId, userName))
+        if (!await this.UserHasOwnerOrEditorPermissionAsync(taskId, userName))
         {
-            throw new UnauthorizedAccessException("User does not have permission to update tags.");
+            throw new UnauthorizedAccessException("User does not have permission to add tags.");
         }
 
         var taskEntity = await this.context.Tasks
@@ -33,7 +33,7 @@ public class TagRepository : ITagRepository
         var existingTagInTask = taskEntity.Tags.FirstOrDefault(t => t.Label == tagEntity.Label);
         if (existingTagInTask != null)
         {
-            throw new InvalidOperationException($"Tag (label = {tagEntity.Label}) already exists.");
+            throw new DbUpdateException($"Tag (label = {tagEntity.Label}) already exists.");
         }
 
         taskEntity.Tags.Add(tagEntity);
@@ -44,9 +44,9 @@ public class TagRepository : ITagRepository
 
     public async Task DeleteAsync(int id, int taskId, string userName)
     {
-        if (!await this.UserHasPermissionAsync(taskId, userName))
+        if (!await this.UserHasOwnerOrEditorPermissionAsync(taskId, userName))
         {
-            throw new UnauthorizedAccessException("User does not have permission to update tags.");
+            throw new UnauthorizedAccessException("User does not have permission to delete tags.");
         }
 
         var taskEntity = await this.context.Tasks
@@ -63,13 +63,17 @@ public class TagRepository : ITagRepository
         _ = await this.context.SaveChangesAsync();
     }
 
-    public async Task<TagEntity> GetByIdAsync(int id, int taskId)
+    public async Task<TagEntity> GetByIdAsync(int id, int taskId, string userName)
     {
+        if (!await this.UserHasOwnerOrEditorPermissionAsync(taskId, userName))
+        {
+            throw new UnauthorizedAccessException("User does not have permission to access this tag.");
+        }
+
         await this.TagTaskExistsAsync(taskId);
 
         return await this.context.Tags
             .Where(t => t.Tasks.Any(task => task.Id == taskId) && t.Id == id)
-            .Include(t => t.Tasks)
             .FirstOrDefaultAsync()
             ?? throw new KeyNotFoundException($"Tag (id = {id}) not found.");
     }
@@ -110,7 +114,7 @@ public class TagRepository : ITagRepository
         };
     }
 
-    public async Task TagTaskExistsAsync(int taskId)
+    private async Task TagTaskExistsAsync(int taskId)
     {
         _ = await this.context.Tasks
             .AsNoTracking()
@@ -118,7 +122,7 @@ public class TagRepository : ITagRepository
             ?? throw new KeyNotFoundException($"Task (id = {taskId}) not found.");
     }
 
-    private async Task<bool> UserHasPermissionAsync(int taskId, string userName)
+    private async Task<bool> UserHasOwnerOrEditorPermissionAsync(int taskId, string userName)
     {
         var task = await this.context.Tasks
             .Include(t => t.TodoList)

@@ -29,9 +29,9 @@ public class TagDatabaseService : ITagDatabaseService
         return this.mapper.Map<PagedModel<Tag>>(tags);
     }
 
-    public async Task<Tag> GetTagByIdAsync(int id, int taskId)
+    public async Task<Tag> GetTagByIdAsync(int id, int taskId, string userName)
     {
-        var tag = await this.repository.GetByIdAsync(id, taskId);
+        var tag = await this.repository.GetByIdAsync(id, taskId, userName);
         return this.mapper.Map<Tag>(tag);
     }
 

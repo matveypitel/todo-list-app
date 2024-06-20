@@ -2,6 +2,7 @@ using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
 using TodoListApp.WebApi.Interfaces;
 
@@ -27,6 +28,11 @@ public class ShareUserController : ControllerBase
         var userName = this.GetUserName();
 
         var users = await this.databaseService.GetPagedTodoListUsersListAsync(todoListId, userName, page, pageSize);
+
+        if (users.TotalCount != 0 && page > (int)Math.Ceiling((double)users.TotalCount / pageSize))
+        {
+            return this.BadRequest();
+        }
 
         return this.Ok(this.mapper.Map<PagedModel<TodoListUserModel>>(users));
     }

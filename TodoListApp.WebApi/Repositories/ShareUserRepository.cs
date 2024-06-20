@@ -53,7 +53,7 @@ public class ShareUserRepository : IShareUserRepository
 
         if (await this.context.TodoListsUsers.AnyAsync(tlu => tlu.TodoListId == todoListId && tlu.UserName == userName))
         {
-            throw new InvalidOperationException("The user is already associated with the TodoList.");
+            throw new DbUpdateException("The user is already associated with the TodoList.");
         }
 
         var todoListUser = new TodoListUserEntity

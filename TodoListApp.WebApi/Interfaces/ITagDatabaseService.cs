@@ -9,7 +9,7 @@ public interface ITagDatabaseService
 
     Task<PagedModel<Tag>> GetPagedListOfAllAsync(string userName, int page, int pageSize);
 
-    Task<Tag> GetTagByIdAsync(int id, int taskId);
+    Task<Tag> GetTagByIdAsync(int id, int taskId, string userName);
 
     Task DeleteTagAsync(int id, int taskId, string userName);
 }
