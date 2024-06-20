@@ -16,6 +16,7 @@ public class BaseAppMappingProfile : Profile
         _ = this.CreateMap<TodoListUser, TodoListUserModel>().ReverseMap();
 
         _ = this.CreateMap<TaskItem, TaskItemWebApiModel>().ReverseMap()
+            .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments))
             .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(
                 tag => new Tag
                 {
@@ -23,6 +24,7 @@ public class BaseAppMappingProfile : Profile
                     Label = tag.Label,
                 })));
         _ = this.CreateMap<TaskItem, TaskItemModel>().ReverseMap()
+            .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments))
             .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(
                 tag => new Tag
                 {
@@ -48,5 +50,8 @@ public class BaseAppMappingProfile : Profile
                     Title = task.Title,
                     Description = task.Description,
                 })));
+
+        _ = this.CreateMap<Comment, CommentModel>().ReverseMap();
+        _ = this.CreateMap<Comment, CommentWebApiModel>().ReverseMap();
     }
 }

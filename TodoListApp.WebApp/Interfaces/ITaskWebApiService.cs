@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using TodoListApp.Models.Domains;
 using TodoListApp.Models.DTOs;
 using TodoListApp.Models.Enums;
@@ -9,6 +10,8 @@ public interface ITaskWebApiService
     Task<TodoListRole> GetUserRoleInTodoListAsync(string token, int todoListId);
 
     Task<PagedModel<TaskItem>> GetPagedTasksAsync(string token, int todoListId, int page, int pageSize);
+
+    Task<PagedModel<TaskItem>> GetPagedSearchedTaskAsync(string token, int page, int pageSize, string? title, string? creationDate, string? dueDate);
 
     Task<TaskItem> GetTaskByIdAsync(string token, int id, int todoListId);
 

@@ -1,3 +1,4 @@
+using TodoListApp.Models.DTOs;
 using TodoListApp.Models.Enums;
 
 namespace TodoListApp.WebApp.Models;
@@ -27,4 +28,6 @@ public class TaskItemWebApiModel
     public bool IsOverDue => this.DueDate.HasValue && this.DueDate.Value.Date < DateTime.Now.Date;
 
     public ICollection<TagWebApiModel> Tags { get; init; } = new List<TagWebApiModel>();
+
+    public ICollection<CommentModel> Comments { get; init; } = new List<CommentModel>();
 }

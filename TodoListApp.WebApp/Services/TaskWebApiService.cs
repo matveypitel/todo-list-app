@@ -89,6 +89,18 @@ public class TaskWebApiService : ITaskWebApiService
         return this.mapper.Map<PagedModel<TaskItem>>(content);
     }
 
+    public async Task<PagedModel<TaskItem>> GetPagedSearchedTaskAsync(string token, int page, int pageSize, string? title, string? creationDate, string? dueDate)
+    {
+        TokenUtility.AddAuthorizationHeader(this.httpClient, token);
+
+        var response = await this.httpClient.GetAsync(new Uri($"api/search/tasks?page={page}&pageSize={pageSize}&title={title}&creationDate={creationDate}&dueDate={dueDate}", UriKind.Relative));
+        _ = response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadFromJsonAsync<PagedModel<TaskItemWebApiModel>>();
+
+        return this.mapper.Map<PagedModel<TaskItem>>(content);
+    }
+
     public async Task<TaskItem> GetTaskByIdAsync(string token, int id, int todoListId)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);

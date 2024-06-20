@@ -20,5 +20,8 @@ public class PagedAppMappingProfile : Profile
 
         _ = this.CreateMap<PagedModel<Tag>, PagedModel<TagWebApiModel>>().ReverseMap();
         _ = this.CreateMap<PagedModel<Tag>, PagedModel<TagModel>>().ReverseMap();
+
+        _ = this.CreateMap<PagedModel<Comment>, PagedModel<CommentModel>>().ReverseMap();
+        _ = this.CreateMap<PagedModel<Comment>, PagedModel<CommentWebApiModel>>().ReverseMap();
     }
 }
