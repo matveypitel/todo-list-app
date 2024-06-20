@@ -36,9 +36,14 @@ builder.Services.AddHttpClient<ITaskWebApiService, TaskWebApiService>(client =>
     });
 
 builder.Services.AddHttpClient<IShareUserWebApiService, ShareUserWebApiService>(client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
-});
+    {
+        client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
+    });
+
+builder.Services.AddHttpClient<ITagWebApiService, TagWebApiService>(client =>
+    {
+        client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
+    });
 
 builder.Services.AddAuthentication(options =>
     {

@@ -15,14 +15,16 @@ namespace TodoListApp.WebApp.Controllers;
 public class TaskController : Controller
 {
     private readonly ITaskWebApiService apiService;
+    private readonly ITagWebApiService tagApiService;
     private readonly IMapper mapper;
     private readonly UserManager<IdentityUser> userManager;
 
-    public TaskController(ITaskWebApiService apiService, IMapper mapper, UserManager<IdentityUser> userManager)
+    public TaskController(ITaskWebApiService apiService, IMapper mapper, UserManager<IdentityUser> userManager, ITagWebApiService tagApiService)
     {
         this.apiService = apiService;
         this.mapper = mapper;
         this.userManager = userManager;
+        this.tagApiService = tagApiService;
     }
 
     public int PageSize { get; set; } = 5;
@@ -49,6 +51,10 @@ public class TaskController : Controller
         var token = TokenUtility.GetToken(this.Request);
 
         var task = await this.apiService.GetTaskByIdAsync(token, id, todoListId);
+
+        var userRole = await this.apiService.GetUserRoleInTodoListAsync(token, todoListId);
+
+        this.TempData["UserRole"] = userRole;
 
         return this.View(this.mapper.Map<TaskItemModel>(task));
     }
@@ -133,5 +139,57 @@ public class TaskController : Controller
         await this.apiService.DeleteTaskAsync(token, id, todoListId);
 
         return this.RedirectToAction(nameof(this.Index), new { todoListId });
+    }
+
+    [HttpGet]
+    [Route("{taskId}/tags/add")]
+    public IActionResult AddTag(int todoListId, int taskId)
+    {
+        this.TempData["TaskId"] = taskId;
+        this.TempData["TodoListId"] = todoListId;
+
+        return this.View(new TagModel());
+    }
+
+    [HttpPost]
+    [Route("{taskId}/tags/add")]
+    public async Task<IActionResult> AddTag(int todoListId, int taskId, TagModel model)
+    {
+        var token = TokenUtility.GetToken(this.Request);
+
+        if (!this.ModelState.IsValid)
+        {
+            return this.View(model);
+        }
+
+        var newTag = this.mapper.Map<Tag>(model);
+
+        _ = await this.tagApiService.AddTagToTaskAsync(token, todoListId, taskId, newTag);
+
+        return this.RedirectToAction(nameof(this.Details), new { todoListId, id = taskId });
+    }
+
+    [HttpGet]
+    [Route("{taskId}/tags/delete/{tagId}")]
+    public async Task<IActionResult> DeleteTag(int todoListId, int taskId, int tagId)
+    {
+        var token = TokenUtility.GetToken(this.Request);
+        this.TempData["TaskId"] = taskId;
+        this.TempData["TodoListId"] = todoListId;
+
+        var tag = await this.tagApiService.GetTagByIdAsync(token, todoListId, taskId, tagId);
+
+        return this.View(this.mapper.Map<TagModel>(tag));
+    }
+
+    [HttpPost]
+    [Route("{taskId}/tags/deleteConfirmed")]
+    public async Task<IActionResult> DeleteTagConfirmed(int todoListId, int taskId, int tagId)
+    {
+        var token = TokenUtility.GetToken(this.Request);
+
+        await this.tagApiService.DeleteTagAsync(token, todoListId, taskId, tagId);
+
+        return this.RedirectToAction(nameof(this.Details), new { todoListId, id = taskId });
     }
 }

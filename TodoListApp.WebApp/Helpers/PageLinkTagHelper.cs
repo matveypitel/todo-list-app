@@ -35,7 +35,7 @@ public class PageLinkTagHelper<T> : TagHelper
             output.Attributes.SetAttribute("class", "pagination-container");
 
             TagBuilder tag = new TagBuilder("ul");
-            tag.AddCssClass("pagination pagination justify-content-center mt-5");
+            tag.AddCssClass("pagination pagination-sm justify-content-center mt-2");
 
             for (int i = 1; i <= this.PageModel.TotalPages; i++)
             {

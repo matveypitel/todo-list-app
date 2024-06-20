@@ -21,7 +21,7 @@ public class TodoListController : Controller
         this.mapper = mapper;
     }
 
-    public int PageSize { get; set; } = 8;
+    public int PageSize { get; set; } = 6;
 
     [HttpGet]
     public async Task<IActionResult> Index([FromQuery] int page = 1)
