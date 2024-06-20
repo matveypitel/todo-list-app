@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using TodoListApp.Models.DTOs;
 using TodoListApp.Models.Enums;
@@ -105,7 +106,12 @@ public class TaskRepository : ITaskRepository
             .Take(pageSize)
             .AsNoTracking();
 
-        if (!string.IsNullOrEmpty(status))
+        if (string.IsNullOrEmpty(status))
+        {
+            tasks = tasks.Where(t => t.Status != TaskItemStatus.Completed);
+        }
+
+        if (!string.IsNullOrEmpty(status) && status != "All")
         {
             tasks = tasks.Where(t => t.Status == Enum.Parse<TaskItemStatus>(status, true));
         }
@@ -123,7 +129,6 @@ public class TaskRepository : ITaskRepository
         }
 
         var totalCount = await tasks.CountAsync();
-
         var listOfTasks = await tasks.ToListAsync();
 
         var pagedModel = new PagedModel<TaskItemEntity>
@@ -137,7 +142,7 @@ public class TaskRepository : ITaskRepository
         return pagedModel;
     }
 
-    public async Task<PagedModel<TaskItemEntity>> GetPagedListOfSearchResultsAsync(string userName, string? title, DateTime? creationDate, DateTime? dueDate, int page, int pageSize)
+    public async Task<PagedModel<TaskItemEntity>> GetPagedListOfSearchResultsAsync(string userName, string? title, string? creationDate, string? dueDate, int page, int pageSize)
     {
         var accessibleTodoListIds = await this.context.TodoLists
         .Where(tl => tl.Users.Any(u => u.UserName == userName))
@@ -153,14 +158,14 @@ public class TaskRepository : ITaskRepository
             tasksQuery = tasksQuery.Where(t => t.Title.Contains(title));
         }
 
-        if (creationDate.HasValue)
+        if (!string.IsNullOrEmpty(creationDate))
         {
-            tasksQuery = tasksQuery.Where(t => t.CreatedDate.Date == creationDate.Value.Date);
+            tasksQuery = tasksQuery.Where(t => t.CreatedDate.Date.ToString(CultureInfo.InvariantCulture) == creationDate);
         }
 
-        if (dueDate.HasValue)
+        if (!string.IsNullOrEmpty(dueDate))
         {
-            tasksQuery = tasksQuery.Where(t => t.DueDate.HasValue && t.DueDate.Value.Date == dueDate.Value.Date);
+            tasksQuery = tasksQuery.Where(t => t.DueDate.HasValue && t.DueDate.Value.ToString(CultureInfo.InvariantCulture) == dueDate);
         }
 
         var tasks = await tasksQuery

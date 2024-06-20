@@ -16,13 +16,15 @@ public class TaskController : ControllerBase
 {
     private readonly ITaskDatabaseService databaseService;
     private readonly ITagDatabaseService tagDatabaseService;
+    private readonly ICommentDatabaseService commentDatabaseService;
     private readonly IMapper mapper;
 
-    public TaskController(ITaskDatabaseService databaseService, IMapper mapper, ITagDatabaseService tagDatabaseService)
+    public TaskController(ITaskDatabaseService databaseService, IMapper mapper, ITagDatabaseService tagDatabaseService, ICommentDatabaseService commentDatabaseService)
     {
         this.databaseService = databaseService;
         this.mapper = mapper;
         this.tagDatabaseService = tagDatabaseService;
+        this.commentDatabaseService = commentDatabaseService;
     }
 
     [HttpPost]
@@ -53,6 +55,11 @@ public class TaskController : ControllerBase
         var userName = this.GetUserName();
 
         var taskItems = await this.databaseService.GetPagedListOfTasksAsync(todoListId, userName, page, pageSize);
+
+        if (taskItems.TotalCount != 0 && page > (int)Math.Ceiling((double)taskItems.TotalCount / pageSize))
+        {
+            return this.BadRequest();
+        }
 
         return this.Ok(this.mapper.Map<PagedModel<TaskItemModel>>(taskItems));
     }
@@ -140,6 +147,89 @@ public class TaskController : ControllerBase
         var role = await this.databaseService.GetUserRoleInTodoListAsync(todoListId, userName);
 
         return this.Ok(role);
+    }
+
+    [HttpGet]
+    [Route("{id}/tags/{tagId}")]
+    public async Task<ActionResult<TagModel>> GetTagById([FromRoute] int id, [FromRoute] int tagId)
+    {
+        var userName = this.GetUserName();
+
+        var tag = await this.tagDatabaseService.GetTagByIdAsync(tagId, id, userName);
+
+        if (tag == null)
+        {
+            return this.NotFound();
+        }
+
+        return this.Ok(this.mapper.Map<TagModel>(tag));
+    }
+
+    [HttpGet]
+    [Route("{id}/comments")]
+    public async Task<ActionResult<PagedModel<CommentModel>>> GetCommentsOfTaskItem(
+        [FromRoute] int id,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
+    {
+        var comments = await this.commentDatabaseService.GetPagedListOfCommentsAsync(id, page, pageSize);
+
+        if (comments.TotalCount != 0 && page > (int)Math.Ceiling((double)comments.TotalCount / pageSize))
+        {
+            return this.BadRequest();
+        }
+
+        return this.Ok(this.mapper.Map<PagedModel<CommentModel>>(comments));
+    }
+
+    [HttpGet]
+    [Route("{id}/comments/{commentId}")]
+    public async Task<ActionResult<CommentModel>> GetCommentOfTaskItem([FromRoute] int id, [FromRoute] int commentId)
+    {
+        var comment = await this.commentDatabaseService.GetCommentByIdAsync(commentId, id);
+
+        return this.Ok(this.mapper.Map<CommentModel>(comment));
+    }
+
+    [HttpPost]
+    [Route("{id}/comments")]
+    public async Task<ActionResult<CommentModel>> AddCommentToTaskItem([FromRoute] int id, [FromBody] CommentModel commentModel)
+    {
+        var userName = this.GetUserName();
+
+        var comment = this.mapper.Map<Comment>(commentModel);
+        comment.Owner = userName;
+
+        var newComment = await this.commentDatabaseService.AddCommentToTaskAsync(comment, userName);
+
+        return this.CreatedAtAction(
+            nameof(this.GetCommentOfTaskItem),
+            new { id, commentId = newComment.Id },
+            this.mapper.Map<CommentModel>(newComment));
+    }
+
+    [HttpPut]
+    [Route("{id}/comments/{commentId}")]
+    public async Task<ActionResult> UpdateCommentOfTaskItem([FromRoute] int id, [FromRoute] int commentId, [FromBody] CommentModel commentModel)
+    {
+        var userName = this.GetUserName();
+
+        var comment = this.mapper.Map<Comment>(commentModel);
+
+        await this.commentDatabaseService.UpdateCommentAsync(commentId, id, comment, userName);
+
+        return this.NoContent();
+    }
+
+    [HttpDelete]
+    [Route("{id}/comments/{commentId}")]
+    public async Task<ActionResult> DeleteCommentOfTaskItem([FromRoute] int id, [FromRoute] int commentId)
+    {
+        var userName = this.GetUserName();
+
+        await this.commentDatabaseService.DeleteCommentAsync(commentId, id, userName);
+
+        return this.NoContent();
     }
 
     private string GetUserName()

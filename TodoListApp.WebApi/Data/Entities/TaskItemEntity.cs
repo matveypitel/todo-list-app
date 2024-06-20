@@ -29,4 +29,6 @@ public class TaskItemEntity
     public bool IsOverDue { get; set; }
 
     public ICollection<TagEntity> Tags { get; init; } = new List<TagEntity>();
+
+    public ICollection<CommentEntity> Comments { get; init; } = new List<CommentEntity>();
 }

@@ -12,6 +12,7 @@ public static class ServiceCollectionExtension
         _ = services.AddScoped<IShareUserRepository, ShareUserRepository>();
         _ = services.AddScoped<ITaskRepository, TaskRepository>();
         _ = services.AddScoped<ITagRepository, TagRepository>();
+        _ = services.AddScoped<ICommentRepository, CommentRepository>();
     }
 
     public static void AddDatabaseServices(this IServiceCollection services)
@@ -20,5 +21,6 @@ public static class ServiceCollectionExtension
         _ = services.AddScoped<IShareUserDatabaseService, ShareUserDatabaseService>();
         _ = services.AddScoped<ITaskDatabaseService, TaskDatabaseService>();
         _ = services.AddScoped<ITagDatabaseService, TagDatabaseService>();
+        _ = services.AddScoped<ICommentDatabaseService, CommentDatabaseService>();
     }
 }

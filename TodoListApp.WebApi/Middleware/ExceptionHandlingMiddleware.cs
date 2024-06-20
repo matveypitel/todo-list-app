@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using TodoListApp.Models.DTOs;
 
 namespace TodoListApp.WebApi.Middleware;
@@ -57,13 +58,13 @@ public class ExceptionHandlingMiddleware
                 ex,
                 "Forbidden.");
         }
-        catch (InvalidOperationException ex)
+        catch (DbUpdateException ex)
         {
             await this.HandleExceptionAsync(
                 httpContext,
                 HttpStatusCode.Conflict,
                 ex,
-                "Invalid Operation.");
+                "Conflict operation.");
         }
         catch (Exception ex) when
             (ex is not KeyNotFoundException

@@ -18,7 +18,7 @@ public interface ITaskDatabaseService
 
     Task<PagedModel<TaskItem>> GetPagedListOfAssignedTasksToUserAsync(string userName, int page, int pageSize, string? status, string? sort);
 
-    Task<PagedModel<TaskItem>> GetPagedListOfTasksSearchResultsAsync(string userName, string? title, DateTime? creationDate, DateTime? dueDate, int page, int pageSize);
+    Task<PagedModel<TaskItem>> GetPagedListOfTasksSearchResultsAsync(string userName, string? title, string? creationDate, string? dueDate, int page, int pageSize);
 
     Task<TaskItem> CreateTaskAsync(TaskItem taskItem, string userName);
 

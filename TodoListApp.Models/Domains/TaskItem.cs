@@ -28,4 +28,6 @@ public class TaskItem
     public bool IsOverDue => this.DueDate.HasValue && this.DueDate.Value.Date < DateTime.Now.Date;
 
     public ICollection<Tag> Tags { get; init; } = new List<Tag>();
+
+    public ICollection<Comment> Comments { get; init; } = new List<Comment>();
 }

@@ -21,6 +21,7 @@ public class BaseApiMappingProfile : Profile
 
         // Tasks mapping
         _ = this.CreateMap<TaskItem, TaskItemEntity>().ReverseMap()
+            .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments))
             .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(
                 tag => new Tag
                 {
@@ -28,6 +29,7 @@ public class BaseApiMappingProfile : Profile
                     Label = tag.Label,
                 })));
         _ = this.CreateMap<TaskItem, TaskItemModel>().ReverseMap()
+            .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments))
             .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(
                 tag => new Tag
                 {
@@ -58,5 +60,9 @@ public class BaseApiMappingProfile : Profile
                     Owner = task.Owner,
                     AssignedTo = task.AssignedTo,
                 })));
+
+        // Comments mapping
+        _ = this.CreateMap<Comment, CommentEntity>().ReverseMap();
+        _ = this.CreateMap<Comment, CommentModel>().ReverseMap();
     }
 }

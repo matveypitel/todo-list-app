@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TodoListApp.WebApi.Data;
 
@@ -11,9 +12,10 @@ using TodoListApp.WebApi.Data;
 namespace TodoListApp.WebApi.Migrations
 {
     [DbContext(typeof(TodoListDbContext))]
-    partial class TodoListDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240619141511_AddComments")]
+    partial class AddComments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,11 +47,10 @@ namespace TodoListApp.WebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Owner")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("TaskId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaskItemId")
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
@@ -182,7 +183,7 @@ namespace TodoListApp.WebApi.Migrations
             modelBuilder.Entity("TodoListApp.WebApi.Data.Entities.CommentEntity", b =>
                 {
                     b.HasOne("TodoListApp.WebApi.Data.Entities.TaskItemEntity", "Task")
-                        .WithMany("Comments")
+                        .WithMany()
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -210,11 +211,6 @@ namespace TodoListApp.WebApi.Migrations
                         .IsRequired();
 
                     b.Navigation("TodoList");
-                });
-
-            modelBuilder.Entity("TodoListApp.WebApi.Data.Entities.TaskItemEntity", b =>
-                {
-                    b.Navigation("Comments");
                 });
 
             modelBuilder.Entity("TodoListApp.WebApi.Data.Entities.TodoListEntity", b =>

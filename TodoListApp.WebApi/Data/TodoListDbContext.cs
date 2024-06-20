@@ -16,6 +16,8 @@ public class TodoListDbContext : DbContext
 
     public DbSet<TagEntity> Tags { get; set; } = null!;
 
+    public DbSet<CommentEntity> Comments { get; set; } = null!;
+
     public DbSet<TodoListUserEntity> TodoListsUsers { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
