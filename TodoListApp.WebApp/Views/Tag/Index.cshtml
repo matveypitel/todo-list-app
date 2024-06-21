@@ -5,23 +5,26 @@
     ViewData["Title"] = "Tags";
 }
 
-<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<h2 class="mb-4"><i class="fa-solid fa-tags"></i> @ViewData["Title"]</h2>
 
 <div class="row">
-    @foreach (var tag in Model.Items ?? Enumerable.Empty<TagModel>())
-    {
-        <div class="col-md-4 mt-2">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h6 class="card-title">@tag.Label</h6>
-                    <a class="btn btn-sm btn-primary" asp-action="TasksWithTag" asp-route-tag="@tag.Label">
-                        <i class="fa-solid fa-list-check"></i>
-                        Tasks
-                    </a>
+    <div class="d-flex flex-wrap">
+        @foreach (var tag in Model.Items ?? Enumerable.Empty<TagModel>())
+        {
+            <div class="col-md-4 mt-2 d-flex align-items-stretch">
+                <div class="card shadow w-100 ms-2">
+                    <div class="card-body">
+                        <h6 class="card-title">@tag.Label</h6>
+                        <a class="btn btn-sm btn-primary" asp-action="TasksWithTag" asp-route-tag="@tag.Label">
+                            <i class="fa-solid fa-list-check"></i>
+                            Tasks
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>
 
 

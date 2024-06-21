@@ -9,7 +9,8 @@
     var isFormSubmitted = !string.IsNullOrEmpty(title) || !string.IsNullOrEmpty(creationDate) || !string.IsNullOrEmpty(dueDate);
 }
 
-<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<h2 class="mb-4"><i class="fa-solid fa-lg fa-magnifying-glass-arrow-right"></i> @ViewData["Title"]</h2>
 <button class="btn btn-sm btn-primary mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#searchCollapse" aria-expanded="false" aria-controls="searchCollapse">
     Show filters
 </button>

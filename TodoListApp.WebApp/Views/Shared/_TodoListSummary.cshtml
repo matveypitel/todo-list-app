@@ -26,33 +26,36 @@
                 <i class="fa-solid fa-list-check"></i>
                 Tasks
             </a>
-            @if (user.Role == TodoListRole.Owner)
+            @if(user.Role != TodoListRole.Viewer)
             {
-            <div class="btn-group">
-                <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                </button>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a class="dropdown-item small" asp-controller="ShareUser" asp-action="Index" asp-route-todoListId="@Model.Id">
-                            <i class="fa-solid fa-share"></i>
-                            Share
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item small" asp-action="Edit" asp-route-id="@Model.Id">
-                            <i class="fa-regular fa-pen-to-square"></i>
-                            Edit
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item small" asp-action="Delete" asp-route-id="@Model.Id">
-                            <i class="fa-solid fa-trash" style="color: #c44545;"></i>
-                            Delete
-                        </a>
-                    </li>
-                </ul>
-            </div>
+                <div class="btn-group">
+                    <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item small" asp-action="Edit" asp-route-id="@Model.Id">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                                Edit
+                            </a>
+                        </li>
+                        @if (user.Role == TodoListRole.Owner)
+                        {
+                            <li>
+                                <a class="dropdown-item small" asp-action="Delete" asp-route-id="@Model.Id">
+                                    <i class="fa-solid fa-trash" style="color: #c44545;"></i>
+                                    Delete
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item small" asp-controller="ShareUser" asp-action="Index" asp-route-todoListId="@Model.Id">
+                                    <i class="fa-solid fa-share"></i>
+                                    Share
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
             }
         </div>
     </div>

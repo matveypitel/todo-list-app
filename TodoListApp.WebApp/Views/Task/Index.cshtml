@@ -8,13 +8,23 @@
     ViewData["Title"] = "Tasks";
 }
 
-<h2 class="mb-4">@ViewData["Title"]</h2>
-<a class="btn btn-sm btn-success mb-2" asp-route-todoListId="@todoListId" asp-action="Create">
-    <i class="fa-solid fa-plus"></i> New task
-</a>
-@foreach (var task in Model.Items ?? Enumerable.Empty<TaskItemModel>())
+<h2 class="mb-4"><i class="fa-solid fa-list-check"></i> @ViewData["Title"]</h2>
+@if (userRole == TodoListRole.Owner)
 {
-    <partial name="_TaskSummary" model="task" />
+    <a class="btn btn-sm btn-success mb-2" asp-route-todoListId="@todoListId" asp-action="Create">
+        <i class="fa-solid fa-plus"></i> New task
+    </a>
+}
+@if (!Model.Items.Any())
+{
+    <h5 class="text-center">No tasks found</h5>
+}
+else
+{
+    @foreach (var task in Model.Items)
+    {
+        <partial name="_TaskSummary" model="task" />
+    }
 }
 
 <div class="pagination-container">

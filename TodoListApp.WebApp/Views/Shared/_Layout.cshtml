@@ -32,25 +32,25 @@
                             <a class="nav-link text-dark
                             @(ViewContext.RouteData.Values["Controller"]!.ToString() == "TodoList"
                             && ViewContext.RouteData.Values["Action"]!.ToString() == "Index" ? "active" : "")"
-                            asp-controller="TodoList" asp-action="Index">List of to-do lists</a>
+                               asp-controller="TodoList" asp-action="Index"><i class="fa-solid fa-list-ul"></i> List of to-do lists</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark
                             @(ViewContext.RouteData.Values["Controller"]!.ToString() == "AssignedTask"
                             && ViewContext.RouteData.Values["Action"]!.ToString() == "Index" ? "active" : "")"
-                            asp-controller="AssignedTask" asp-action="Index">Assigned tasks</a>
+                               asp-controller="AssignedTask" asp-action="Index"><i class="fa-solid fa-people-arrows"></i> Assigned tasks</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark
                             @(ViewContext.RouteData.Values["Controller"]!.ToString() == "Tag"
                             && ViewContext.RouteData.Values["Action"]!.ToString() == "Index" ? "active" : "")
-                            " asp-controller="Tag" asp-action="Index">All tags</a>
+                            " asp-controller="Tag" asp-action="Index"><i class="fa-solid fa-tags"></i> All tags</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark
                             @(ViewContext.RouteData.Values["Controller"]!.ToString() == "Search"
                             && ViewContext.RouteData.Values["Action"]!.ToString() == "Index" ? "active" : "")"
-                            asp-controller="Search" asp-action="Index">Search for tasks</a>
+                               asp-controller="Search" asp-action="Index"><i class="fa-solid fa-magnifying-glass-arrow-right"></i> Search for tasks</a>
                         </li>
                     </ul>
                     <form class="d-flex">
