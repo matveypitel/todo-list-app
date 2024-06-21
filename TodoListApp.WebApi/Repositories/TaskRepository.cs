@@ -225,6 +225,11 @@ public class TaskRepository : ITaskRepository
         taskItemEntity.TodoListId = todoListId;
         taskItemEntity.Id = existingTask.Id;
 
+        if (taskItemEntity.DueDate == null)
+        {
+            taskItemEntity.DueDate = existingTask.DueDate;
+        }
+
         if (string.IsNullOrEmpty(taskItemEntity.AssignedTo))
         {
             taskItemEntity.AssignedTo = taskItemEntity.Owner;
