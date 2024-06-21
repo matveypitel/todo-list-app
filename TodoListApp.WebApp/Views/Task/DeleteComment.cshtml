@@ -1,0 +1,36 @@
+@model CommentModel
+
+@{
+    ViewData["Title"] = "Delete Comment";
+    var todoListId = TempData["TodoListId"] as int?;
+    var taskId = TempData["TaskId"] as int?;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">Delete Comment</div>
+                <div class="card-body">
+                    <h5>Are you sure you want to delete this comment?</h5>
+                    <table class="table">
+                        <tr>
+                            <th>Text</th>
+                            <td>@Model.Text</td>
+                        </tr>
+                    </table>
+
+                    <form asp-action="DeleteCommentConfirmed" asp-route-todoListId="@todoListId" asp-route-taskId="@taskId" asp-route-commentId="@Model.Id" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <button type="submit" class="btn btn-outline-danger">Delete</button>
+                        <a class="btn btn-outline-secondary" asp-action="Details" asp-route-todoListId="@todoListId" asp-route-id="@taskId">Back to Task</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

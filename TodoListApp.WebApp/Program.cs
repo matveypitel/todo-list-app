@@ -45,6 +45,11 @@ builder.Services.AddHttpClient<ITagWebApiService, TagWebApiService>(client =>
         client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
     });
 
+builder.Services.AddHttpClient<ICommentWebApiService, CommentWebApiService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
+});
+
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

@@ -1,0 +1,53 @@
+@using TodoListApp.Models.Enums
+@model PagedModel<CommentModel>
+
+@{
+    ViewData["Title"] = "Comments";
+    var todoListId = TempData["TodoListId"] as int?;
+    var taskId = TempData["TaskId"] as int?;
+    var userRole = TempData["UserRole"] as TodoListRole?;
+}
+
+<div class="mt-4">
+    <h2><i class="fa-regular fa-comments"></i> All task's comments</h2>
+    <a class="btn btn-outline-success mt-2 mb-2" asp-action="AddComment" asp-route-todoListId="@todoListId" asp-route-taskId="@taskId"><i class="fa-solid fa-comment-medical"></i></a>
+    @foreach (var comment in Model.Items)
+    {
+        <div class="card mb-2 shadow-sm border-2" style="border-radius: 25px;">
+            <div class="card-body">
+                <p class="card-text">@comment.Text</p>
+                <footer class="blockquote-footer">@@@comment.Owner</footer>
+                @if (userRole == TodoListRole.Owner)
+                {
+                    <div class="btn-group">
+                        <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item small" asp-action="EditComment" asp-route-todoListId="@todoListId" asp-route-taskId="@taskId" asp-route-commentId="@comment.Id">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                    Edit
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item small" asp-action="DeleteComment" asp-route-todoListId="@todoListId" asp-route-taskId="@taskId" asp-route-commentId="@comment.Id">
+                                    <i class="fa-solid fa-trash" style="color: #c44545;"></i>
+                                    Delete
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    <a class="btn btn-sm btn-outline-secondary mb-2" asp-action="Details" asp-route-todoListId="@todoListId" asp-route-id="@taskId">
+        <i class="fa-solid fa-angles-left"></i>
+        Back to Task
+    </a>
+</div>
+
+<div class="pagination-container">
+    <div class="pagination" is-comment-model="" page-model="@Model" page-action="Comments"></div>
+</div>

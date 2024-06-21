@@ -1,0 +1,33 @@
+@model CommentModel
+
+@{
+    ViewData["Title"] = "Add Comment";
+    var todoListId = TempData["TodoListId"] as int?;
+    var taskId = TempData["TaskId"] as int?;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">Add Comment</div>
+                <div class="card-body">
+                    <form asp-action="AddComment" method="post">
+                        <input type="hidden" asp-for="@taskId" />
+                        <div class="form-group mb-3">
+                            <label asp-for="Text" class="form-label">Text comment</label>
+                            <textarea asp-for="Text" class="form-control"></textarea>
+                            <span asp-validation-for="Text" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Comment</button>
+                        <a class="btn btn-outline-secondary" asp-action="Details" asp-route-todoListId="@todoListId" asp-route-id="@taskId">Back to Task</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
