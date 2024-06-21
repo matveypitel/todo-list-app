@@ -10,6 +10,8 @@ public interface ITagWebApiService
     Task DeleteTagAsync(string token, int todoListId, int taskId, int tagId);
 
     Task<PagedModel<Tag>> GetAllTagsAsync(string token, int page, int pageSize);
+
     Task<Tag> GetTagByIdAsync(string token, int todoListId, int taskId, int tagId);
+
     Task<PagedModel<TaskItem>> GetTasksWithTag(string token, string tag, int page, int pageSize);
 }
