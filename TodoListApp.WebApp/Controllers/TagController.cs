@@ -20,7 +20,7 @@ public class TagController : Controller
         this.mapper = mapper;
     }
 
-    public int PageSize { get; set; } = 8;
+    public int PageSize { get; set; } = 18;
 
     [HttpGet]
     public async Task<IActionResult> Index([FromQuery] int page = 1)

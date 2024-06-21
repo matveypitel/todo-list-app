@@ -193,26 +193,41 @@ public class TaskController : ControllerBase
 
     [HttpPost]
     [Route("{id}/comments")]
-    public async Task<ActionResult<CommentModel>> AddCommentToTaskItem([FromRoute] int id, [FromBody] CommentModel commentModel)
+    public async Task<ActionResult<CommentModel>> AddCommentToTaskItem([FromRoute] int todoListId, [FromRoute] int id, [FromBody] CommentModel commentModel)
     {
         var userName = this.GetUserName();
 
+        var taskItem = await this.databaseService.GetTaskByIdAsync(id, todoListId, userName);
+
+        if (taskItem == null)
+        {
+            return this.NotFound();
+        }
+
         var comment = this.mapper.Map<Comment>(commentModel);
         comment.Owner = userName;
+        comment.TaskId = id;
 
         var newComment = await this.commentDatabaseService.AddCommentToTaskAsync(comment, userName);
 
         return this.CreatedAtAction(
-            nameof(this.GetCommentOfTaskItem),
-            new { id, commentId = newComment.Id },
+            nameof(this.GetTaskDetails),
+            new { id = taskItem.Id, todoListId = taskItem.TodoListId, },
             this.mapper.Map<CommentModel>(newComment));
     }
 
     [HttpPut]
     [Route("{id}/comments/{commentId}")]
-    public async Task<ActionResult> UpdateCommentOfTaskItem([FromRoute] int id, [FromRoute] int commentId, [FromBody] CommentModel commentModel)
+    public async Task<ActionResult> UpdateCommentOfTaskItem([FromRoute] int todoListId, [FromRoute] int id, [FromRoute] int commentId, [FromBody] CommentModel commentModel)
     {
         var userName = this.GetUserName();
+
+        var taskItem = await this.databaseService.GetTaskByIdAsync(id, todoListId, userName);
+
+        if (taskItem == null)
+        {
+            return this.NotFound();
+        }
 
         var comment = this.mapper.Map<Comment>(commentModel);
 
@@ -223,9 +238,16 @@ public class TaskController : ControllerBase
 
     [HttpDelete]
     [Route("{id}/comments/{commentId}")]
-    public async Task<ActionResult> DeleteCommentOfTaskItem([FromRoute] int id, [FromRoute] int commentId)
+    public async Task<ActionResult> DeleteCommentOfTaskItem([FromRoute] int todoListId, [FromRoute] int id, [FromRoute] int commentId)
     {
         var userName = this.GetUserName();
+
+        var taskItem = await this.databaseService.GetTaskByIdAsync(id, todoListId, userName);
+
+        if (taskItem == null)
+        {
+            return this.NotFound();
+        }
 
         await this.commentDatabaseService.DeleteCommentAsync(commentId, id, userName);
 

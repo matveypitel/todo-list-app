@@ -53,6 +53,7 @@ public class TaskRepository : ITaskRepository
 
         var tasks = await this.context.Tasks
             .AsNoTracking()
+            .OrderByDescending(t => t.CreatedDate)
             .Where(t => t.TodoListId == todoListId)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -83,6 +84,7 @@ public class TaskRepository : ITaskRepository
             .Where(task => task.Tags.Any(tag => tag.Label == tagLabel) && accessibleTodoListIds.Contains(task.TodoListId));
 
         var tasks = await tasksQuery
+            .OrderByDescending(t => t.CreatedDate)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -102,6 +104,7 @@ public class TaskRepository : ITaskRepository
     {
         var tasks = this.context.Tasks
             .Where(t => t.AssignedTo == userName)
+            .OrderByDescending(t => t.CreatedDate)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .AsNoTracking();
@@ -169,6 +172,7 @@ public class TaskRepository : ITaskRepository
         }
 
         var tasks = await tasksQuery
+            .OrderByDescending(t => t.CreatedDate)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -194,6 +198,7 @@ public class TaskRepository : ITaskRepository
         return await this.context.Tasks
             .Where(t => t.TodoListId == todoListId)
             .Include(t => t.Tags)
+            .Include(t => t.Comments)
             .FirstOrDefaultAsync(t => t.Id == id)
             ?? throw new KeyNotFoundException($"Task (id = {id}) not found.");
     }

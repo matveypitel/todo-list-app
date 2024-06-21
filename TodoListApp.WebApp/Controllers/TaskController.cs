@@ -16,15 +16,17 @@ public class TaskController : Controller
 {
     private readonly ITaskWebApiService apiService;
     private readonly ITagWebApiService tagApiService;
+    private readonly ICommentWebApiService commentApiService;
     private readonly IMapper mapper;
     private readonly UserManager<IdentityUser> userManager;
 
-    public TaskController(ITaskWebApiService apiService, IMapper mapper, UserManager<IdentityUser> userManager, ITagWebApiService tagApiService)
+    public TaskController(ITaskWebApiService apiService, IMapper mapper, ICommentWebApiService commentApiService, UserManager<IdentityUser> userManager, ITagWebApiService tagApiService)
     {
         this.apiService = apiService;
         this.mapper = mapper;
         this.userManager = userManager;
         this.tagApiService = tagApiService;
+        this.commentApiService = commentApiService;
     }
 
     public int PageSize { get; set; } = 5;
@@ -191,5 +193,104 @@ public class TaskController : Controller
         await this.tagApiService.DeleteTagAsync(token, todoListId, taskId, tagId);
 
         return this.RedirectToAction(nameof(this.Details), new { todoListId, id = taskId });
+    }
+
+    [HttpGet]
+    [Route("{taskId}/comments")]
+    public async Task<IActionResult> Comments(int todoListId, int taskId, [FromQuery] int page = 1)
+    {
+        var token = TokenUtility.GetToken(this.Request);
+        var userRole = await this.apiService.GetUserRoleInTodoListAsync(token, todoListId);
+
+        this.TempData["UserRole"] = userRole;
+        this.TempData["TaskId"] = taskId;
+        this.TempData["TodoListId"] = todoListId;
+
+        var pagedResult = await this.commentApiService.GetPagedListOfCommentsAsync(token, taskId, todoListId, page, this.PageSize);
+
+        return this.View(this.mapper.Map<PagedModel<CommentModel>>(pagedResult));
+    }
+
+    [HttpGet]
+    [Route("{taskId}/comments/add")]
+    public IActionResult AddComment(int todoListId, int taskId)
+    {
+        this.TempData["TaskId"] = taskId;
+        this.TempData["TodoListId"] = todoListId;
+
+        return this.View(new CommentModel());
+    }
+
+    [HttpPost]
+    [Route("{taskId}/comments/add")]
+    public async Task<IActionResult> AddComment(int todoListId, int taskId, CommentModel model)
+    {
+        var token = TokenUtility.GetToken(this.Request);
+
+        if (!this.ModelState.IsValid)
+        {
+            return this.View(model);
+        }
+
+        var newComment = this.mapper.Map<Comment>(model);
+
+        _ = await this.commentApiService.AddCommentToTaskAsync(token, todoListId, taskId, newComment);
+
+        return this.RedirectToAction(nameof(this.Details), new { todoListId, id = taskId });
+    }
+
+    [HttpGet]
+    [Route("{taskId}/comments/edit/{commentId}")]
+    public async Task<IActionResult> EditComment(int todoListId, int taskId, int commentId)
+    {
+        this.TempData["TaskId"] = taskId;
+        this.TempData["TodoListId"] = todoListId;
+        var token = TokenUtility.GetToken(this.Request);
+
+        var commentToEdit = await this.commentApiService.GetCommentByIdAsync(token, commentId, todoListId, taskId);
+
+        return this.View(this.mapper.Map<CommentModel>(commentToEdit));
+    }
+
+    [HttpPost]
+    [Route("{taskId}/comments/edit/{commentId}")]
+    public async Task<IActionResult> EditComment(int todoListId, int commentId, int taskId, CommentModel model)
+    {
+        var token = TokenUtility.GetToken(this.Request);
+
+        if (!this.ModelState.IsValid)
+        {
+            return this.View();
+        }
+
+        var updatedComment = this.mapper.Map<Comment>(model);
+
+        await this.commentApiService.UpdateCommentAsync(token, commentId, todoListId, taskId, updatedComment);
+
+        return this.RedirectToAction(nameof(this.Comments), new { todoListId, taskId });
+    }
+
+    [HttpGet]
+    [Route("{taskId}/comments/delete/{commentId}")]
+    public async Task<IActionResult> DeleteComment(int todoListId, int taskId, int commentId)
+    {
+        var token = TokenUtility.GetToken(this.Request);
+        this.TempData["TaskId"] = taskId;
+        this.TempData["TodoListId"] = todoListId;
+
+        var comment = await this.commentApiService.GetCommentByIdAsync(token, commentId, todoListId, taskId);
+
+        return this.View(this.mapper.Map<CommentModel>(comment));
+    }
+
+    [HttpPost]
+    [Route("{taskId}/comments/deleteConfirmed")]
+    public async Task<IActionResult> DeleteCommentConfirmed(int todoListId, int taskId, int commentId)
+    {
+        var token = TokenUtility.GetToken(this.Request);
+
+        await this.commentApiService.DeleteCommentAsync(token, commentId, todoListId, taskId);
+
+        return this.RedirectToAction(nameof(this.Comments), new { todoListId, taskId });
     }
 }

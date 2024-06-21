@@ -44,6 +44,7 @@ public class TodoListRepository : ITodoListRepository
         var totalCount = await query.CountAsync();
 
         var listOfTodoList = await query
+            .OrderByDescending(t => t.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .AsNoTracking()

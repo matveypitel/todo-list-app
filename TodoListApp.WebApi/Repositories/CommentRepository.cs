@@ -18,7 +18,7 @@ public class CommentRepository : ICommentRepository
 
     public async Task<CommentEntity> GetByIdAsync(int id, int taskId)
     {
-        _ = this.CommentTaskExistsAsync(taskId);
+        await this.CommentTaskExistsAsync(taskId);
 
         return await this.context.Comments
             .Where(c => c.Id == id && c.TaskId == taskId)
@@ -28,13 +28,14 @@ public class CommentRepository : ICommentRepository
 
     public async Task<PagedModel<CommentEntity>> GetPagedListOfAllAsync(int taskId, int page, int pageSize)
     {
-        _ = this.CommentTaskExistsAsync(taskId);
+        await this.CommentTaskExistsAsync(taskId);
 
         var query = this.context.Comments
             .Where(c => c.TaskId == taskId);
 
         var totalItems = await query.CountAsync();
         var comments = await query
+            .OrderByDescending(c => c.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -75,7 +76,7 @@ public class CommentRepository : ICommentRepository
             throw new UnauthorizedAccessException("User does not have permission to delete comments.");
         }
 
-        _ = this.CommentTaskExistsAsync(taskId);
+        await this.CommentTaskExistsAsync(taskId);
 
         var comment = await this.context.Comments
             .Where(c => c.Id == id && c.TaskId == taskId)
@@ -95,7 +96,7 @@ public class CommentRepository : ICommentRepository
             throw new UnauthorizedAccessException("User does not have permission to update comments.");
         }
 
-        _ = this.CommentTaskExistsAsync(taskId);
+        await this.CommentTaskExistsAsync(taskId);
 
         var comment = await this.context.Comments
             .Where(c => c.Id == id && c.TaskId == taskId)
