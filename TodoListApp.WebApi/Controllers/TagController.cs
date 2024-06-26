@@ -7,6 +7,9 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Controllers;
 
+/// <summary>
+/// Controller for managing tags.
+/// </summary>
 [Authorize]
 [Route("api/tags")]
 [ApiController]
@@ -16,6 +19,12 @@ public class TagController : ControllerBase
     private readonly ITagDatabaseService tagDatabaseService;
     private readonly ITaskDatabaseService taskDatabaseService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TagController"/> class.
+    /// </summary>
+    /// <param name="mapper">The mapper.</param>
+    /// <param name="tagDatabaseService">The tag database service.</param>
+    /// <param name="taskDatabaseService">The task database service.</param>
     public TagController(IMapper mapper, ITagDatabaseService tagDatabaseService, ITaskDatabaseService taskDatabaseService)
     {
         this.mapper = mapper;
@@ -23,6 +32,13 @@ public class TagController : ControllerBase
         this.taskDatabaseService = taskDatabaseService;
     }
 
+    /// <summary>
+    /// GET: api/tags.
+    /// Gets all tags.
+    /// </summary>
+    /// <param name="page">The page number.</param>
+    /// <param name="pageSize">The page size.</param>
+    /// <returns>The paged list of tags.</returns>
     [HttpGet]
     public async Task<ActionResult<PagedModel<TagModel>>> GetAllTags([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
@@ -38,6 +54,14 @@ public class TagController : ControllerBase
         return this.Ok(this.mapper.Map<PagedModel<TagModel>>(tags));
     }
 
+    /// <summary>
+    /// GET: api/tags/tasks.
+    /// Gets tasks with the specified tag.
+    /// </summary>
+    /// <param name="tag">The tag.</param>
+    /// <param name="page">The page number.</param>
+    /// <param name="pageSize">The page size.</param>
+    /// <returns>The paged list of tasks with the specified tag.</returns>
     [HttpGet]
     [Route("tasks")]
     public async Task<ActionResult<PagedModel<TaskItemModel>>> GetTasksWithTag(

@@ -1,4 +1,8 @@
 namespace TodoListApp.Models.Domains;
+
+/// <summary>
+/// Represents a comment made on a task item.
+/// </summary>
 public class Comment
 {
     public int Id { get; set; }

@@ -7,15 +7,21 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Repositories;
 
+/// <inheritdoc/>
 public class TagRepository : ITagRepository
 {
     private readonly TodoListDbContext context;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TagRepository"/> class.
+    /// </summary>
+    /// <param name="context">The TodoListDbContext.</param>
     public TagRepository(TodoListDbContext context)
     {
         this.context = context;
     }
 
+    /// <inheritdoc/>
     public async Task<TagEntity> AddToTaskAsync(int taskId, TagEntity tagEntity, string userName)
     {
         ArgumentNullException.ThrowIfNull(tagEntity);
@@ -42,6 +48,7 @@ public class TagRepository : ITagRepository
         return tagEntity;
     }
 
+    /// <inheritdoc/>
     public async Task DeleteAsync(int id, int taskId, string userName)
     {
         if (!await this.UserHasOwnerOrEditorPermissionAsync(taskId, userName))
@@ -63,6 +70,7 @@ public class TagRepository : ITagRepository
         _ = await this.context.SaveChangesAsync();
     }
 
+    /// <inheritdoc/>
     public async Task<TagEntity> GetByIdAsync(int id, int taskId, string userName)
     {
         if (!await this.UserHasOwnerOrEditorPermissionAsync(taskId, userName))
@@ -78,6 +86,7 @@ public class TagRepository : ITagRepository
             ?? throw new KeyNotFoundException($"Tag (id = {id}) not found.");
     }
 
+    /// <inheritdoc/>
     public async Task<PagedModel<TagEntity>> GetPagedListOfAllAsync(string userName, int page, int pageSize)
     {
         var accessibleTodoListIds = await this.context.TodoLists

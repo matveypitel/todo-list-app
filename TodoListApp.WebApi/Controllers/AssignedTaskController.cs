@@ -8,6 +8,9 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Controllers;
 
+/// <summary>
+/// Controller for managing assigned tasks.
+/// </summary>
 [Authorize]
 [Route("api/tasks/assigned_to_me")]
 [ApiController]
@@ -16,12 +19,26 @@ public class AssignedTaskController : ControllerBase
     private readonly IMapper mapper;
     private readonly ITaskDatabaseService databaseService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AssignedTaskController"/> class.
+    /// </summary>
+    /// <param name="databaseService">The task database service.</param>
+    /// <param name="mapper">The mapper.</param>
     public AssignedTaskController(ITaskDatabaseService databaseService, IMapper mapper)
     {
         this.mapper = mapper;
         this.databaseService = databaseService;
     }
 
+    /// <summary>
+    /// GET: api/tasks/assigned_to_me.
+    /// Gets the assigned tasks for the current user.
+    /// </summary>
+    /// <param name="page">The page number.</param>
+    /// <param name="pageSize">The page size.</param>
+    /// <param name="status">The task status.</param>
+    /// <param name="sort">The sort order.</param>
+    /// <returns>The paged list of assigned tasks.</returns>
     [HttpGet]
     public async Task<ActionResult<PagedModel<TaskItemModel>>> GetAssignedTasksToUser(
         [FromQuery] int page = 1,
@@ -41,6 +58,12 @@ public class AssignedTaskController : ControllerBase
         return this.Ok(this.mapper.Map<PagedModel<TaskItemModel>>(taskItems));
     }
 
+    /// <summary>
+    /// GET: api/tasks/assigned_to_me/{id}.
+    /// Gets the task with the specified ID for the current user.
+    /// </summary>
+    /// <param name="id">The task ID.</param>
+    /// <returns>The task item.</returns>
     [HttpGet]
     [Route("{id}")]
     public async Task<ActionResult<TaskItemModel>> GetTaskById([FromRoute] int id)
@@ -52,6 +75,13 @@ public class AssignedTaskController : ControllerBase
         return this.Ok(this.mapper.Map<TaskItemModel>(taskItem));
     }
 
+    /// <summary>
+    /// PUT: api/tasks/assigned_to_me/status/{id}.
+    /// Updates the status of the task with the specified ID for the current user.
+    /// </summary>
+    /// <param name="id">The task ID.</param>
+    /// <param name="taskItemModel">The updated task item.</param>
+    /// <returns>The updated task item.</returns>
     [HttpPut]
     [Route("status/{id}")]
     public async Task<IActionResult> UpdateTaskStatus([FromRoute] int id, [FromBody] TaskItemModel taskItemModel)

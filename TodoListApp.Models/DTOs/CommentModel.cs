@@ -1,6 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace TodoListApp.Models.DTOs;
+
+/// <summary>
+/// Represents a data transfer object for a comment made on a task item.
+/// </summary>
 public class CommentModel
 {
     public int Id { get; set; }

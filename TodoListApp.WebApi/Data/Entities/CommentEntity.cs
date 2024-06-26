@@ -1,5 +1,8 @@
 namespace TodoListApp.WebApi.Data.Entities;
 
+/// <summary>
+/// Represents a comment entity.
+/// </summary>
 public class CommentEntity
 {
     public int Id { get; set; }

@@ -3,6 +3,9 @@ using TodoListApp.Models.Enums;
 
 namespace TodoListApp.WebApp.Models;
 
+/// <summary>
+/// Represents a task item in the Web API model.
+/// </summary>
 public class TaskItemWebApiModel
 {
     public int Id { get; set; }

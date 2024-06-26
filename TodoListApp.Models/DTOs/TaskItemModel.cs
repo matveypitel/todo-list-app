@@ -3,6 +3,10 @@ using TodoListApp.Models.Enums;
 using TodoListApp.Models.ValidationAttributes;
 
 namespace TodoListApp.Models.DTOs;
+
+/// <summary>
+/// Represents a data transfer object for a task item within a todo list.
+/// </summary>
 public class TaskItemModel
 {
     public int Id { get; set; }

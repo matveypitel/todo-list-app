@@ -1,5 +1,8 @@
 namespace TodoListApp.WebApi.Data.Entities;
 
+/// <summary>
+/// Represents a to-do list entity.
+/// </summary>
 public class TodoListEntity
 {
     public int Id { get; set; }

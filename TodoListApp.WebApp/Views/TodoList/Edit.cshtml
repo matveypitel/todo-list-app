@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Edit Todo List";
+    var currentPage = ViewBag.CurrentPage;
 }
 
 <div class="container mt-5">
@@ -24,7 +25,7 @@
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                         <button type="submit" class="btn btn-primary">Save</button>
-                        <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+                        <a class="btn btn-secondary" asp-action="Index" asp-route-page="@currentPage">Cancel</a>
                     </form>
                 </div>
             </div>

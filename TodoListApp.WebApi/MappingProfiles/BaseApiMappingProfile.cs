@@ -5,21 +5,24 @@ using TodoListApp.WebApi.Data.Entities;
 
 namespace TodoListApp.WebApi.MappingProfiles;
 
+/// <summary>
+/// Represents the base mapping profile for the API.
+/// </summary>
 public class BaseApiMappingProfile : Profile
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BaseApiMappingProfile"/> class.
+    /// </summary>
     public BaseApiMappingProfile()
     {
-        // TodoList mapping
         _ = this.CreateMap<TodoListEntity, TodoList>().ReverseMap()
             .ForMember(dest => dest.Users, opt => opt.MapFrom(src => src.Users));
         _ = this.CreateMap<TodoListModel, TodoList>().ReverseMap()
             .ForMember(dest => dest.Users, opt => opt.MapFrom(src => src.Users));
 
-        // TodoListUsers mapping
         _ = this.CreateMap<TodoListUserEntity, TodoListUser>().ReverseMap();
         _ = this.CreateMap<TodoListUserModel, TodoListUser>().ReverseMap();
 
-        // Tasks mapping
         _ = this.CreateMap<TaskItem, TaskItemEntity>().ReverseMap()
             .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments))
             .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(
@@ -37,7 +40,6 @@ public class BaseApiMappingProfile : Profile
                     Label = tag.Label,
                 })));
 
-        // Tags mapping
         _ = this.CreateMap<Tag, TagEntity>().ReverseMap()
             .ForMember(dest => dest.Tasks, opt => opt.MapFrom(src => src.Tasks.Select(
                 task => new TaskItem
@@ -57,11 +59,10 @@ public class BaseApiMappingProfile : Profile
                     TodoListId = task.TodoListId,
                     Title = task.Title,
                     Description = task.Description,
-                    Owner = task.Owner,
+                    Owner = task.Owner ?? string.Empty,
                     AssignedTo = task.AssignedTo,
                 })));
 
-        // Comments mapping
         _ = this.CreateMap<Comment, CommentEntity>().ReverseMap();
         _ = this.CreateMap<Comment, CommentModel>().ReverseMap();
     }

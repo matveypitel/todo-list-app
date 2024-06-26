@@ -8,15 +8,21 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Repositories;
 
+/// <inheritdoc/>
 public class TaskRepository : ITaskRepository
 {
     private readonly TodoListDbContext context;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TaskRepository"/> class.
+    /// </summary>
+    /// <param name="context">The TodoListDbContext.</param>
     public TaskRepository(TodoListDbContext context)
     {
         this.context = context;
     }
 
+    /// <inheritdoc/>
     public async Task<TodoListRole> GetUserRoleInTodoListAsync(int todoListId, string userName)
     {
         return await this.context.TodoListsUsers
@@ -25,6 +31,7 @@ public class TaskRepository : ITaskRepository
             .FirstOrDefaultAsync();
     }
 
+    /// <inheritdoc/>
     public async Task<TaskItemEntity> CreateAsync(TaskItemEntity taskItemEntity, string userName)
     {
         ArgumentNullException.ThrowIfNull(taskItemEntity);
@@ -44,6 +51,7 @@ public class TaskRepository : ITaskRepository
         return createdTask.Entity;
     }
 
+    /// <inheritdoc/>
     public async Task<PagedModel<TaskItemEntity>> GetPagedListAsync(int todoListId, string userName, int page, int pageSize)
     {
         _ = await this.context.TodoLists
@@ -72,6 +80,7 @@ public class TaskRepository : ITaskRepository
         };
     }
 
+    /// <inheritdoc/>
     public async Task<PagedModel<TaskItemEntity>> GetPagedListWithTagAsync(string userName, string tagLabel, int page, int pageSize)
     {
         var accessibleTodoListIds = await this.context.TodoLists
@@ -100,6 +109,7 @@ public class TaskRepository : ITaskRepository
         };
     }
 
+    /// <inheritdoc/>
     public async Task<PagedModel<TaskItemEntity>> GetPagedListOfAssignedToUserAsync(string userName, int page, int pageSize, string? status, string? sort)
     {
         var tasks = this.context.Tasks
@@ -145,6 +155,7 @@ public class TaskRepository : ITaskRepository
         return pagedModel;
     }
 
+    /// <inheritdoc/>
     public async Task<PagedModel<TaskItemEntity>> GetPagedListOfSearchResultsAsync(string userName, string? title, string? creationDate, string? dueDate, int page, int pageSize)
     {
         var accessibleTodoListIds = await this.context.TodoLists
@@ -163,16 +174,15 @@ public class TaskRepository : ITaskRepository
 
         if (!string.IsNullOrEmpty(creationDate))
         {
-            tasksQuery = tasksQuery.Where(t => t.CreatedDate.Date.ToString(CultureInfo.InvariantCulture) == creationDate);
+            tasksQuery = tasksQuery.Where(t => t.CreatedDate.Date == DateTime.Parse(creationDate, CultureInfo.InvariantCulture));
         }
 
         if (!string.IsNullOrEmpty(dueDate))
         {
-            tasksQuery = tasksQuery.Where(t => t.DueDate.HasValue && t.DueDate.Value.ToString(CultureInfo.InvariantCulture) == dueDate);
+            tasksQuery = tasksQuery.Where(t => t.DueDate.HasValue && t.DueDate.Value == DateTime.Parse(dueDate, CultureInfo.InvariantCulture));
         }
 
         var tasks = await tasksQuery
-            .OrderByDescending(t => t.CreatedDate)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -188,6 +198,7 @@ public class TaskRepository : ITaskRepository
         };
     }
 
+    /// <inheritdoc/>
     public async Task<TaskItemEntity> GetByIdAsync(int id, int todoListId, string userName)
     {
         _ = await this.context.TodoLists
@@ -203,6 +214,7 @@ public class TaskRepository : ITaskRepository
             ?? throw new KeyNotFoundException($"Task (id = {id}) not found.");
     }
 
+    /// <inheritdoc/>
     public async Task UpdateAsync(int id, int todoListId, TaskItemEntity taskItemEntity, string userName)
     {
         ArgumentNullException.ThrowIfNull(taskItemEntity);
@@ -240,6 +252,7 @@ public class TaskRepository : ITaskRepository
         _ = await this.context.SaveChangesAsync();
     }
 
+    /// <inheritdoc/>
     public async Task UpdateTaskStatusAsync(int id, string userName, TaskItemEntity taskItemEntity)
     {
         ArgumentNullException.ThrowIfNull(taskItemEntity);
@@ -257,6 +270,7 @@ public class TaskRepository : ITaskRepository
         _ = await this.context.SaveChangesAsync();
     }
 
+    /// <inheritdoc/>
     public async Task DeleteAsync(int id, int todoListId, string userName)
     {
         if (!await this.IsOwner(todoListId, userName))
@@ -278,6 +292,7 @@ public class TaskRepository : ITaskRepository
         _ = await this.context.SaveChangesAsync();
     }
 
+    /// <inheritdoc/>
     public async Task<TaskItemEntity> GetAssignedByIdAsync(int id, string userName)
     {
         return await this.context.Tasks

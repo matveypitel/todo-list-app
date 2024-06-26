@@ -4,8 +4,15 @@ using TodoListApp.WebApi.Services;
 
 namespace TodoListApp.WebApi.Extensions;
 
+/// <summary>
+/// Extension methods for IServiceCollection.
+/// </summary>
 public static class ServiceCollectionExtension
 {
+    /// <summary>
+    /// Adds repositories to the service collection.
+    /// </summary>
+    /// <param name="services">The IServiceCollection instance.</param>
     public static void AddRepositories(this IServiceCollection services)
     {
         _ = services.AddScoped<ITodoListRepository, TodoListRepository>();
@@ -15,6 +22,10 @@ public static class ServiceCollectionExtension
         _ = services.AddScoped<ICommentRepository, CommentRepository>();
     }
 
+    /// <summary>
+    /// Adds database services to the service collection.
+    /// </summary>
+    /// <param name="services">The IServiceCollection instance.</param>
     public static void AddDatabaseServices(this IServiceCollection services)
     {
         _ = services.AddScoped<ITodoListDatabaseService, TodoListDatabaseService>();

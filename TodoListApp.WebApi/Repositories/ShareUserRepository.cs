@@ -7,21 +7,27 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Repositories;
 
+/// <inheritdoc/>
 public class ShareUserRepository : IShareUserRepository
 {
     private readonly TodoListDbContext context;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ShareUserRepository"/> class.
+    /// </summary>
+    /// <param name="context">The TodoListDbContext.</param>
     public ShareUserRepository(TodoListDbContext context)
     {
         this.context = context;
     }
 
+    /// <inheritdoc/>
     public async Task<PagedModel<TodoListUserEntity>> GetPagedListAsync(int todoListId, string requesterUserName, int page, int pageSize)
     {
         await this.IsOwner(todoListId, requesterUserName);
 
         var query = this.context.TodoListsUsers
-        .Where(tlu => tlu.TodoListId == todoListId);
+            .Where(tlu => tlu.TodoListId == todoListId);
 
         var totalItems = await query.CountAsync();
         var items = await query
@@ -38,6 +44,7 @@ public class ShareUserRepository : IShareUserRepository
         };
     }
 
+    /// <inheritdoc/>
     public async Task<TodoListUserEntity> GetByNameAsync(int todoListId, string requesterUserName, string userName)
     {
         await this.IsOwner(todoListId, requesterUserName);
@@ -47,6 +54,7 @@ public class ShareUserRepository : IShareUserRepository
             ?? throw new KeyNotFoundException("The user is not associated with the TodoList.");
     }
 
+    /// <inheritdoc/>
     public async Task<TodoListUserEntity> AddUserToTodoListAsync(int todoListId, string requesterUserName, string userName, TodoListRole role)
     {
         await this.IsOwner(todoListId, requesterUserName);
@@ -69,6 +77,7 @@ public class ShareUserRepository : IShareUserRepository
         return todoListUser;
     }
 
+    /// <inheritdoc/>
     public async Task UpdateUserRoleAsync(int todoListId, string requesterUserName, string userName, TodoListRole newRole)
     {
         await this.IsOwner(todoListId, requesterUserName);
@@ -83,6 +92,7 @@ public class ShareUserRepository : IShareUserRepository
         _ = await this.context.SaveChangesAsync();
     }
 
+    /// <inheritdoc/>
     public async Task RemoveUserFromTodoListAsync(int todoListId, string requesterUserName, string userName)
     {
         await this.IsOwner(todoListId, requesterUserName);

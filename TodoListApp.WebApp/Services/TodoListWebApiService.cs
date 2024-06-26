@@ -7,17 +7,26 @@ using TodoListApp.WebApp.Utilities;
 
 namespace TodoListApp.WebApp.Services;
 
+/// <summary>
+/// Represents a service for interacting with the TodoList Web API.
+/// </summary>
 public class TodoListWebApiService : ITodoListWebApiService
 {
     private readonly HttpClient httpClient;
     private readonly IMapper mapper;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TodoListWebApiService"/> class.
+    /// </summary>
+    /// <param name="httpClient">The HTTP client.</param>
+    /// <param name="mapper">The mapper.</param>
     public TodoListWebApiService(HttpClient httpClient, IMapper mapper)
     {
         this.httpClient = httpClient;
         this.mapper = mapper;
     }
 
+    /// <inheritdoc/>
     public async Task<PagedModel<TodoList>> GetPagedListOfTodoListsAsync(string token, int page, int pageSize)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -30,6 +39,7 @@ public class TodoListWebApiService : ITodoListWebApiService
         return this.mapper.Map<PagedModel<TodoList>>(content);
     }
 
+    /// <inheritdoc/>
     public async Task<TodoList> GetTodoListByIdAsync(string token, int id)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -42,6 +52,7 @@ public class TodoListWebApiService : ITodoListWebApiService
         return this.mapper.Map<TodoList>(content);
     }
 
+    /// <inheritdoc/>
     public async Task<TodoList> CreateTodoListAsync(string token, TodoList todoList)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -55,6 +66,7 @@ public class TodoListWebApiService : ITodoListWebApiService
         return this.mapper.Map<TodoList>(createdTodoListWebApiModel);
     }
 
+    /// <inheritdoc/>
     public async Task UpdateTodoListAsync(string token, int id, TodoList todoList)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -65,6 +77,7 @@ public class TodoListWebApiService : ITodoListWebApiService
         _ = response.EnsureSuccessStatusCode();
     }
 
+    /// <inheritdoc/>
     public async Task DeleteTodoListAsync(string token, int id)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);

@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Create Task";
+    var currentPage = ViewBag.CurrentPage;
     var minDueDate = DateTime.Today.AddDays(1);
 }
 
@@ -28,7 +29,7 @@
                             <span asp-validation-for="DueDate" class="text-danger"></span>
                         </div>
                         <button type="submit" class="btn btn-success">Create</button>
-                        <a class="btn btn-outline-secondary" asp-action="Index" asp-route-todoListId="@Model.TodoListId">Back to tasks</a>
+                        <a class="btn btn-outline-secondary" asp-action="Index" asp-route-todoListId="@Model.TodoListId" asp-route-page="@currentPage">Back to tasks</a>
                     </form>
                 </div>
             </div>

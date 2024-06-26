@@ -1,6 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace TodoListApp.Models.DTOs;
+
+/// <summary>
+/// Represents a data transfer object for a tag that can be associated with task items.
+/// </summary>
 public class TagModel
 {
     public int Id { get; set; }

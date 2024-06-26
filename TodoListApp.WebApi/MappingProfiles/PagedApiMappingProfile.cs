@@ -5,8 +5,14 @@ using TodoListApp.WebApi.Data.Entities;
 
 namespace TodoListApp.WebApi.MappingProfiles;
 
+/// <summary>
+/// Represents a mapping profile for Paged API models.
+/// </summary>
 public class PagedApiMappingProfile : Profile
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PagedApiMappingProfile"/> class.
+    /// </summary>
     public PagedApiMappingProfile()
     {
         _ = this.CreateMap<PagedModel<TodoListEntity>, PagedModel<TodoList>>().ReverseMap();

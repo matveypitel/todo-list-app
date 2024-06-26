@@ -11,11 +11,17 @@ public class TodoListRepository : ITodoListRepository
 {
     private readonly TodoListDbContext context;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TodoListRepository"/> class.
+    /// </summary>
+    /// <param name="context">The TodoListDbContext.</param>
     public TodoListRepository(TodoListDbContext context)
     {
         this.context = context;
     }
 
+    /// <inheritdoc />
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="todoListEntity"/> is null.</exception>
     public async Task<TodoListEntity> CreateAsync(TodoListEntity todoListEntity, string userName)
     {
         var createdEntity = await this.context.TodoLists.AddAsync(todoListEntity);
@@ -35,6 +41,8 @@ public class TodoListRepository : ITodoListRepository
         return createdEntity.Entity;
     }
 
+    /// <inheritdoc />
+    /// <exception cref="KeyNotFoundException">Thrown when the to-do list with the specified ID is not found.</exception>
     public async Task<PagedModel<TodoListEntity>> GetPagedListAsync(string userName, int page, int pageSize)
     {
         var query = this.context.TodoLists
@@ -59,6 +67,8 @@ public class TodoListRepository : ITodoListRepository
         };
     }
 
+    /// <inheritdoc />
+    /// <exception cref="KeyNotFoundException">Thrown when the to-do list with the specified ID is not found.</exception>
     public async Task<TodoListEntity> GetByIdAsync(int id, string userName)
     {
         return await this.context.TodoLists
@@ -67,6 +77,9 @@ public class TodoListRepository : ITodoListRepository
             ?? throw new KeyNotFoundException($"To-do list (id = {id}) not found.");
     }
 
+    /// <inheritdoc />
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="todoListEntity"/> is null.</exception>
+    /// <exception cref="KeyNotFoundException">Thrown when the to-do list with the specified ID is not found or access is denied.</exception>
     public async Task UpdateAsync(int id, TodoListEntity todoListEntity, string userName)
     {
         ArgumentNullException.ThrowIfNull(todoListEntity);
@@ -87,6 +100,8 @@ public class TodoListRepository : ITodoListRepository
         _ = await this.context.SaveChangesAsync();
     }
 
+    /// <inheritdoc />
+    /// <exception cref="KeyNotFoundException">Thrown when the to-do list with the specified ID is not found or access is denied.</exception>
     public async Task DeleteAsync(int id, string userName)
     {
         if (!await this.IsOwner(id, userName))

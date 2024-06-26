@@ -7,15 +7,21 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Repositories;
 
+/// <inheritdoc/>
 public class CommentRepository : ICommentRepository
 {
     private readonly TodoListDbContext context;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CommentRepository"/> class.
+    /// </summary>
+    /// <param name="context">The database context.</param>
     public CommentRepository(TodoListDbContext context)
     {
         this.context = context;
     }
 
+    /// <inheritdoc/>
     public async Task<CommentEntity> GetByIdAsync(int id, int taskId)
     {
         await this.CommentTaskExistsAsync(taskId);
@@ -26,6 +32,7 @@ public class CommentRepository : ICommentRepository
             ?? throw new KeyNotFoundException($"Comment (id = {taskId}) not found.");
     }
 
+    /// <inheritdoc/>
     public async Task<PagedModel<CommentEntity>> GetPagedListOfAllAsync(int taskId, int page, int pageSize)
     {
         await this.CommentTaskExistsAsync(taskId);
@@ -49,6 +56,7 @@ public class CommentRepository : ICommentRepository
         };
     }
 
+    /// <inheritdoc/>
     public async Task<CommentEntity> AddToTaskAsync(CommentEntity commentEntity, string userName)
     {
         ArgumentNullException.ThrowIfNull(commentEntity);
@@ -69,6 +77,7 @@ public class CommentRepository : ICommentRepository
         return createdComment.Entity;
     }
 
+    /// <inheritdoc/>
     public async Task DeleteAsync(int id, int taskId, string userName)
     {
         if (!await this.UserHasOwnerPermissionAsync(taskId, userName))
@@ -87,6 +96,7 @@ public class CommentRepository : ICommentRepository
         _ = await this.context.SaveChangesAsync();
     }
 
+    /// <inheritdoc/>
     public async Task UpdateAsync(int id, int taskId, CommentEntity commentEntity, string userName)
     {
         ArgumentNullException.ThrowIfNull(commentEntity);

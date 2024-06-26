@@ -2,6 +2,9 @@ using TodoListApp.Models.Enums;
 
 namespace TodoListApp.WebApi.Data.Entities;
 
+/// <summary>
+/// Represents a task item entity.
+/// </summary>
 public class TaskItemEntity
 {
     public int Id { get; set; }

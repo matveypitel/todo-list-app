@@ -1,4 +1,8 @@
 namespace TodoListApp.Models.Domains;
+
+/// <summary>
+/// Represents a to-do list with a collection of tasks.
+/// </summary>
 public class TodoList
 {
     public int Id { get; set; }

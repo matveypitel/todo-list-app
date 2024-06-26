@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TodoListApp.WebApp.Models.ViewModels;
 
+/// <summary>
+/// Represents the login view model.
+/// </summary>
 public class LoginViewModel
 {
     [Required(ErrorMessage = "Username is required")]

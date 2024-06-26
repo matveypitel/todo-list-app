@@ -9,6 +9,9 @@ using TodoListApp.WebApp.Models.ViewModels;
 
 namespace TodoListApp.WebApp.Controllers;
 
+/// <summary>
+/// Controller for managing user accounts.
+/// </summary>
 [Authorize]
 [Route("account")]
 public class AccountController : Controller
@@ -17,6 +20,12 @@ public class AccountController : Controller
     private readonly SignInManager<IdentityUser> signInManager;
     private readonly IConfiguration configuration;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AccountController"/> class.
+    /// </summary>
+    /// <param name="userManager">The user manager.</param>
+    /// <param name="signInManager">The sign-in manager.</param>
+    /// <param name="configuration">The configuration.</param>
     public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration)
     {
         this.userManager = userManager;
@@ -24,6 +33,10 @@ public class AccountController : Controller
         this.configuration = configuration;
     }
 
+    /// <summary>
+    /// GET: /account/register.
+    /// </summary>
+    /// <returns>The register view.</returns>
     [HttpGet]
     [Route("register")]
     [AllowAnonymous]
@@ -32,7 +45,13 @@ public class AccountController : Controller
         return this.View();
     }
 
+    /// <summary>
+    /// POST: /account/register.
+    /// </summary>
+    /// <param name="model">The register view model.</param>
+    /// <returns>The result of the registration.</returns>
     [HttpPost]
+    [ValidateAntiForgeryToken]
     [Route("register")]
     [AllowAnonymous]
     public async Task<IActionResult> Register(RegisterViewModel model)
@@ -58,6 +77,10 @@ public class AccountController : Controller
         return this.BadRequest(this.ModelState);
     }
 
+    /// <summary>
+    /// GET: /account/login.
+    /// </summary>
+    /// <returns>The login view.</returns>
     [HttpGet]
     [Route("login")]
     [AllowAnonymous]
@@ -66,6 +89,11 @@ public class AccountController : Controller
         return this.View();
     }
 
+    /// <summary>
+    /// POST: /account/login.
+    /// </summary>
+    /// <param name="model">The login view model.</param>
+    /// <returns>The result of the login.</returns>
     [HttpPost]
     [Route("login")]
     [ValidateAntiForgeryToken]
@@ -99,6 +127,10 @@ public class AccountController : Controller
         return this.View(model);
     }
 
+    /// <summary>
+    /// GET: /account/logout.
+    /// </summary>
+    /// <returns>The result of the logout.</returns>
     [HttpGet]
     [Route("logout")]
     public async Task<IActionResult> Logout()
@@ -114,8 +146,8 @@ public class AccountController : Controller
     {
         var claims = new ClaimsIdentity(new Claim[]
         {
-            new (ClaimTypes.NameIdentifier, user.Id),
-            new (ClaimTypes.Name, user.UserName),
+                new (ClaimTypes.NameIdentifier, user.Id),
+                new (ClaimTypes.Name, user.UserName),
         });
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration["Jwt:Key"]));

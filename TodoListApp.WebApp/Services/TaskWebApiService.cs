@@ -8,17 +8,26 @@ using TodoListApp.WebApp.Utilities;
 
 namespace TodoListApp.WebApp.Services;
 
+/// <summary>
+/// Represents a service for interacting with the Task Web API.
+/// </summary>
 public class TaskWebApiService : ITaskWebApiService
 {
     private readonly HttpClient httpClient;
     private readonly IMapper mapper;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TaskWebApiService"/> class.
+    /// </summary>
+    /// <param name="httpClient">The HTTP client.</param>
+    /// <param name="mapper">The mapper.</param>
     public TaskWebApiService(HttpClient httpClient, IMapper mapper)
     {
         this.httpClient = httpClient;
         this.mapper = mapper;
     }
 
+    /// <inheritdoc/>
     public async Task<TodoListRole> GetUserRoleInTodoListAsync(string token, int todoListId)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -30,6 +39,7 @@ public class TaskWebApiService : ITaskWebApiService
         return await response.Content.ReadFromJsonAsync<TodoListRole>();
     }
 
+    /// <inheritdoc/>
     public async Task<TaskItem> CreateTaskAsync(string token, int todoListId, TaskItem task)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -43,6 +53,7 @@ public class TaskWebApiService : ITaskWebApiService
         return this.mapper.Map<TaskItem>(createdTaskWebApiModel);
     }
 
+    /// <inheritdoc/>
     public async Task DeleteTaskAsync(string token, int id, int todoListId)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -52,6 +63,7 @@ public class TaskWebApiService : ITaskWebApiService
         _ = response.EnsureSuccessStatusCode();
     }
 
+    /// <inheritdoc/>
     public async Task<TaskItem> GetAssignedTaskByIdAsync(string token, int id)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -65,6 +77,7 @@ public class TaskWebApiService : ITaskWebApiService
         return this.mapper.Map<TaskItem>(content);
     }
 
+    /// <inheritdoc/>
     public async Task<PagedModel<TaskItem>> GetAssignedTasksToUserAsync(string token, int page, int pageSize, string? status, string? sort)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -77,6 +90,7 @@ public class TaskWebApiService : ITaskWebApiService
         return this.mapper.Map<PagedModel<TaskItem>>(content);
     }
 
+    /// <inheritdoc/>
     public async Task<PagedModel<TaskItem>> GetPagedTasksAsync(string token, int todoListId, int page, int pageSize)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -89,6 +103,7 @@ public class TaskWebApiService : ITaskWebApiService
         return this.mapper.Map<PagedModel<TaskItem>>(content);
     }
 
+    /// <inheritdoc/>
     public async Task<PagedModel<TaskItem>> GetPagedSearchedTaskAsync(string token, int page, int pageSize, string? title, string? creationDate, string? dueDate)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -101,6 +116,7 @@ public class TaskWebApiService : ITaskWebApiService
         return this.mapper.Map<PagedModel<TaskItem>>(content);
     }
 
+    /// <inheritdoc/>
     public async Task<TaskItem> GetTaskByIdAsync(string token, int id, int todoListId)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -113,6 +129,7 @@ public class TaskWebApiService : ITaskWebApiService
         return this.mapper.Map<TaskItem>(content);
     }
 
+    /// <inheritdoc/>
     public async Task UpdateTaskAsync(string token, int id, int todoListId, TaskItem task)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -123,6 +140,7 @@ public class TaskWebApiService : ITaskWebApiService
         _ = response.EnsureSuccessStatusCode();
     }
 
+    /// <inheritdoc/>
     public async Task UpdateTaskStatusAsync(string token, int id, TaskItem task)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);

@@ -5,8 +5,14 @@ using TodoListApp.WebApp.Models;
 
 namespace TodoListApp.WebApp.MappingProfiles;
 
+/// <summary>
+/// Represents the base mapping profile for the TodoListApp WebApp.
+/// </summary>
 public class BaseAppMappingProfile : Profile
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BaseAppMappingProfile"/> class.
+    /// </summary>
     public BaseAppMappingProfile()
     {
         _ = this.CreateMap<TodoList, TodoListWebApiModel>().ReverseMap();

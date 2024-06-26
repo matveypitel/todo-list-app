@@ -1,5 +1,8 @@
 namespace TodoListApp.WebApi.Data.Entities;
 
+/// <summary>
+/// Represents a tag entity.
+/// </summary>
 public class TagEntity
 {
     public int Id { get; set; }

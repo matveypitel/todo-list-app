@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TodoListApp.Models.DTOs;
 
+/// <summary>
+/// Represents a data transfer object for a to-do list.
+/// </summary>
 public class TodoListModel
 {
     public int Id { get; set; }

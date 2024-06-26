@@ -1,5 +1,8 @@
 namespace TodoListApp.WebApp.Models;
 
+/// <summary>
+/// Represents a CommentWebApiModel.
+/// </summary>
 public class CommentWebApiModel
 {
     public int Id { get; set; }

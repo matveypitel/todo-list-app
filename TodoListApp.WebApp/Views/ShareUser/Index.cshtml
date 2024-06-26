@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Shared Users";
     var todoListId = TempData["TodoListId"] as int?;
+    var currentPage = ViewBag.CurrentPage;
 }
 
 <h2 class="mb-4">@ViewData["Title"]</h2>
@@ -24,7 +25,8 @@
 <a class="btn btn-sm btn-outline-secondary mt-4"
    asp-controller="TodoList"
    asp-action="Index"
-   asp-route-todoListId="@todoListId">
+   asp-route-todoListId="@todoListId"
+   asp-route-page="@currentPage">
     <i class="fa-solid fa-angles-left"></i>
     Back to list
 </a>

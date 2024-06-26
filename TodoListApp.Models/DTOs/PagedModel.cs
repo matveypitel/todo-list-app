@@ -1,5 +1,9 @@
 namespace TodoListApp.Models.DTOs;
 
+/// <summary>
+/// Represents a generic model for paginated data.
+/// </summary>
+/// <typeparam name="T">The type of the data items.</typeparam>
 public class PagedModel<T>
 {
     public IEnumerable<T> Items { get; set; } = new List<T>();

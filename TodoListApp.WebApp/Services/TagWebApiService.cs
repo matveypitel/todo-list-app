@@ -7,17 +7,26 @@ using TodoListApp.WebApp.Utilities;
 
 namespace TodoListApp.WebApp.Services;
 
+/// <summary>
+/// Represents a service for interacting with the Tag Web API.
+/// </summary>
 public class TagWebApiService : ITagWebApiService
 {
     private readonly HttpClient httpClient;
     private readonly IMapper mapper;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TagWebApiService"/> class.
+    /// </summary>
+    /// <param name="httpClient">The HTTP client.</param>
+    /// <param name="mapper">The mapper.</param>
     public TagWebApiService(HttpClient httpClient, IMapper mapper)
     {
         this.httpClient = httpClient;
         this.mapper = mapper;
     }
 
+    /// <inheritdoc/>
     public async Task<PagedModel<Tag>> GetAllTagsAsync(string token, int page, int pageSize)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -30,6 +39,7 @@ public class TagWebApiService : ITagWebApiService
         return this.mapper.Map<PagedModel<Tag>>(content);
     }
 
+    /// <inheritdoc/>
     public async Task<PagedModel<TaskItem>> GetTasksWithTag(string token, string tag, int page, int pageSize)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -42,6 +52,7 @@ public class TagWebApiService : ITagWebApiService
         return this.mapper.Map<PagedModel<TaskItem>>(content);
     }
 
+    /// <inheritdoc/>
     public async Task<Tag> GetTagByIdAsync(string token, int todoListId, int taskId, int tagId)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -54,6 +65,7 @@ public class TagWebApiService : ITagWebApiService
         return this.mapper.Map<Tag>(content);
     }
 
+    /// <inheritdoc/>
     public async Task<Tag> AddTagToTaskAsync(string token, int todoListId, int taskId, Tag tag)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);
@@ -68,6 +80,7 @@ public class TagWebApiService : ITagWebApiService
         return this.mapper.Map<Tag>(content);
     }
 
+    /// <inheritdoc/>
     public async Task DeleteTagAsync(string token, int todoListId, int taskId, int tagId)
     {
         TokenUtility.AddAuthorizationHeader(this.httpClient, token);

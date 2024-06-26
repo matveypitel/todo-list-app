@@ -8,11 +8,19 @@ using TodoListApp.Models.DTOs;
 
 namespace TodoListApp.WebApp.Helpers;
 
+/// <summary>
+/// Tag helper for generating pagination links.
+/// </summary>
+/// <typeparam name="T">The type of the paged model.</typeparam>
 [HtmlTargetElement("div", Attributes = "page-model")]
 public class PageLinkTagHelper<T> : TagHelper
 {
     private readonly IUrlHelperFactory urlHelperFactory;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PageLinkTagHelper{T}"/> class.
+    /// </summary>
+    /// <param name="helperFactory">The URL helper factory.</param>
     public PageLinkTagHelper(IUrlHelperFactory helperFactory)
     {
         this.urlHelperFactory = helperFactory;
@@ -26,6 +34,7 @@ public class PageLinkTagHelper<T> : TagHelper
 
     public string? PageAction { get; set; }
 
+    /// <inheritdoc/>
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
         if (this.PageModel != null && this.PageModel.TotalPages != 1 && this.ViewContext != null && output != null)

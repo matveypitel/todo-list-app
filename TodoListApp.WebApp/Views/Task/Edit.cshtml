@@ -4,6 +4,8 @@
 @{
     ViewData["Title"] = "Edit Task";
     var minDueDate = DateTime.Today.AddDays(1);
+    var currentPage = TempData["CurrentPage"] as int?;
+    this.ViewBag.CurrentPage = currentPage;
 }
 
 <div class="container mt-5">
@@ -26,7 +28,14 @@
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                         <div class="form-group mb-3">
-                            <label asp-for="DueDate" class="form-label">Due Date<p class="small m-0">Current due date: @(Model.DueDate == null ? "No due date" : Model.DueDate.Value.ToString("yyyy-MM-dd"))</p></label>
+                            <label asp-for="DueDate" class="form-label">
+                                Due Date
+                                <p class="small m-0">
+                                    <i class="fa-regular fa-clock"></i>
+                                    Current due date:
+                                    @(Model.DueDate == null ? "No due date" : Model.DueDate.Value.ToString("yyyy-MM-dd"))
+                                </p>
+                            </label>
                             <input asp-for="DueDate" type="date" min="@minDueDate.ToString("yyyy-MM-dd")" class="form-control" id="dueDateInput" disabled />
                             <span asp-validation-for="DueDate" class="text-danger"></span>
                             <input class="form-check-input mt-2" type="checkbox" value="" id="changeDueDateCheckbox">
@@ -50,7 +59,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary">Save</button>
-                        <a class="btn btn-outline-secondary" asp-action="Index" asp-route-todoListId="@Model.TodoListId">Cancel</a>
+                        <a class="btn btn-outline-secondary" asp-action="Index" asp-route-todoListId="@Model.TodoListId" asp-route-page="@currentPage">Cancel</a>
                     </form>
                 </div>
             </div>

@@ -8,6 +8,9 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Controllers;
 
+/// <summary>
+/// Controller for managing to-do lists.
+/// </summary>
 [Authorize]
 [Route("api/todolists")]
 [ApiController]
@@ -16,12 +19,23 @@ public class TodoListController : ControllerBase
     private readonly IMapper mapper;
     private readonly ITodoListDatabaseService databaseService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TodoListController"/> class.
+    /// </summary>
+    /// <param name="mapper">The mapper instance.</param>
+    /// <param name="databaseService">The database service instance.</param>
     public TodoListController(IMapper mapper, ITodoListDatabaseService databaseService)
     {
         this.mapper = mapper;
         this.databaseService = databaseService;
     }
 
+    /// <summary>
+    /// POST: api/todolists.
+    /// Creates a new to-do list.
+    /// </summary>
+    /// <param name="todoListModel">The to-do list model.</param>
+    /// <returns>The created to-do list.</returns>
     [HttpPost]
     public async Task<ActionResult<TodoListModel>> CreateTodoList([FromBody] TodoListModel todoListModel)
     {
@@ -36,6 +50,13 @@ public class TodoListController : ControllerBase
             this.mapper.Map<TodoListModel>(todoList));
     }
 
+    /// <summary>
+    /// GET: api/todolists.
+    /// Gets a paged list of to-do lists.
+    /// </summary>
+    /// <param name="page">The page number.</param>
+    /// <param name="pageSize">The page size.</param>
+    /// <returns>The paged list of to-do lists.</returns>
     [HttpGet]
     public async Task<ActionResult<PagedModel<TodoListModel>>> GetTodoLists([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
@@ -51,6 +72,12 @@ public class TodoListController : ControllerBase
         return this.Ok(this.mapper.Map<PagedModel<TodoListModel>>(todoLists));
     }
 
+    /// <summary>
+    /// GET: api/todolists/{id}.
+    /// Gets the details of a to-do list by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the to-do list.</param>
+    /// <returns>The details of the to-do list.</returns>
     [HttpGet("{id}")]
     public async Task<ActionResult<TodoListModel>> GetTodoListDetails([FromRoute] int id)
     {
@@ -61,6 +88,13 @@ public class TodoListController : ControllerBase
         return this.Ok(this.mapper.Map<TodoListModel>(todoList));
     }
 
+    /// <summary>
+    /// PUT: api/todolists/{id}.
+    /// Updates a to-do list.
+    /// </summary>
+    /// <param name="id">The ID of the to-do list.</param>
+    /// <param name="todoListModel">The updated to-do list model.</param>
+    /// <returns>The updated to-do list.</returns>
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateTodoList([FromRoute] int id, [FromBody] TodoListModel todoListModel)
     {
@@ -73,6 +107,12 @@ public class TodoListController : ControllerBase
         return this.NoContent();
     }
 
+    /// <summary>
+    /// DELETE: api/todolists/{id}.
+    /// Deletes a to-do list by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the to-do list.</param>
+    /// <returns>No content.</returns>
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteTodoList([FromRoute] int id)
     {

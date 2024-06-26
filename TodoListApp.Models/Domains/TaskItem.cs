@@ -1,6 +1,10 @@
 using TodoListApp.Models.Enums;
 
 namespace TodoListApp.Models.Domains;
+
+/// <summary>
+/// Represents an individual task item within a to-do list.
+/// </summary>
 public class TaskItem
 {
     public int Id { get; set; }

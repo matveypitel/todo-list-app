@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TodoListApp.WebApp.Models.ViewModels;
 
+/// <summary>
+/// Represents the view model for user registration.
+/// </summary>
 public class RegisterViewModel
 {
     [Required(ErrorMessage = "Email is required")]

@@ -5,6 +5,9 @@ using TodoListApp.Models.DTOs;
 
 namespace TodoListApp.WebApi.Middleware;
 
+/// <summary>
+/// Middleware for handling exceptions and producing error responses.
+/// </summary>
 public class ExceptionHandlingMiddleware
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions()
@@ -20,12 +23,22 @@ public class ExceptionHandlingMiddleware
     private readonly RequestDelegate next;
     private readonly ILogger<ExceptionHandlingMiddleware> logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExceptionHandlingMiddleware"/> class.
+    /// </summary>
+    /// <param name="next">The next middleware in the pipeline.</param>
+    /// <param name="logger">The logger.</param>
     public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
     {
         this.next = next;
         this.logger = logger;
     }
 
+    /// <summary>
+    /// Invokes the middleware.
+    /// </summary>
+    /// <param name="httpContext">The HTTP context.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public async Task InvokeAsync(HttpContext httpContext)
     {
         ArgumentNullException.ThrowIfNull(httpContext);

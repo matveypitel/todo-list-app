@@ -2,6 +2,9 @@ using TodoListApp.Models.DTOs;
 
 namespace TodoListApp.WebApp.Models;
 
+/// <summary>
+/// Represents a TagWebApiModel.
+/// </summary>
 public class TagWebApiModel
 {
     public int Id { get; set; }
