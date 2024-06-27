@@ -5,7 +5,18 @@ namespace TodoListApp.Models.Enums;
 /// </summary>
 public enum TaskItemStatus
 {
+    /// <summary>
+    /// The task item has not been started.
+    /// </summary>
     NotStarted,
+
+    /// <summary>
+    /// The task item is in progress.
+    /// </summary>
     InProgress,
+
+    /// <summary>
+    /// The task item has been completed.
+    /// </summary>
     Completed,
 }

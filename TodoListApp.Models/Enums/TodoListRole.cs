@@ -5,7 +5,18 @@ namespace TodoListApp.Models.Enums;
 /// </summary>
 public enum TodoListRole
 {
+    /// <summary>
+    /// Represents a viewer role.
+    /// </summary>
     Viewer,
+
+    /// <summary>
+    /// Represents an editor role.
+    /// </summary>
     Editor,
+
+    /// <summary>
+    /// Represents an owner role.
+    /// </summary>
     Owner,
 }

@@ -7,7 +7,13 @@ namespace TodoListApp.WebApp.Models;
 /// </summary>
 public class TodoListUserWebApiModel
 {
+    /// <summary>
+    /// Gets or sets the username of the user.
+    /// </summary>
     public string UserName { get; set; } = null!;
 
+    /// <summary>
+    /// Gets or sets the role of the user.
+    /// </summary>
     public TodoListRole Role { get; set; } = TodoListRole.Viewer;
 }
