@@ -17,19 +17,22 @@
             <div class="card-body">
                 <p class="card-text">@comment.Text</p>
                 <footer class="blockquote-footer">@@@comment.Owner</footer>
-                @if (userRole == TodoListRole.Owner)
+                @if (userRole == TodoListRole.Owner || userRole == TodoListRole.Editor)
                 {
                     <div class="btn-group">
                         <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa-solid fa-ellipsis"></i>
                         </button>
                         <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item small" asp-action="EditComment" asp-route-todoListId="@todoListId" asp-route-taskId="@taskId" asp-route-commentId="@comment.Id">
-                                    <i class="fa-regular fa-pen-to-square"></i>
-                                    Edit
-                                </a>
-                            </li>
+                            @if (comment.Owner == this.User.Identity!.Name)
+                            {
+                                <li>
+                                    <a class="dropdown-item small" asp-action="EditComment" asp-route-todoListId="@todoListId" asp-route-taskId="@taskId" asp-route-commentId="@comment.Id">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                        Edit
+                                    </a>
+                                </li>
+                            }
                             <li>
                                 <a class="dropdown-item small" asp-action="DeleteComment" asp-route-todoListId="@todoListId" asp-route-taskId="@taskId" asp-route-commentId="@comment.Id">
                                     <i class="fa-solid fa-trash" style="color: #c44545;"></i>

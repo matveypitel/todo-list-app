@@ -115,6 +115,11 @@ public class CommentRepository : ICommentRepository
             .FirstOrDefaultAsync()
             ?? throw new KeyNotFoundException($"Comment (id = {taskId}) not found.");
 
+        if (comment.Owner != userName)
+        {
+            throw new UnauthorizedAccessException("User does not have permission to update this comment.");
+        }
+
         comment.Text = commentEntity.Text;
         this.context.Entry(comment).State = EntityState.Modified;
 

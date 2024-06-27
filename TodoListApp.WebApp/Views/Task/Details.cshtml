@@ -93,18 +93,12 @@
     {
         <p>No comments</p>
     }
-    @if (!viewer)
-    {
-        @if (Model.Comments.Count > 5)
-        {
-            <div class="text-center mt-4">
-                <a class="btn btn-sm btn-outline-primary mt-2" asp-action="Comments" asp-route-todoListId="@Model.TodoListId" asp-route-taskId="@Model.Id">
-                    <i class="fa-regular fa-comment-dots"></i>
-                    View all comments
-                </a>
-            </div>
-        }
-    }
+    <div class="text-center mt-4">
+        <a class="btn btn-sm btn-outline-primary mt-2" asp-action="Comments" asp-route-todoListId="@Model.TodoListId" asp-route-taskId="@Model.Id">
+            <i class="fa-regular fa-comment-dots"></i>
+            View all comments
+        </a>
+    </div>
 </div>
 
 <a class="btn btn-sm btn-outline-secondary" asp-action="Index" asp-route-todoListId="@Model.TodoListId" asp-route-page="@currentPage">
