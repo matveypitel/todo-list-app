@@ -49,6 +49,8 @@ public class TagController : Controller
         var token = TokenUtility.GetToken(this.Request);
         var pagedResult = await this.tagWebApiService.GetAllTagsAsync(token, page, this.pageSize);
 
+        this.TempData["CurrentPage"] = page;
+
         LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Get the view of all tags", null);
         return this.View(this.mapper.Map<PagedModel<TagModel>>(pagedResult));
     }
@@ -65,6 +67,8 @@ public class TagController : Controller
     {
         var token = TokenUtility.GetToken(this.Request);
         var pagedResult = await this.tagWebApiService.GetTasksWithTag(token, tag, page, this.pageSize);
+
+        this.ViewBag.CurrentPage = this.TempData["CurrentPage"] ?? 1;
 
         LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Get the view of tasks with tag - {tag}", null);
         return this.View(this.mapper.Map<PagedModel<TaskItemModel>>(pagedResult));

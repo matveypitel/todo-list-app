@@ -66,6 +66,7 @@ public class TaskController : Controller
     {
         var token = TokenUtility.GetToken(this.Request);
 
+        var todoList = await this.todoListApiService.GetTodoListByIdAsync(token, todoListId);
         var pagedResult = await this.apiService.GetPagedTasksAsync(token, todoListId, page, this.pageSize);
 
         var userRole = await this.apiService.GetUserRoleInTodoListAsync(token, todoListId);
@@ -73,6 +74,7 @@ public class TaskController : Controller
         this.TempData["UserRole"] = userRole;
         this.TempData["TodoListId"] = todoListId;
         this.TempData["CurrentPage"] = page;
+        this.TempData["TodoListTitle"] = todoList.Title;
 
         LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning the view with {pagedResult.TotalCount} tasks", null);
         return this.View(this.mapper.Map<PagedModel<TaskItemModel>>(pagedResult));
@@ -94,6 +96,7 @@ public class TaskController : Controller
 
         var userRole = await this.apiService.GetUserRoleInTodoListAsync(token, todoListId);
 
+        this.ViewBag.CurrentPage = this.TempData["CurrentPage"] ?? 1;
         this.TempData["UserRole"] = userRole;
 
         LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Gets details of task with id = {id}", null);
@@ -123,7 +126,7 @@ public class TaskController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Route("create")]
-    public async Task<IActionResult> Create(int todoListId, TaskItemModel model)
+    public async Task<IActionResult> Create(int todoListId, TaskItemModel model, int currentPage)
     {
         var token = TokenUtility.GetToken(this.Request);
 
@@ -138,7 +141,7 @@ public class TaskController : Controller
         _ = await this.apiService.CreateTaskAsync(token, todoListId, newTask);
 
         LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully create task with id = {newTask.Id}", null);
-        return this.RedirectToAction(nameof(this.Index), new { todoListId });
+        return this.RedirectToAction(nameof(this.Index), new { todoListId, page = currentPage });
     }
 
     /// <summary>
@@ -162,6 +165,7 @@ public class TaskController : Controller
             .ToList();
 
         this.ViewBag.Users = usersList;
+        this.ViewBag.CurrentPage = this.TempData["CurrentPage"] ?? 1;
 
         LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning the view of editing task with id = {id}", null);
         return this.View(this.mapper.Map<TaskItemModel>(taskToEdit));
@@ -177,7 +181,7 @@ public class TaskController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Route("edit/{id}")]
-    public async Task<IActionResult> Edit(int todoListId, int id, TaskItemModel model)
+    public async Task<IActionResult> Edit(int todoListId, int id, TaskItemModel model, int currentPage)
     {
         var token = TokenUtility.GetToken(this.Request);
 
@@ -188,12 +192,10 @@ public class TaskController : Controller
 
         var updatedTask = this.mapper.Map<TaskItem>(model);
 
-        this.ViewBag.CurrentPage = this.TempData["CurrentPage"] ?? 1;
-
         await this.apiService.UpdateTaskAsync(token, id, todoListId, updatedTask);
 
         LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully edit task with id = {id}", null);
-        return this.RedirectToAction(nameof(this.Index), new { todoListId, page = this.ViewBag.CurrentPage });
+        return this.RedirectToAction(nameof(this.Index), new { todoListId, page = currentPage });
     }
 
     /// <summary>
@@ -225,14 +227,14 @@ public class TaskController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Route("deleteConfirmed")]
-    public async Task<IActionResult> DeleteConfirmed(int id, int todoListId)
+    public async Task<IActionResult> DeleteConfirmed(int id, int todoListId, int currentPage)
     {
         var token = TokenUtility.GetToken(this.Request);
 
         await this.apiService.DeleteTaskAsync(token, id, todoListId);
 
         LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully delete task with id = {id}", null);
-        return this.RedirectToAction(nameof(this.Index), new { todoListId });
+        return this.RedirectToAction(nameof(this.Index), new { todoListId, page = currentPage });
     }
 
     /// <summary>

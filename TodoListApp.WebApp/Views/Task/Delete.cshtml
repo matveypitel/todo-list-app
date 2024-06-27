@@ -3,7 +3,8 @@
 
 @{
     ViewData["Title"] = "Delete Task";
-    var currentPage = ViewBag.CurrentPage;
+    var currentPage = TempData["CurrentPage"] as int?;
+    this.ViewBag.CurrentPage = currentPage;
 }
 
 <div class="container mt-5">
@@ -26,6 +27,7 @@
 
                     <form asp-action="DeleteConfirmed" asp-route-todoListId="@Model.TodoListId" method="post">
                         <input type="hidden" asp-for="Id" />
+                        <input type="hidden" name="currentPage" value="@currentPage" />
                         <button type="submit" class="btn btn-outline-danger">Delete</button>
                         <a class="btn btn-outline-secondary" asp-action="Index" asp-route-todoListId="@Model.TodoListId" asp-route-page="@currentPage">Cancel</a>
                     </form>

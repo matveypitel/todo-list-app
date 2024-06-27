@@ -127,7 +127,7 @@ public class TodoListController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Route("edit/{id}")]
-    public async Task<IActionResult> Edit(int id, TodoListModel model)
+    public async Task<IActionResult> Edit(int id, TodoListModel model, int currentPage)
     {
         var token = TokenUtility.GetToken(this.Request);
 
@@ -141,7 +141,7 @@ public class TodoListController : Controller
         await this.apiService.UpdateTodoListAsync(token, id, newTodoList);
 
         LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully edit to-do list with id = {newTodoList.Id}", null);
-        return this.RedirectToAction(nameof(this.Index));
+        return this.RedirectToAction(nameof(this.Index), new { page = currentPage });
     }
 
     /// <summary>
@@ -171,13 +171,13 @@ public class TodoListController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Route("deleteConfirmed")]
-    public async Task<IActionResult> DeleteConfirmed(int id)
+    public async Task<IActionResult> DeleteConfirmed(int id, int currentPage)
     {
         var token = TokenUtility.GetToken(this.Request);
 
         await this.apiService.DeleteTodoListAsync(token, id);
 
         LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully delete to-do list with id = {id}", null);
-        return this.RedirectToAction(nameof(this.Index));
+        return this.RedirectToAction(nameof(this.Index), new { page = currentPage });
     }
 }

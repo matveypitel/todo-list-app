@@ -3,12 +3,15 @@
 
 @{
     ViewData["Title"] = "Status of assigned tasks";
+    var currentPage = TempData["CurrentPage"] as int?;
+    this.ViewBag.CurrentPage = currentPage;
 }
 
 <h1>Task Status</h1>
 
 <form asp-action="Status" asp-route-id="@Model.Id" method="post">
     <input type="hidden" asp-for="Title" />
+    <input type="hidden" name="currentPage" value="@currentPage" />
     <div>
         <label for="status">Status:</label>
         <select id="status" name="Status">

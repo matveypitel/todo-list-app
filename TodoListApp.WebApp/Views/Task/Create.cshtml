@@ -2,7 +2,8 @@
 
 @{
     ViewData["Title"] = "Create Task";
-    var currentPage = ViewBag.CurrentPage;
+    var currentPage = TempData["CurrentPage"] as int?;
+    this.ViewBag.CurrentPage = currentPage;
     var minDueDate = DateTime.Today.AddDays(1);
 }
 
@@ -13,6 +14,7 @@
                 <div class="card-header bg-success text-white">Create Task</div>
                 <div class="card-body">
                     <form asp-action="Create" method="post">
+                        <input type="hidden" name="currentPage" value="@currentPage" />
                         <div class="form-group mb-3">
                             <label asp-for="Title" class="form-label">Title</label>
                             <input asp-for="Title" class="form-control" />

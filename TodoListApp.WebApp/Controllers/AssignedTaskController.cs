@@ -52,6 +52,7 @@ public class AssignedTaskController : Controller
         var token = TokenUtility.GetToken(this.Request);
 
         var pagedResult = await this.apiService.GetAssignedTasksToUserAsync(token, page, this.pageSize, status, sort);
+        this.TempData["CurrentPage"] = page;
 
         LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning view of {pagedResult.TotalCount} assigned tasks", null);
         return this.View(this.mapper.Map<PagedModel<TaskItemModel>>(pagedResult));
@@ -69,6 +70,7 @@ public class AssignedTaskController : Controller
         var token = TokenUtility.GetToken(this.Request);
 
         var taskItem = await this.apiService.GetAssignedTaskByIdAsync(token, id);
+        this.ViewBag.CurrentPage = this.TempData["CurrentPage"] ?? 1;
 
         LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Get change status page of assigned task with id = {id}", null);
         return this.View(this.mapper.Map<TaskItemModel>(taskItem));
@@ -83,7 +85,7 @@ public class AssignedTaskController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Route("status/{id}")]
-    public async Task<IActionResult> Status(int id, TaskItemModel taskItemModel)
+    public async Task<IActionResult> Status(int id, TaskItemModel taskItemModel, int currentPage)
     {
         var token = TokenUtility.GetToken(this.Request);
 
@@ -97,6 +99,6 @@ public class AssignedTaskController : Controller
         await this.apiService.UpdateTaskStatusAsync(token, id, updatedTask);
 
         LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesful change status of task with id = {id}, redirecting to paged view", null);
-        return this.RedirectToAction(nameof(this.Index));
+        return this.RedirectToAction(nameof(this.Index), new { page = currentPage });
     }
 }

@@ -5,10 +5,11 @@
 @{
     var todoListId = TempData["TodoListId"] as int?;
     var userRole = TempData["UserRole"] as TodoListRole?;
-    ViewData["Title"] = "Tasks";
+    var todoListTitle = TempData["TodoListTitle"] as string;
+    ViewData["Title"] = "tasks";
 }
 
-<h2 class="mb-4"><i class="fa-solid fa-list-check"></i> @ViewData["Title"]</h2>
+<h2 class="mb-4"><i class="fa-solid fa-list-check"></i> @todoListTitle @ViewData["Title"]</h2>
 @if (userRole == TodoListRole.Owner)
 {
     <a class="btn btn-sm btn-success mb-2" asp-route-todoListId="@todoListId" asp-action="Create">

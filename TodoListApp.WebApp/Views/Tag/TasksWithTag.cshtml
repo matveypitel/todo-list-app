@@ -6,6 +6,8 @@
     ViewData["Title"] = "Tasks with Tag";
     HttpRequest thisRequest = Context.Request;
     var tag = thisRequest.Query["tag"].ToString();
+    var currentPage = TempData["CurrentPage"] as int?;
+    this.ViewBag.CurrentPage = currentPage;
 }
 
 <h2>Tasks with Tag: @tag</h2>
@@ -14,6 +16,11 @@
 {
     <partial name="_TaskSummary" model="task" />
 }
+
+<a class="btn btn-sm btn-outline-secondary m-2" asp-action="Index" asp-route-page="@currentPage">
+    <i class="fa-solid fa-angles-left"></i>
+    Back to tags
+</a>
 
 <div class="pagination-container">
     <div class="pagination" is-task-model="" page-model="@Model" page-action="TasksWithTag" page-route-tag="@tag"></div>
