@@ -12,13 +12,10 @@
 <form asp-action="Status" asp-route-id="@Model.Id" method="post">
     <input type="hidden" asp-for="Title" />
     <input type="hidden" name="currentPage" value="@currentPage" />
-    <div>
-        <label for="status">Status:</label>
-        <select id="status" name="Status">
-            <option value="NotStarted">Not Started</option>
-            <option value="InProgress">In Progress</option>
-            <option value="Completed">Completed</option>
-        </select>
-    </div>
+    <select class="form-select" asp-for="Status">
+        <option value="NotStarted">Not Started</option>
+        <option value="InProgress">In Progress</option>
+        <option value="Completed">Completed</option>
+    </select>
     <button type="submit" class="btn btn-primary" style="margin-top: 10px">Save</button>
 </form>

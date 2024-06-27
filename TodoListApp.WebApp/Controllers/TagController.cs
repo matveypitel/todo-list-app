@@ -24,7 +24,7 @@ public class TagController : Controller
     private readonly ITagWebApiService tagWebApiService;
     private readonly IMapper mapper;
     private readonly ILogger<TagController> logger;
-    private readonly int pageSize = 9;
+    private readonly int pageSize = 18;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TagController"/> class.
