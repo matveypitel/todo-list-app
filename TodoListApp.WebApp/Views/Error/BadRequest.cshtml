@@ -1,0 +1,12 @@
+<link rel="stylesheet" href="~/css/error-page.css" />
+
+@{
+    ViewData["Title"] = "Bad Request";
+}
+
+<div class="error-page">
+    <h2>400 - Bad Request</h2>
+    <p>Sorry, the server could not understand the request due to invalid syntax.</p>
+    <img src="~/images/bad-request.png" alt="Bad Request">
+    <a asp-controller="TodoList" asp-action="Index" class="btn btn-primary">Go to to-do lists</a>
+</div>

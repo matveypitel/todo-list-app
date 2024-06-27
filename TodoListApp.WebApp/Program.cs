@@ -84,7 +84,8 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    _ = app.UseExceptionHandler("/Home/Error");
+    _ = app.UseExceptionHandler("/error");
+    _ = app.UseStatusCodePagesWithReExecute("/error/statusCode", "?statusCode={0}");
     _ = app.UseHsts();
 }
 
@@ -95,6 +96,26 @@ app.UseStatusCodePages(context =>
     if (response.StatusCode == (int)HttpStatusCode.Unauthorized)
     {
         response.Redirect("/account/login");
+    }
+
+    if (response.StatusCode == (int)HttpStatusCode.NotFound)
+    {
+        response.Redirect("/error/404");
+    }
+
+    if (response.StatusCode == (int)HttpStatusCode.InternalServerError)
+    {
+        response.Redirect("/error/500");
+    }
+
+    if (response.StatusCode == (int)HttpStatusCode.Forbidden)
+    {
+        response.Redirect("/error/403");
+    }
+
+    if (response.StatusCode == (int)HttpStatusCode.BadRequest)
+    {
+        response.Redirect("/error/400");
     }
 
     return Task.CompletedTask;

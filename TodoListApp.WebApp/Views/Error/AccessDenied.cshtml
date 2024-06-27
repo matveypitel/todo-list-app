@@ -1,0 +1,12 @@
+<link rel="stylesheet" href="~/css/error-page.css" />
+
+@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="error-page">
+    <h2>403 - Access Denied</h2>
+    <p>Sorry, you do not have permission to access this page.</p>
+    <img src="~/images/access-denied.png" alt="Access Denied">
+    <a asp-controller="TodoList" asp-action="Index" class="btn btn-primary">Go to to-do lists</a>
+</div>

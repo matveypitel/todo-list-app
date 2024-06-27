@@ -1,0 +1,12 @@
+<link rel="stylesheet" href="~/css/error-page.css" />
+
+@{
+    ViewData["Title"] = "Internal Server Error";
+}
+
+<div class="error-page">
+    <h2>500 - Internal Server Error</h2>
+    <p>Sorry, something went wrong on our end. Please try again later.</p>
+    <img src="~/images/internal-server-error.png" alt="Internal Server Error">
+    <a asp-controller="TodoList" asp-action="Index" class="btn btn-primary">Go to to-do lists</a>
+</div>

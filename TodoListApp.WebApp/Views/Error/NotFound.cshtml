@@ -1,0 +1,13 @@
+<link rel="stylesheet" href="~/css/error-page.css" />
+
+@{
+    ViewData["Title"] = "Page Not Found";
+}
+
+<div class="error-page">
+    <h1>Oops! 404. Page not found.</h1>
+    <p>We can't find the page you're looking for.</p>
+    <img src="/images/oops.png" alt="Page Not Found" width="200" height="200">
+    <p class="mt-2">It looks like nothing was found at this location. Maybe try one of the links below or a search?</p>
+    <a asp-controller="TodoList" asp-action="Index" class="btn btn-primary">Go to to-do lists</a>
+</div>
