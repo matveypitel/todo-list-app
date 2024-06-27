@@ -8,7 +8,9 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Repositories;
 
-/// <inheritdoc/>
+/// <summary>
+/// Represents a repository for managing tasks.
+/// </summary>
 public class TaskRepository : ITaskRepository
 {
     private readonly TodoListDbContext context;
@@ -38,7 +40,7 @@ public class TaskRepository : ITaskRepository
 
         if (!await this.IsOwner(taskItemEntity.TodoListId, userName))
         {
-            throw new UnauthorizedAccessException("Only the owner can remove users from the TodoList.");
+            throw new UnauthorizedAccessException("Only the owner of to-do list can create tasks.");
         }
 
         _ = await this.context.TodoLists
@@ -221,7 +223,7 @@ public class TaskRepository : ITaskRepository
 
         if (!await this.IsOwner(todoListId, userName))
         {
-            throw new UnauthorizedAccessException("Only the owner can remove users from the TodoList.");
+            throw new UnauthorizedAccessException("Only the owner of to-do list can update tasks.");
         }
 
         _ = await this.context.TodoLists
@@ -275,7 +277,7 @@ public class TaskRepository : ITaskRepository
     {
         if (!await this.IsOwner(todoListId, userName))
         {
-            throw new UnauthorizedAccessException("Only the owner can remove users from the TodoList.");
+            throw new UnauthorizedAccessException("Only the owner of to-do list can remove tasks.");
         }
 
         _ = await this.context.TodoLists

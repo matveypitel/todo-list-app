@@ -7,6 +7,9 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Repositories;
 
+/// <summary>
+/// Represents a repository for managing to-do lists.
+/// </summary>
 public class TodoListRepository : ITodoListRepository
 {
     private readonly TodoListDbContext context;
@@ -84,9 +87,9 @@ public class TodoListRepository : ITodoListRepository
     {
         ArgumentNullException.ThrowIfNull(todoListEntity);
 
-        if (!await this.IsOwner(id, userName))
+        if (await this.IsViewer(id, userName))
         {
-            throw new UnauthorizedAccessException("Only the owner can remove users from the TodoList.");
+            throw new UnauthorizedAccessException("Viewer can't update to-do lists.");
         }
 
         var existingTodoList = await this.context.TodoLists
@@ -106,7 +109,7 @@ public class TodoListRepository : ITodoListRepository
     {
         if (!await this.IsOwner(id, userName))
         {
-            throw new UnauthorizedAccessException("Only the owner can remove users from the TodoList.");
+            throw new UnauthorizedAccessException("Only the owner can remove to-do lists.");
         }
 
         var todoList = await this.context.TodoLists
@@ -121,5 +124,11 @@ public class TodoListRepository : ITodoListRepository
     {
         return await this.context.TodoListsUsers
             .AnyAsync(tlu => tlu.TodoListId == todoListId && tlu.UserName == requesterUserName && tlu.Role == TodoListRole.Owner);
+    }
+
+    private async Task<bool> IsViewer(int todoListId, string requesterUserName)
+    {
+        return await this.context.TodoListsUsers
+            .AnyAsync(tlu => tlu.TodoListId == todoListId && tlu.UserName == requesterUserName && tlu.Role == TodoListRole.Viewer);
     }
 }

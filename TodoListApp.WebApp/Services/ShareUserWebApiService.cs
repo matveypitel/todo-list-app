@@ -8,7 +8,7 @@ using TodoListApp.WebApp.Utilities;
 namespace TodoListApp.WebApp.Services;
 
 /// <summary>
-/// Service for managing shared users in a todo list through a web API.
+/// Service for managing shared users in a to-do list through a web API.
 /// </summary>
 public class ShareUserWebApiService : IShareUserWebApiService
 {

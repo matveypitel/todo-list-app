@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -15,18 +16,26 @@ namespace TodoListApp.WebApi.Controllers;
 [ApiController]
 public class ShareUserController : ControllerBase
 {
+    private static readonly Action<ILogger, string, string, Exception?> LogInformation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            default,
+            "{DateTime} Message: [{Message}]");
+
     private readonly IShareUserDatabaseService databaseService;
     private readonly IMapper mapper;
+    private readonly ILogger<ShareUserController> logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ShareUserController"/> class.
     /// </summary>
     /// <param name="databaseService">The database service for managing shared users.</param>
     /// <param name="mapper">The mapper for mapping between DTOs and domain models.</param>
-    public ShareUserController(IShareUserDatabaseService databaseService, IMapper mapper)
+    public ShareUserController(IShareUserDatabaseService databaseService, IMapper mapper, ILogger<ShareUserController> logger)
     {
         this.databaseService = databaseService;
         this.mapper = mapper;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -49,6 +58,12 @@ public class ShareUserController : ControllerBase
             return this.BadRequest();
         }
 
+        LogInformation(
+            this.logger,
+            DateTime.Now.ToString(CultureInfo.InvariantCulture),
+            $"{users.TotalCount} users got in to-do list with id {todoListId}",
+            null);
+
         return this.Ok(this.mapper.Map<PagedModel<TodoListUserModel>>(users));
     }
 
@@ -65,6 +80,12 @@ public class ShareUserController : ControllerBase
         var userNameRequester = this.GetUserName();
 
         var user = await this.databaseService.GetUserByNameAsync(todoListId, userNameRequester, userName);
+
+        LogInformation(
+            this.logger,
+            DateTime.Now.ToString(CultureInfo.InvariantCulture),
+            $"User with username: {userNameRequester} requested in to-do list with id {todoListId}",
+            null);
 
         return this.Ok(this.mapper.Map<TodoListUserModel>(user));
     }
@@ -87,6 +108,12 @@ public class ShareUserController : ControllerBase
         }
 
         var todoListUser = await this.databaseService.AddUserToTodoListAsync(todoListId, userNameRequester, model.UserName, model.Role);
+
+        LogInformation(
+            this.logger,
+            DateTime.Now.ToString(CultureInfo.InvariantCulture),
+            $"User with username: {userNameRequester} added to to-do list with id {todoListId}",
+            null);
 
         return this.CreatedAtAction(
             nameof(this.GetTodoListUser),
@@ -114,6 +141,12 @@ public class ShareUserController : ControllerBase
 
         await this.databaseService.UpdateUserRoleAsync(todoListId, userNameRequester, userName, model.Role);
 
+        LogInformation(
+            this.logger,
+            DateTime.Now.ToString(CultureInfo.InvariantCulture),
+            $"User with username: {userNameRequester} updated in to-do list with id {todoListId}",
+            null);
+
         return this.NoContent();
     }
 
@@ -121,7 +154,7 @@ public class ShareUserController : ControllerBase
     /// DELETE: api/todolists/{todoListId}/share_users/{userName}.
     /// Remove a shared user from a to-do list.
     /// </summary>
-    /// <param name="todoListId">The ID of the todo list.</param>
+    /// <param name="todoListId">The ID of the to-do list.</param>
     /// <param name="userName">The username of the shared user.</param>
     /// <returns>No content.</returns>
     [HttpDelete("{userName}")]
@@ -130,6 +163,12 @@ public class ShareUserController : ControllerBase
         var userNameRequester = this.GetUserName();
 
         await this.databaseService.RemoveUserFromTodoListAsync(todoListId, userNameRequester, userName);
+
+        LogInformation(
+            this.logger,
+            DateTime.Now.ToString(CultureInfo.InvariantCulture),
+            $"User with username: {userNameRequester} removed from to-do list with id {todoListId}",
+            null);
 
         return this.NoContent();
     }

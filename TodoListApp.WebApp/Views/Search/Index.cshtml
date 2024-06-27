@@ -37,9 +37,16 @@
     </div>
 </form>
 
-@foreach (var task in Model.Items ?? Enumerable.Empty<TaskItemModel>())
+@if (!Model.Items.Any())
 {
-    <partial name="_TaskSummary" model="task" />
+    <h5 class="text-center">No tasks found</h5>
+}
+else
+{
+    @foreach (var task in Model.Items)
+    {
+        <partial name="_TaskSummary" model="task" />
+    }
 }
 
 <div class="pagination-container">

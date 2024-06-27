@@ -1,3 +1,4 @@
+using System.Globalization;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,10 +18,17 @@ namespace TodoListApp.WebApp.Controllers;
 [Route("todolists/{todoListId}/share_users")]
 public class ShareUserController : Controller
 {
+    private static readonly Action<ILogger, string, string, Exception?> LogInformation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            default,
+            "{DateTime} Message: [{Message}]");
+
     private readonly IShareUserWebApiService apiService;
     private readonly ITodoListWebApiService todoListApiService;
     private readonly IMapper mapper;
     private readonly UserManager<IdentityUser> userManager;
+    private readonly ILogger<ShareUserController> logger;
     private readonly int pageSize = 15;
 
     /// <summary>
@@ -30,12 +38,18 @@ public class ShareUserController : Controller
     /// <param name="mapper">The mapper.</param>
     /// <param name="userManager">The user manager.</param>
     /// <param name="todoListApiService">The to-do list web API service.</param>
-    public ShareUserController(IShareUserWebApiService apiService, IMapper mapper, UserManager<IdentityUser> userManager, ITodoListWebApiService todoListApiService)
+    public ShareUserController(
+        IShareUserWebApiService apiService,
+        IMapper mapper,
+        UserManager<IdentityUser> userManager,
+        ITodoListWebApiService todoListApiService,
+        ILogger<ShareUserController> logger)
     {
         this.apiService = apiService;
         this.mapper = mapper;
         this.userManager = userManager;
         this.todoListApiService = todoListApiService;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -53,6 +67,7 @@ public class ShareUserController : Controller
 
         var pagedResult = await this.apiService.GetPagedListOfUsersInTodoListAsync(token, todoListId, page, this.pageSize);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning view of {pagedResult.TotalCount} users", null);
         return this.View(this.mapper.Map<PagedModel<TodoListUserModel>>(pagedResult));
     }
 
@@ -79,6 +94,7 @@ public class ShareUserController : Controller
             .ToList();
         this.ViewBag.Users = usersList;
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning view of add sharing to-do list with id = {todoListId} with users", null);
         return this.View(new TodoListUserModel() { TodoListId = todoListId });
     }
 
@@ -104,6 +120,7 @@ public class ShareUserController : Controller
 
         _ = await this.apiService.AddUserToTodoListAsync(token, todoListId, newUser);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully sharing to-do list with id = {todoListId} with {newUser.UserName}", null);
         return this.RedirectToAction(nameof(this.Index), new { todoListId });
     }
 
@@ -122,6 +139,7 @@ public class ShareUserController : Controller
 
         var user = await this.apiService.GetUserInTodoListAsync(token, todoListId, userName);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning view of edit sharing to-do list with id = {todoListId} with users", null);
         return this.View(this.mapper.Map<TodoListUserModel>(user));
     }
 
@@ -148,6 +166,7 @@ public class ShareUserController : Controller
 
         await this.apiService.UpdateUserRoleAsync(token, todoListId, userName, user);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully edit sharing to-do list with id = {todoListId} with {userName}", null);
         return this.RedirectToAction(nameof(this.Index), new { todoListId });
     }
 
@@ -166,6 +185,7 @@ public class ShareUserController : Controller
 
         var todoUser = await this.apiService.GetUserInTodoListAsync(token, todoListId, userName);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning view of delete sharing to-do list with id = {todoListId} with users", null);
         return this.View(this.mapper.Map<TodoListUserModel>(todoUser));
     }
 
@@ -184,6 +204,7 @@ public class ShareUserController : Controller
 
         await this.apiService.RemoveUserFromTodoListAsync(token, todoListId, userName);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully delete sharing to-do list with id = {todoListId} with {userName}", null);
         return this.RedirectToAction(nameof(this.Index), new { todoListId });
     }
 }

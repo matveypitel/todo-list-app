@@ -5,6 +5,7 @@
 @{
     var owner = Model.Users.FirstOrDefault(u => u.Role == TodoListRole.Owner);
     var user = Model.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name) !;
+    var sharedList = Model.Users.Where(u => u.Role != TodoListRole.Owner).Select(u => u.UserName).ToList();
 }
 
 

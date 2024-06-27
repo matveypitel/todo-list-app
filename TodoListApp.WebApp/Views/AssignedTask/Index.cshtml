@@ -37,11 +37,18 @@
     <button type="submit" class="btn btn-outline-primary mt-2">Apply</button>
     <a asp-action="Index" class="btn btn-secondary mt-2">Reset</a>
 </form>
-@foreach (var task in Model.Items ?? Enumerable.Empty<TaskItemModel>())
-{
-    <partial name="_AssignedTaskSummary" model="task" />
-}
 
+@if (!Model.Items.Any())
+{
+    <h5 class="text-center">No tasks found</h5>
+}
+else
+{
+    @foreach (var task in Model.Items)
+    {
+        <partial name="_AssignedTaskSummary" model="task" />
+    }
+}
 
 <div class="pagination-container">
     <div class="pagination" is-assignedTask-model="" page-model="@Model" page-action="Index"></div>

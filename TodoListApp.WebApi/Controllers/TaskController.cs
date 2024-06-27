@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -17,10 +18,17 @@ namespace TodoListApp.WebApi.Controllers;
 [ApiController]
 public class TaskController : ControllerBase
 {
+    private static readonly Action<ILogger, string, string, Exception?> LogInformation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            default,
+            "{DateTime} Message: [{Message}]");
+
     private readonly ITaskDatabaseService databaseService;
     private readonly ITagDatabaseService tagDatabaseService;
     private readonly ICommentDatabaseService commentDatabaseService;
     private readonly IMapper mapper;
+    private readonly ILogger<TaskController> logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TaskController"/> class.
@@ -29,12 +37,18 @@ public class TaskController : ControllerBase
     /// <param name="mapper">The mapper.</param>
     /// <param name="tagDatabaseService">The tag database service.</param>
     /// <param name="commentDatabaseService">The comment database service.</param>
-    public TaskController(ITaskDatabaseService databaseService, IMapper mapper, ITagDatabaseService tagDatabaseService, ICommentDatabaseService commentDatabaseService)
+    public TaskController(
+        ITaskDatabaseService databaseService,
+        IMapper mapper,
+        ITagDatabaseService tagDatabaseService,
+        ICommentDatabaseService commentDatabaseService,
+        ILogger<TaskController> logger)
     {
         this.databaseService = databaseService;
         this.mapper = mapper;
         this.tagDatabaseService = tagDatabaseService;
         this.commentDatabaseService = commentDatabaseService;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -56,6 +70,12 @@ public class TaskController : ControllerBase
         newTaskItem.AssignedTo = userName;
 
         var taskItem = await this.databaseService.CreateTaskAsync(newTaskItem, userName);
+
+        LogInformation(
+            this.logger,
+            DateTime.Now.ToString(CultureInfo.InvariantCulture),
+            $"Task with id {newTaskItem.Id} updated in to-do list with id {todoListId}",
+            null);
 
         return this.CreatedAtAction(
             nameof(this.GetTaskDetails),
@@ -86,6 +106,12 @@ public class TaskController : ControllerBase
             return this.BadRequest();
         }
 
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"{taskItems.TotalCount} tasks found in to-do list with id {todoListId}",
+           null);
+
         return this.Ok(this.mapper.Map<PagedModel<TaskItemModel>>(taskItems));
     }
 
@@ -102,6 +128,12 @@ public class TaskController : ControllerBase
         var userName = this.GetUserName();
 
         var taskItem = await this.databaseService.GetTaskByIdAsync(id, todoListId, userName);
+
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"Task details with id {taskItem.Id} in to-do list with id {todoListId}",
+           null);
 
         return this.Ok(this.mapper.Map<TaskItemModel>(taskItem));
     }
@@ -124,6 +156,12 @@ public class TaskController : ControllerBase
 
         await this.databaseService.UpdateTaskAsync(id, todoListId, taskItem, userName);
 
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"Task with id {taskItem.Id} updated in to-do list with id {todoListId}",
+           null);
+
         return this.NoContent();
     }
 
@@ -140,6 +178,12 @@ public class TaskController : ControllerBase
         var userName = this.GetUserName();
 
         await this.databaseService.DeleteTaskAsync(id, todoListId, userName);
+
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"Task with id {id} deleted in to-do list with id {todoListId}",
+           null);
 
         return this.NoContent();
     }
@@ -169,6 +213,12 @@ public class TaskController : ControllerBase
 
         var newTag = await this.tagDatabaseService.AddTagToTaskAsync(id, tag, userName);
 
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"Tag with id {newTag.Id} added to task with id {id}",
+           null);
+
         return this.CreatedAtAction(
             nameof(this.GetTaskDetails),
             new { id = taskItem.Id, todoListId, },
@@ -197,6 +247,12 @@ public class TaskController : ControllerBase
         }
 
         await this.tagDatabaseService.DeleteTagAsync(tagId, id, userName);
+
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"Tag with id {tagId} deleted from task with id {id}",
+           null);
 
         return this.NoContent();
     }
@@ -238,6 +294,12 @@ public class TaskController : ControllerBase
             return this.NotFound();
         }
 
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"Tag with id {tagId} found from task with id {id}",
+           null);
+
         return this.Ok(this.mapper.Map<TagModel>(tag));
     }
 
@@ -263,6 +325,12 @@ public class TaskController : ControllerBase
             return this.BadRequest();
         }
 
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"{comments.TotalCount} found in task with id {id}",
+           null);
+
         return this.Ok(this.mapper.Map<PagedModel<CommentModel>>(comments));
     }
 
@@ -278,6 +346,12 @@ public class TaskController : ControllerBase
     public async Task<ActionResult<CommentModel>> GetCommentOfTaskItem([FromRoute] int id, [FromRoute] int commentId)
     {
         var comment = await this.commentDatabaseService.GetCommentByIdAsync(commentId, id);
+
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"Comment with id {commentId} found from task with id {id}",
+           null);
 
         return this.Ok(this.mapper.Map<CommentModel>(comment));
     }
@@ -308,6 +382,12 @@ public class TaskController : ControllerBase
         comment.TaskId = id;
 
         var newComment = await this.commentDatabaseService.AddCommentToTaskAsync(comment, userName);
+
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"Comment with id {newComment.Id} added to task with id {id}",
+           null);
 
         return this.CreatedAtAction(
             nameof(this.GetTaskDetails),
@@ -341,6 +421,12 @@ public class TaskController : ControllerBase
 
         await this.commentDatabaseService.UpdateCommentAsync(commentId, id, comment, userName);
 
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"Comment with id {commentId} updated from task with id {id}",
+           null);
+
         return this.NoContent();
     }
 
@@ -366,6 +452,12 @@ public class TaskController : ControllerBase
         }
 
         await this.commentDatabaseService.DeleteCommentAsync(commentId, id, userName);
+
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"Comment with id {commentId} deleted from task with id {id}",
+           null);
 
         return this.NoContent();
     }

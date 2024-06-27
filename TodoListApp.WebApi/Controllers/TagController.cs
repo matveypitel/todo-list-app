@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -15,9 +16,16 @@ namespace TodoListApp.WebApi.Controllers;
 [ApiController]
 public class TagController : ControllerBase
 {
+    private static readonly Action<ILogger, string, string, Exception?> LogInformation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            default,
+            "{DateTime} Message: [{Message}]");
+
     private readonly IMapper mapper;
     private readonly ITagDatabaseService tagDatabaseService;
     private readonly ITaskDatabaseService taskDatabaseService;
+    private readonly ILogger<TagController> logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TagController"/> class.
@@ -25,11 +33,12 @@ public class TagController : ControllerBase
     /// <param name="mapper">The mapper.</param>
     /// <param name="tagDatabaseService">The tag database service.</param>
     /// <param name="taskDatabaseService">The task database service.</param>
-    public TagController(IMapper mapper, ITagDatabaseService tagDatabaseService, ITaskDatabaseService taskDatabaseService)
+    public TagController(IMapper mapper, ITagDatabaseService tagDatabaseService, ITaskDatabaseService taskDatabaseService, ILogger<TagController> logger)
     {
         this.mapper = mapper;
         this.tagDatabaseService = tagDatabaseService;
         this.taskDatabaseService = taskDatabaseService;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -51,6 +60,11 @@ public class TagController : ControllerBase
             return this.BadRequest();
         }
 
+        LogInformation(
+            this.logger,
+            DateTime.Now.ToString(CultureInfo.InvariantCulture),
+            $"{tags.TotalCount} tags was found",
+            null);
         return this.Ok(this.mapper.Map<PagedModel<TagModel>>(tags));
     }
 
@@ -77,6 +91,12 @@ public class TagController : ControllerBase
         {
             return this.BadRequest();
         }
+
+        LogInformation(
+            this.logger,
+            DateTime.Now.ToString(CultureInfo.InvariantCulture),
+            $"{tasks.TotalCount} tasks got with tag {tag}",
+            null);
 
         return this.Ok(this.mapper.Map<PagedModel<TaskItemModel>>(tasks));
     }

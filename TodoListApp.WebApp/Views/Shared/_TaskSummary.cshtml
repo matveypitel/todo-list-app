@@ -6,7 +6,7 @@
     var role = TempData["UserRole"] as TodoListRole?;
 }
 
-<div class="card h-100 mt-2 border-2 shadow @(Model.IsOverDue ? "border-danger" : "")">
+<div class="card h-100 mt-2 border-2 shadow @(Model.IsOverDue && Model.IsActive ? "border-danger" : "")">
     <div class="card-body d-flex flex-column">
         @if (Model.IsOverDue)
         {

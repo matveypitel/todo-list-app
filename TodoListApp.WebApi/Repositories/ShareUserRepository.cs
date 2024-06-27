@@ -7,7 +7,9 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Repositories;
 
-/// <inheritdoc/>
+/// <summary>
+/// Represents a repository for managing shared users in a to-do list.
+/// </summary>
 public class ShareUserRepository : IShareUserRepository
 {
     private readonly TodoListDbContext context;
@@ -24,7 +26,10 @@ public class ShareUserRepository : IShareUserRepository
     /// <inheritdoc/>
     public async Task<PagedModel<TodoListUserEntity>> GetPagedListAsync(int todoListId, string requesterUserName, int page, int pageSize)
     {
-        await this.IsOwner(todoListId, requesterUserName);
+        if (await this.IsOwner(todoListId, requesterUserName))
+        {
+            throw new UnauthorizedAccessException("Only the owner can get users from the TodoList.");
+        }
 
         var query = this.context.TodoListsUsers
             .Where(tlu => tlu.TodoListId == todoListId);
@@ -47,7 +52,10 @@ public class ShareUserRepository : IShareUserRepository
     /// <inheritdoc/>
     public async Task<TodoListUserEntity> GetByNameAsync(int todoListId, string requesterUserName, string userName)
     {
-        await this.IsOwner(todoListId, requesterUserName);
+        if (await this.IsOwner(todoListId, requesterUserName))
+        {
+            throw new UnauthorizedAccessException("Only the owner can get user from the TodoList.");
+        }
 
         return await this.context.TodoListsUsers
             .FirstOrDefaultAsync(tlu => tlu.TodoListId == todoListId && tlu.UserName == userName)
@@ -57,7 +65,10 @@ public class ShareUserRepository : IShareUserRepository
     /// <inheritdoc/>
     public async Task<TodoListUserEntity> AddUserToTodoListAsync(int todoListId, string requesterUserName, string userName, TodoListRole role)
     {
-        await this.IsOwner(todoListId, requesterUserName);
+        if (await this.IsOwner(todoListId, requesterUserName))
+        {
+            throw new UnauthorizedAccessException("Only the owner can add users from the TodoList.");
+        }
 
         if (await this.context.TodoListsUsers.AnyAsync(tlu => tlu.TodoListId == todoListId && tlu.UserName == userName))
         {
@@ -80,7 +91,10 @@ public class ShareUserRepository : IShareUserRepository
     /// <inheritdoc/>
     public async Task UpdateUserRoleAsync(int todoListId, string requesterUserName, string userName, TodoListRole newRole)
     {
-        await this.IsOwner(todoListId, requesterUserName);
+        if (await this.IsOwner(todoListId, requesterUserName))
+        {
+            throw new UnauthorizedAccessException("Only the owner can update users from the TodoList.");
+        }
 
         var todoListUser = await this.context.TodoListsUsers
             .FirstOrDefaultAsync(tlu => tlu.TodoListId == todoListId && tlu.UserName == userName)
@@ -95,7 +109,10 @@ public class ShareUserRepository : IShareUserRepository
     /// <inheritdoc/>
     public async Task RemoveUserFromTodoListAsync(int todoListId, string requesterUserName, string userName)
     {
-        await this.IsOwner(todoListId, requesterUserName);
+        if (await this.IsOwner(todoListId, requesterUserName))
+        {
+            throw new UnauthorizedAccessException("Only the owner can remove users from the TodoList.");
+        }
 
         var todoListUser = await this.context.TodoListsUsers
             .FirstOrDefaultAsync(tlu => tlu.TodoListId == todoListId && tlu.UserName == userName)
@@ -105,14 +122,9 @@ public class ShareUserRepository : IShareUserRepository
         _ = await this.context.SaveChangesAsync();
     }
 
-    private async Task IsOwner(int todoListId, string requesterUserName)
+    private async Task<bool> IsOwner(int todoListId, string requesterUserName)
     {
-        var isOwner = await this.context.TodoListsUsers
+        return await this.context.TodoListsUsers
             .AnyAsync(tlu => tlu.TodoListId == todoListId && tlu.UserName == requesterUserName && tlu.Role == TodoListRole.Owner);
-
-        if (!isOwner)
-        {
-            throw new UnauthorizedAccessException("Only the owner can remove users from the TodoList.");
-        }
     }
 }

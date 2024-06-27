@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -16,9 +17,16 @@ namespace TodoListApp.WebApp.Controllers;
 [Route("account")]
 public class AccountController : Controller
 {
+    private static readonly Action<ILogger, string, string, Exception?> LogInformation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            default,
+            "{DateTime} Message: [{Message}]");
+
     private readonly UserManager<IdentityUser> userManager;
     private readonly SignInManager<IdentityUser> signInManager;
     private readonly IConfiguration configuration;
+    private readonly ILogger<AccountController> logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AccountController"/> class.
@@ -26,11 +34,12 @@ public class AccountController : Controller
     /// <param name="userManager">The user manager.</param>
     /// <param name="signInManager">The sign-in manager.</param>
     /// <param name="configuration">The configuration.</param>
-    public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration)
+    public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration, ILogger<AccountController> logger)
     {
         this.userManager = userManager;
         this.signInManager = signInManager;
         this.configuration = configuration;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -42,6 +51,7 @@ public class AccountController : Controller
     [AllowAnonymous]
     public IActionResult Register()
     {
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning view of register page", null);
         return this.View();
     }
 
@@ -65,6 +75,7 @@ public class AccountController : Controller
 
             if (result.Succeeded)
             {
+                LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Redirecting to login page", null);
                 return this.RedirectToAction("Login");
             }
 
@@ -86,6 +97,7 @@ public class AccountController : Controller
     [AllowAnonymous]
     public IActionResult Login()
     {
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning view of login page", null);
         return this.View();
     }
 
@@ -118,6 +130,7 @@ public class AccountController : Controller
                     SameSite = SameSiteMode.Strict,
                 });
 
+                LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesful login and auth, redirecting to todolist page", null);
                 return this.RedirectToAction("Index", "TodoList");
             }
 
@@ -139,6 +152,7 @@ public class AccountController : Controller
 
         this.Response.Cookies.Delete("Token");
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Logout, redirecting to login page", null);
         return this.RedirectToAction(nameof(this.Login), "Account");
     }
 

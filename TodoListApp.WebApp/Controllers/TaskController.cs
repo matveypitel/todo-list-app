@@ -1,6 +1,6 @@
+using System.Globalization;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TodoListApp.Models.Domains;
@@ -17,11 +17,18 @@ namespace TodoListApp.WebApp.Controllers;
 [Route("todolists/{todoListId}/tasks")]
 public class TaskController : Controller
 {
+    private static readonly Action<ILogger, string, string, Exception?> LogInformation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            default,
+            "{DateTime} Message: [{Message}]");
+
     private readonly ITaskWebApiService apiService;
     private readonly ITagWebApiService tagApiService;
     private readonly ICommentWebApiService commentApiService;
+    private readonly ITodoListWebApiService todoListApiService;
     private readonly IMapper mapper;
-    private readonly UserManager<IdentityUser> userManager;
+    private readonly ILogger<TaskController> logger;
     private readonly int pageSize = 5;
 
     /// <summary>
@@ -32,13 +39,20 @@ public class TaskController : Controller
     /// <param name="commentApiService">The service for managing comments via API.</param>
     /// <param name="userManager">The user manager for handling user-related operations.</param>
     /// <param name="tagApiService">The service for managing tags via API.</param>
-    public TaskController(ITaskWebApiService apiService, IMapper mapper, ICommentWebApiService commentApiService, UserManager<IdentityUser> userManager, ITagWebApiService tagApiService)
+    public TaskController(
+        ITaskWebApiService apiService,
+        IMapper mapper,
+        ICommentWebApiService commentApiService,
+        ITagWebApiService tagApiService,
+        ITodoListWebApiService todoListApiService,
+        ILogger<TaskController> logger)
     {
         this.apiService = apiService;
         this.mapper = mapper;
-        this.userManager = userManager;
         this.tagApiService = tagApiService;
         this.commentApiService = commentApiService;
+        this.todoListApiService = todoListApiService;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -60,6 +74,7 @@ public class TaskController : Controller
         this.TempData["TodoListId"] = todoListId;
         this.TempData["CurrentPage"] = page;
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning the view with {pagedResult.TotalCount} tasks", null);
         return this.View(this.mapper.Map<PagedModel<TaskItemModel>>(pagedResult));
     }
 
@@ -81,6 +96,7 @@ public class TaskController : Controller
 
         this.TempData["UserRole"] = userRole;
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Gets details of task with id = {id}", null);
         return this.View(this.mapper.Map<TaskItemModel>(task));
     }
 
@@ -94,6 +110,7 @@ public class TaskController : Controller
     public IActionResult Create(int todoListId)
     {
         this.ViewBag.CurrentPage = this.TempData["CurrentPage"] ?? 1;
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning the view of creation task", null);
         return this.View(new TaskItemModel() { TodoListId = todoListId });
     }
 
@@ -120,6 +137,7 @@ public class TaskController : Controller
 
         _ = await this.apiService.CreateTaskAsync(token, todoListId, newTask);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully create task with id = {newTask.Id}", null);
         return this.RedirectToAction(nameof(this.Index), new { todoListId });
     }
 
@@ -137,12 +155,15 @@ public class TaskController : Controller
 
         var taskToEdit = await this.apiService.GetTaskByIdAsync(token, id, todoListId);
 
-        var users = this.userManager.Users.ToList();
-        var usersList = users.Select(user => new SelectListItem(user.UserName, user.UserName))
+        var todoList = await this.todoListApiService.GetTodoListByIdAsync(token, todoListId);
+        var todoListUserNames = todoList.Users.Select(u => u.UserName).ToList();
+
+        var usersList = todoListUserNames.Select(user => new SelectListItem(user, user))
             .ToList();
 
         this.ViewBag.Users = usersList;
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning the view of editing task with id = {id}", null);
         return this.View(this.mapper.Map<TaskItemModel>(taskToEdit));
     }
 
@@ -171,6 +192,7 @@ public class TaskController : Controller
 
         await this.apiService.UpdateTaskAsync(token, id, todoListId, updatedTask);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully edit task with id = {id}", null);
         return this.RedirectToAction(nameof(this.Index), new { todoListId, page = this.ViewBag.CurrentPage });
     }
 
@@ -190,6 +212,7 @@ public class TaskController : Controller
 
         this.ViewBag.CurrentPage = this.TempData["CurrentPage"] ?? 1;
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning the view of deleting task with id = {id}", null);
         return this.View(this.mapper.Map<TaskItemModel>(taskToDelete));
     }
 
@@ -208,6 +231,7 @@ public class TaskController : Controller
 
         await this.apiService.DeleteTaskAsync(token, id, todoListId);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully delete task with id = {id}", null);
         return this.RedirectToAction(nameof(this.Index), new { todoListId });
     }
 
@@ -224,6 +248,7 @@ public class TaskController : Controller
         this.TempData["TaskId"] = taskId;
         this.TempData["TodoListId"] = todoListId;
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning the view to add tag to task with id = {taskId}", null);
         return this.View(new TagModel());
     }
 
@@ -250,6 +275,7 @@ public class TaskController : Controller
 
         _ = await this.tagApiService.AddTagToTaskAsync(token, todoListId, taskId, newTag);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully add tag - {newTag.Label} to task with id = {taskId}", null);
         return this.RedirectToAction(nameof(this.Details), new { todoListId, id = taskId });
     }
 
@@ -270,6 +296,7 @@ public class TaskController : Controller
 
         var tag = await this.tagApiService.GetTagByIdAsync(token, todoListId, taskId, tagId);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning the view to delete tag from task with id = {taskId}", null);
         return this.View(this.mapper.Map<TagModel>(tag));
     }
 
@@ -289,6 +316,7 @@ public class TaskController : Controller
 
         await this.tagApiService.DeleteTagAsync(token, todoListId, taskId, tagId);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully delete tag with id = {tagId} from task with id = {taskId}", null);
         return this.RedirectToAction(nameof(this.Details), new { todoListId, id = taskId });
     }
 
@@ -312,6 +340,7 @@ public class TaskController : Controller
 
         var pagedResult = await this.commentApiService.GetPagedListOfCommentsAsync(token, taskId, todoListId, page, this.pageSize);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning the view of comments of task with id = {taskId}", null);
         return this.View(this.mapper.Map<PagedModel<CommentModel>>(pagedResult));
     }
 
@@ -328,6 +357,7 @@ public class TaskController : Controller
         this.TempData["TaskId"] = taskId;
         this.TempData["TodoListId"] = todoListId;
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning the view of add comment to task with id = {taskId}", null);
         return this.View(new CommentModel());
     }
 
@@ -354,6 +384,7 @@ public class TaskController : Controller
 
         _ = await this.commentApiService.AddCommentToTaskAsync(token, todoListId, taskId, newComment);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully add comment with id = {newComment.Id} to task with id = {taskId}", null);
         return this.RedirectToAction(nameof(this.Details), new { todoListId, id = taskId });
     }
 
@@ -374,6 +405,7 @@ public class TaskController : Controller
 
         var commentToEdit = await this.commentApiService.GetCommentByIdAsync(token, commentId, todoListId, taskId);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning the view of editing comment in task with id = {taskId}", null);
         return this.View(this.mapper.Map<CommentModel>(commentToEdit));
     }
 
@@ -401,6 +433,7 @@ public class TaskController : Controller
 
         await this.commentApiService.UpdateCommentAsync(token, commentId, todoListId, taskId, updatedComment);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully edit comment with id = {updatedComment.Id} in task with id = {taskId}", null);
         return this.RedirectToAction(nameof(this.Comments), new { todoListId, taskId });
     }
 
@@ -421,6 +454,7 @@ public class TaskController : Controller
 
         var comment = await this.commentApiService.GetCommentByIdAsync(token, commentId, todoListId, taskId);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning the view of deleting comment from task with id = {taskId}", null);
         return this.View(this.mapper.Map<CommentModel>(comment));
     }
 
@@ -440,6 +474,7 @@ public class TaskController : Controller
 
         await this.commentApiService.DeleteCommentAsync(token, commentId, todoListId, taskId);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully delete comment with id = {commentId} from task with id = {taskId}", null);
         return this.RedirectToAction(nameof(this.Comments), new { todoListId, taskId });
     }
 }

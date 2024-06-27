@@ -1,3 +1,4 @@
+using System.Globalization;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,19 +15,27 @@ namespace TodoListApp.WebApp.Controllers;
 [Route("search")]
 public class SearchController : Controller
 {
+    private static readonly Action<ILogger, string, string, Exception?> LogInformation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            default,
+            "{DateTime} Message: [{Message}]");
+
     private readonly ITaskWebApiService apiService;
     private readonly IMapper mapper;
     private readonly int pageSize = 10;
+    private readonly ILogger<SearchController> logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SearchController"/> class.
     /// </summary>
     /// <param name="apiService">The task web API service.</param>
     /// <param name="mapper">The mapper.</param>
-    public SearchController(ITaskWebApiService apiService, IMapper mapper)
+    public SearchController(ITaskWebApiService apiService, IMapper mapper, ILogger<SearchController> logger)
     {
         this.apiService = apiService;
         this.mapper = mapper;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -45,6 +54,7 @@ public class SearchController : Controller
 
         var pagedResult = await this.apiService.GetPagedSearchedTaskAsync(token, page, this.pageSize, title, creationDate, dueDate);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning view of {pagedResult.TotalCount} searched tasks with filters", null);
         return this.View(this.mapper.Map<PagedModel<TaskItemModel>>(pagedResult));
     }
 }

@@ -1,3 +1,4 @@
+using System.Globalization;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,8 +16,15 @@ namespace TodoListApp.WebApp.Controllers;
 [Route("todolists")]
 public class TodoListController : Controller
 {
+    private static readonly Action<ILogger, string, string, Exception?> LogInformation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            default,
+            "{DateTime} Message: [{Message}]");
+
     private readonly ITodoListWebApiService apiService;
     private readonly IMapper mapper;
+    private readonly ILogger<TodoListController> logger;
     private readonly int pageSize = 6;
 
     /// <summary>
@@ -24,10 +32,11 @@ public class TodoListController : Controller
     /// </summary>
     /// <param name="apiService">The to-do list web API service.</param>
     /// <param name="mapper">The mapper.</param>
-    public TodoListController(ITodoListWebApiService apiService, IMapper mapper)
+    public TodoListController(ITodoListWebApiService apiService, IMapper mapper, ILogger<TodoListController> logger)
     {
         this.apiService = apiService;
         this.mapper = mapper;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -38,10 +47,16 @@ public class TodoListController : Controller
     [HttpGet]
     public async Task<IActionResult> Index([FromQuery] int page = 1)
     {
+        if (!this.User.Identity!.IsAuthenticated)
+        {
+            return this.RedirectToAction("Login", "Account");
+        }
+
         var token = TokenUtility.GetToken(this.Request);
         var pagedResult = await this.apiService.GetPagedListOfTodoListsAsync(token, page, this.pageSize);
 
         this.TempData["CurrentPage"] = page;
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Get the view of to-do lists", null);
         return this.View(this.mapper.Map<PagedModel<TodoListModel>>(pagedResult));
     }
 
@@ -54,6 +69,8 @@ public class TodoListController : Controller
     public IActionResult Create()
     {
         this.ViewBag.CurrentPage = this.TempData["CurrentPage"] ?? 1;
+
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Get the view of creating to-do list", null);
         return this.View(new TodoListModel());
     }
 
@@ -78,6 +95,7 @@ public class TodoListController : Controller
 
         _ = await this.apiService.CreateTodoListAsync(token, newTodoList);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully create to-do list with id = {newTodoList.Id}", null);
         return this.RedirectToAction(nameof(this.Index));
     }
 
@@ -96,6 +114,7 @@ public class TodoListController : Controller
 
         this.ViewBag.CurrentPage = this.TempData["CurrentPage"] ?? 1;
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Get the view of editing to-do lists", null);
         return this.View(this.mapper.Map<TodoListModel>(todoListToEdit));
     }
 
@@ -121,6 +140,7 @@ public class TodoListController : Controller
 
         await this.apiService.UpdateTodoListAsync(token, id, newTodoList);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully edit to-do list with id = {newTodoList.Id}", null);
         return this.RedirectToAction(nameof(this.Index));
     }
 
@@ -139,6 +159,7 @@ public class TodoListController : Controller
 
         this.ViewBag.CurrentPage = this.TempData["CurrentPage"] ?? 1;
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Get the view of deleting to-do lists", null);
         return this.View(this.mapper.Map<TodoListModel>(todoListToDelete));
     }
 
@@ -156,6 +177,7 @@ public class TodoListController : Controller
 
         await this.apiService.DeleteTodoListAsync(token, id);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesfully delete to-do list with id = {id}", null);
         return this.RedirectToAction(nameof(this.Index));
     }
 }

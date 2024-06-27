@@ -6,7 +6,9 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Services;
 
-/// <inheritdoc/>
+/// <summary>
+/// Represents a service for interacting with the TodoList database.
+/// </summary>
 public class TodoListDatabaseService : ITodoListDatabaseService
 {
     private readonly IMapper mapper;

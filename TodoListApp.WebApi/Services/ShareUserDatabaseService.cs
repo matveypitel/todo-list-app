@@ -6,7 +6,9 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Services;
 
-/// <inheritdoc/>
+/// <summary>
+/// Represents a service for sharing user data in a to-do list.
+/// </summary>
 public class ShareUserDatabaseService : IShareUserDatabaseService
 {
     private readonly IShareUserRepository repository;

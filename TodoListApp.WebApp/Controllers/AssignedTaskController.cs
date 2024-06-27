@@ -1,3 +1,4 @@
+using System.Globalization;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,19 +16,27 @@ namespace TodoListApp.WebApp.Controllers;
 [Route("tasks/assigned_to_me")]
 public class AssignedTaskController : Controller
 {
+    private static readonly Action<ILogger, string, string, Exception?> LogInformation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            default,
+            "{DateTime} Message: [{Message}]");
+
     private readonly ITaskWebApiService apiService;
     private readonly IMapper mapper;
     private readonly int pageSize = 10;
+    private readonly ILogger<AssignedTaskController> logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssignedTaskController"/> class.
     /// </summary>
     /// <param name="apiService">The task web API service.</param>
     /// <param name="mapper">The mapper.</param>
-    public AssignedTaskController(ITaskWebApiService apiService, IMapper mapper)
+    public AssignedTaskController(ITaskWebApiService apiService, IMapper mapper, ILogger<AssignedTaskController> logger)
     {
         this.apiService = apiService;
         this.mapper = mapper;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -44,6 +53,7 @@ public class AssignedTaskController : Controller
 
         var pagedResult = await this.apiService.GetAssignedTasksToUserAsync(token, page, this.pageSize, status, sort);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Returning view of {pagedResult.TotalCount} assigned tasks", null);
         return this.View(this.mapper.Map<PagedModel<TaskItemModel>>(pagedResult));
     }
 
@@ -60,6 +70,7 @@ public class AssignedTaskController : Controller
 
         var taskItem = await this.apiService.GetAssignedTaskByIdAsync(token, id);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Get change status page of assigned task with id = {id}", null);
         return this.View(this.mapper.Map<TaskItemModel>(taskItem));
     }
 
@@ -85,6 +96,7 @@ public class AssignedTaskController : Controller
 
         await this.apiService.UpdateTaskStatusAsync(token, id, updatedTask);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Succesful change status of task with id = {id}, redirecting to paged view", null);
         return this.RedirectToAction(nameof(this.Index));
     }
 }

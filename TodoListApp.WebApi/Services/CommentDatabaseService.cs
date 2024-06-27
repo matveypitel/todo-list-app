@@ -6,7 +6,9 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Services;
 
-/// <inheritdoc />
+/// <summary>
+/// Represents a database service for managing comments.
+/// </summary>
 public class CommentDatabaseService : ICommentDatabaseService
 {
     private readonly ICommentRepository repository;

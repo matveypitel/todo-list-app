@@ -11,9 +11,16 @@
     New list
 </a>
 
-@foreach (var todoList in Model.Items ?? Enumerable.Empty<TodoListModel>())
+@if (!Model.Items.Any())
 {
-    <partial name="_TodoListSummary" model="todoList" />
+    <h5 class="text-center">No to-do lists</h5>
+}
+else
+{
+    @foreach (var todoList in Model.Items ?? Enumerable.Empty<TodoListModel>())
+    {
+        <partial name="_TodoListSummary" model="todoList" />
+    }
 }
 
 <div class="pagination-container">

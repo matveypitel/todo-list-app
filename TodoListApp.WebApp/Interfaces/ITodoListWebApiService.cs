@@ -14,7 +14,7 @@ public interface ITodoListWebApiService
     /// <param name="token">The authentication token.</param>
     /// <param name="page">The page number.</param>
     /// <param name="pageSize">The number of items per page.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains the paged list of todo lists.</returns>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the paged list of to-do lists.</returns>
     Task<PagedModel<TodoList>> GetPagedListOfTodoListsAsync(string token, int page, int pageSize);
 
     /// <summary>
@@ -22,7 +22,7 @@ public interface ITodoListWebApiService
     /// </summary>
     /// <param name="token">The authentication token.</param>
     /// <param name="id">The ID of the to-do list.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains the todo list.</returns>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the to-do list.</returns>
     Task<TodoList> GetTodoListByIdAsync(string token, int id);
 
     /// <summary>
@@ -30,7 +30,7 @@ public interface ITodoListWebApiService
     /// </summary>
     /// <param name="token">The authentication token.</param>
     /// <param name="todoList">The to-do list to create.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains the created todo list.</returns>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the created to-do list.</returns>
     Task<TodoList> CreateTodoListAsync(string token, TodoList todoList);
 
     /// <summary>

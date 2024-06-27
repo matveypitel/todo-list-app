@@ -5,7 +5,7 @@ using TodoListApp.Models.DTOs;
 namespace TodoListApp.WebApp.Helpers;
 
 /// <summary>
-/// Represents a tag helper for generating links to todo list pages.
+/// Represents a tag helper for generating links to to-do list pages.
 /// </summary>
 [HtmlTargetElement("div", Attributes = "is-todoList-model")]
 public class TodoListLinkTagHelper : PageLinkTagHelper<TodoListModel>

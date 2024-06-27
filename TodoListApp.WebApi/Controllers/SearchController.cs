@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -15,18 +16,26 @@ namespace TodoListApp.WebApi.Controllers;
 [ApiController]
 public class SearchController : ControllerBase
 {
+    private static readonly Action<ILogger, string, string, Exception?> LogInformation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            default,
+            "{DateTime} Message: [{Message}]");
+
     private readonly IMapper mapper;
     private readonly ITaskDatabaseService taskDatabaseService;
+    private readonly ILogger<SearchController> logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SearchController"/> class.
     /// </summary>
     /// <param name="mapper">The mapper.</param>
     /// <param name="taskDatabaseService">The task database service.</param>
-    public SearchController(IMapper mapper, ITaskDatabaseService taskDatabaseService)
+    public SearchController(IMapper mapper, ITaskDatabaseService taskDatabaseService, ILogger<SearchController> logger)
     {
         this.mapper = mapper;
         this.taskDatabaseService = taskDatabaseService;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -56,6 +65,12 @@ public class SearchController : ControllerBase
         {
             return this.BadRequest();
         }
+
+        LogInformation(
+            this.logger,
+            DateTime.Now.ToString(CultureInfo.InvariantCulture),
+            $"Count of searched tasks on page {tasks.CurrentPage} = {tasks.ItemsPerPage}, all count = {tasks.TotalCount}",
+            null);
 
         return this.Ok(this.mapper.Map<PagedModel<TaskItemModel>>(tasks));
     }

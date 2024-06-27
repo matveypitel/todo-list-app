@@ -1,3 +1,4 @@
+using System.Globalization;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,19 +15,27 @@ namespace TodoListApp.WebApp.Controllers;
 [Route("tags")]
 public class TagController : Controller
 {
+    private static readonly Action<ILogger, string, string, Exception?> LogInformation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            default,
+            "{DateTime} Message: [{Message}]");
+
     private readonly ITagWebApiService tagWebApiService;
     private readonly IMapper mapper;
-    private readonly int pageSize = 10;
+    private readonly ILogger<TagController> logger;
+    private readonly int pageSize = 9;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TagController"/> class.
     /// </summary>
     /// <param name="tagWebApiService">The tag web API service.</param>
     /// <param name="mapper">The mapper.</param>
-    public TagController(ITagWebApiService tagWebApiService, IMapper mapper)
+    public TagController(ITagWebApiService tagWebApiService, IMapper mapper, ILogger<TagController> logger)
     {
         this.tagWebApiService = tagWebApiService;
         this.mapper = mapper;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -40,6 +49,7 @@ public class TagController : Controller
         var token = TokenUtility.GetToken(this.Request);
         var pagedResult = await this.tagWebApiService.GetAllTagsAsync(token, page, this.pageSize);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Get the view of all tags", null);
         return this.View(this.mapper.Map<PagedModel<TagModel>>(pagedResult));
     }
 
@@ -56,6 +66,7 @@ public class TagController : Controller
         var token = TokenUtility.GetToken(this.Request);
         var pagedResult = await this.tagWebApiService.GetTasksWithTag(token, tag, page, this.pageSize);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Get the view of tasks with tag - {tag}", null);
         return this.View(this.mapper.Map<PagedModel<TaskItemModel>>(pagedResult));
     }
 }

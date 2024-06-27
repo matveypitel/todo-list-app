@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -16,18 +17,26 @@ namespace TodoListApp.WebApi.Controllers;
 [ApiController]
 public class AssignedTaskController : ControllerBase
 {
+    private static readonly Action<ILogger, string, string, Exception?> LogInformation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            default,
+            "{DateTime} Message: [{Message}]");
+
     private readonly IMapper mapper;
     private readonly ITaskDatabaseService databaseService;
+    private readonly ILogger<AssignedTaskController> logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssignedTaskController"/> class.
     /// </summary>
     /// <param name="databaseService">The task database service.</param>
     /// <param name="mapper">The mapper.</param>
-    public AssignedTaskController(ITaskDatabaseService databaseService, IMapper mapper)
+    public AssignedTaskController(ITaskDatabaseService databaseService, IMapper mapper, ILogger<AssignedTaskController> logger)
     {
         this.mapper = mapper;
         this.databaseService = databaseService;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -55,6 +64,7 @@ public class AssignedTaskController : ControllerBase
             return this.BadRequest();
         }
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"GetAssignedTasksToUser : {userName}", null);
         return this.Ok(this.mapper.Map<PagedModel<TaskItemModel>>(taskItems));
     }
 
@@ -72,6 +82,7 @@ public class AssignedTaskController : ControllerBase
 
         var taskItem = await this.databaseService.GetAssignedTaskByIdAsync(id, userName);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Got assigned task where id = {taskItem.Id}", null);
         return this.Ok(this.mapper.Map<TaskItemModel>(taskItem));
     }
 
@@ -92,6 +103,7 @@ public class AssignedTaskController : ControllerBase
 
         await this.databaseService.UpdateTaskStatusAsync(id, userName, taskItem);
 
+        LogInformation(this.logger, DateTime.Now.ToString(CultureInfo.InvariantCulture), $"Updated assigned task where id = {taskItem.Id}", null);
         return this.NoContent();
     }
 

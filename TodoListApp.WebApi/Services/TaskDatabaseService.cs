@@ -7,7 +7,9 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Services;
 
-/// <inheritdoc/>
+/// <summary>
+/// Represents a service for interacting with the task database.
+/// </summary>
 public class TaskDatabaseService : ITaskDatabaseService
 {
     private readonly ITaskRepository repository;

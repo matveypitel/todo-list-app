@@ -6,7 +6,9 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Services;
 
-/// <inheritdoc/>
+/// <summary>
+/// Represents a service for managing tags in the database.
+/// </summary>
 public class TagDatabaseService : ITagDatabaseService
 {
     private readonly ITagRepository repository;

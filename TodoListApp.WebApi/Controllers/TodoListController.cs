@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -16,18 +17,26 @@ namespace TodoListApp.WebApi.Controllers;
 [ApiController]
 public class TodoListController : ControllerBase
 {
+    private static readonly Action<ILogger, string, string, Exception?> LogInformation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            default,
+            "{DateTime} Message: [{Message}]");
+
     private readonly IMapper mapper;
     private readonly ITodoListDatabaseService databaseService;
+    private readonly ILogger<TodoListController> logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TodoListController"/> class.
     /// </summary>
     /// <param name="mapper">The mapper instance.</param>
     /// <param name="databaseService">The database service instance.</param>
-    public TodoListController(IMapper mapper, ITodoListDatabaseService databaseService)
+    public TodoListController(IMapper mapper, ITodoListDatabaseService databaseService, ILogger<TodoListController> logger)
     {
         this.mapper = mapper;
         this.databaseService = databaseService;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -43,6 +52,12 @@ public class TodoListController : ControllerBase
 
         var newtodoList = this.mapper.Map<TodoList>(todoListModel);
         var todoList = await this.databaseService.CreateTodoListAsync(newtodoList, userName);
+
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"To-do list with id = {todoList.Id} created",
+           null);
 
         return this.CreatedAtAction(
             nameof(this.GetTodoListDetails),
@@ -69,6 +84,12 @@ public class TodoListController : ControllerBase
             return this.BadRequest();
         }
 
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"{todoLists.TotalCount} to-do lists found",
+           null);
+
         return this.Ok(this.mapper.Map<PagedModel<TodoListModel>>(todoLists));
     }
 
@@ -84,6 +105,12 @@ public class TodoListController : ControllerBase
         var userName = this.GetUserName();
 
         var todoList = await this.databaseService.GetTodoListByIdAsync(id, userName);
+
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"To-do list detail with id = {todoList.Id} got",
+           null);
 
         return this.Ok(this.mapper.Map<TodoListModel>(todoList));
     }
@@ -104,6 +131,12 @@ public class TodoListController : ControllerBase
 
         await this.databaseService.UpdateTodoListAsync(id, todoList, userName);
 
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"To-do list with id = {todoList.Id} updated",
+           null);
+
         return this.NoContent();
     }
 
@@ -119,6 +152,12 @@ public class TodoListController : ControllerBase
         var userName = this.GetUserName();
 
         await this.databaseService.DeleteTodoListAsync(id, userName);
+
+        LogInformation(
+           this.logger,
+           DateTime.Now.ToString(CultureInfo.InvariantCulture),
+           $"To-do list with id = {id} deleted",
+           null);
 
         return this.NoContent();
     }

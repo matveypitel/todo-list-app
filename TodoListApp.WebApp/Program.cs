@@ -46,9 +46,9 @@ builder.Services.AddHttpClient<ITagWebApiService, TagWebApiService>(client =>
     });
 
 builder.Services.AddHttpClient<ICommentWebApiService, CommentWebApiService>(client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
-});
+    {
+        client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
+    });
 
 builder.Services.AddAuthentication(options =>
     {

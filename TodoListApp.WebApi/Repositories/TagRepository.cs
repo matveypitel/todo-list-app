@@ -7,7 +7,9 @@ using TodoListApp.WebApi.Interfaces;
 
 namespace TodoListApp.WebApi.Repositories;
 
-/// <inheritdoc/>
+/// <summary>
+/// Represents a repository for managing tags.
+/// </summary>
 public class TagRepository : ITagRepository
 {
     private readonly TodoListDbContext context;
